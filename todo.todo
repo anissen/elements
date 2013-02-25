@@ -1,0 +1,11 @@
+
+Elements:
+
+Extremely simple game
+ ✔ One type of card - 1/1 unit with no casting cost @done (22-02-13 17:40)
+ ✔ Possible actions @done (22-02-13 17:40)
+     ✔ Play card @done (21-02-13 23:14)
+     ✔ Move unit @done (21-02-13 23:14)
+     ✔ Attack unit with unit @done (21-02-13 23:14)
+     ✔ End turn @done (22-02-13 17:40)
+ ☐ Plain page to trigger actions and observe result
