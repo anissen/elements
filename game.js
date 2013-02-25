@@ -63,11 +63,12 @@ module.exports = (function () {
 
   // TODO: Make this object literal into its own module
   var GameFunctions = {
+    /*
     draw: function(data, state) {
       var player = state.players[state.currentPlayer];
       var cards = player.library.splice(0, data.cards);
       player.hand = player.hand.concat(cards);
-    },
+    },*/
     play: function(data, state) {
       var player = state.players[state.currentPlayer];
       var cardIndex = player.hand.indexOf(data.cardId);
@@ -96,6 +97,14 @@ module.exports = (function () {
       var defendingUnit = state.board[data.toY][data.toX];
       defendingUnit.life -= attackingUnit.attack;
       attackingUnit.life -= defendingUnit.attack;
+      if (defendingUnit.life <= 0) {
+        // reset the defending units tile
+        state.board[data.toY][data.toX] = {type: 'empty', x: data.toX, y: data.toY};
+      }
+      if (attackingUnit.life <= 0) {
+        // reset the attacking units tile
+        state.board[data.fromY][data.fromX] = {type: 'empty', x: data.fromX, y: data.fromY};
+      }
     },
     endTurn: function(data, state) {
       state.currentPlayer = (state.currentPlayer + 1) % state.players.length;

@@ -58,15 +58,18 @@ function stateCtrl($scope) {
 
   $scope.selectUnit = function(unit) {
     deselectSelectedCard();
-    deselectSelectedUnit();
 
-    if (unit.player !== $scope.state.players[$scope.state.currentPlayer].id) {
-      alert('not your unit!');
-      return;
+    var ownUnitIsSelected = ($scope.selectedUnit);
+    var enemyUnitSelected = (unit.player !== $scope.state.players[$scope.state.currentPlayer].id);
+    if (!ownUnitIsSelected && enemyUnitSelected) { // selecting only an enemy unit
+      alert('not your unit');
+    } else if (ownUnitIsSelected && enemyUnitSelected) { // selected own unit THEN an enemy unit
+      postAction('attack', { "fromX": $scope.selectedUnit.x, "fromY": $scope.selectedUnit.y, "toX": unit.x, "toY": unit.y});
+    } else { // Just selected own unit
+      deselectSelectedUnit();
+      $scope.selectedUnit = unit;
+      unit.selected = true;
     }
-
-    $scope.selectedUnit = unit;
-    unit.selected = true;
   };
 
   $scope.selectTile = function(tile) {
@@ -77,6 +80,11 @@ function stateCtrl($scope) {
       var unit = $scope.selectedUnit;
       if (unit.x === tile.x && unit.y === tile.y)
         return;
+
+      if (tile.type !== 'empty') {
+        //alert('cannot move to non-empty tile');
+        return;
+      }
 
       postAction('move', { "fromX": unit.x, "fromY": unit.y, "toX": tile.x, "toY": tile.y });
     } else if ($scope.selectedCard) {
