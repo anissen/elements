@@ -108,6 +108,12 @@ module.exports = (function () {
     },
     endTurn: function(data, state) {
       state.currentPlayer = (state.currentPlayer + 1) % state.players.length;
+
+      // draw a card for the next player
+      var player = state.players[state.currentPlayer];
+      var numberOfCards = 1;
+      var cards = player.library.splice(0, numberOfCards);
+      player.hand = player.hand.concat(cards);
     }
   };
 
