@@ -1,0 +1,26 @@
+td {
+  height: 50px;
+  vertical-align: middle;
+  text-align: center;
+  padding: 10px;
+}
+table, th, td
+{
+  border: 1px solid #AAA;
+}
+.player1 {
+  background-color: darkblue;
+  border: 2px solid blue;
+}
+.player2 {
+  background-color: darkred;
+  border: 2px solid red;
+}
+.selected-true {
+  border: 2px solid white;
+}
+
+td:hover {
+  background-color: #222;
+  border: 2px solid white;
+}

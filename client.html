@@ -8,36 +8,15 @@
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
+    <script src="/vendor/jquery/jquery.min.js" type="text/javascript"></script>
     <script src="/vendor/angularjs/angular.min.js"></script>
+    <script src="state.js"></script>
 
     <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/vendor/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 
-    <style>
-      td {
-        height: 50px;
-        vertical-align: middle;
-        text-align: center;
-        padding: 10px;
-      }
-      table, th, td
-      {
-        border: 1px solid #AAA;
-      }
-      .player1 {
-        background-color: darkblue;
-      }
-      .player2 {
-        background-color: darkred;
-      }
-      .selected-true {
-        border: 2px solid white;
-      }
-      td:hover {
-        background-color: #222;
-        border: 2px solid white;
-      }
-    </style>
+    <link href="style.css" rel="stylesheet">
   </head>
 
   <body>
@@ -45,13 +24,26 @@
 
       <section>
         <div class="page-header">
-          <h1>elements test client</h1>
+          <!-- <h1>elements test client</h1> -->
         </div>
 
         <div class="row">
           <div class="span12">
 
             <div ng-controller="stateCtrl">
+
+              <table width="100%">
+                <tr>
+                  <td ng-repeat="card in getCardsInEnemyHand()">
+                    <div class="thumbnail player{{(state.currentPlayer+1)%2+1}}">
+                      <p>?</p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <br/>
+
               <table width="50%">
                 <tr ng-repeat="row in state.board">
                   <td ng-repeat="cell in row" width="33%" ng-click="selectTile(cell)">
@@ -59,12 +51,12 @@
                     <div ng-switch on="cell.type">
 
                       <div ng-switch-when="unit" class="thumbnail {{cell.player}} selected-{{cell.selected}}" ng-click="selectUnit(cell)">
-                        <p><span class="label label-warning">{{cell.name}}</span> <i>{{cell.id}}</i></p>
+                        <p><span class="label label-warning">{{cell.name}}</span> <!-- <i>{{cell.id}}</i> --></p>
                         <p>Attack: {{cell.attack}}</p>
                         <p>Life: {{cell.life}} / {{cell.maxLife}}</p>
                       </div>
 
-                      <span ng-switch-when="empty">EMPTY</span>
+                      <span ng-switch-when="empty"></span>
                       <span ng-switch-default>N/A</span>
 
                     </div>
@@ -77,9 +69,8 @@
 
               <table width="100%">
                 <tr>
-                  <td ng-repeat="card in getCardsInHand()" ng-click="selectCard(card)">
-
-                    <div class="thumbnail {{card.player}} selected-{{card.selected}}" ng-click="selectUnit(card)">
+                  <td ng-repeat="card in getCardsInOwnHand()" ng-click="selectCard(card)">
+                    <div class="thumbnail player{{state.currentPlayer+1}} selected-{{card.selected}}">
                       <p><span class="label label-warning">{{card.name}}</span> {{card.id}}</p>
                       <p>Attack: {{card.attack}}</p>
                       <p>Life: {{card.life}} / {{card.maxLife}}</p>
@@ -90,138 +81,25 @@
               </table>
 
               <br/>
+              <!--
               <a href="#" class="btn" ng-click="playCard()">Play card</a>
               <a href="#" class="btn" ng-click="getState()">Get state</a>
+            -->
               <a href="#" class="btn" ng-click="endTurn()">End turn</a>
             </div>
 
           </div>
         </div>
-
+<!--
         <div class="row">
           <div class="span12">
             <h3>Status</h3>
             <pre id="output"></pre>
           </div>
         </div>
-
+ -->
       </section>
 
     </div><!-- /container -->
-
-    <script src="/vendor/jquery/jquery.min.js" type="text/javascript"></script>
-
-    <script type="text/javascript">
-      function stateCtrl($scope) {
-        $scope.state = {};
-        $scope.selectedUnit = null;
-
-        $scope.getState = function() {
-          getGameState().done(function(state) {
-            $scope.$apply(function() {
-              //console.log(state);
-              $scope.state = state;
-            });
-          });
-        };
-
-        $scope.getCardsInHand = function() {
-          var state = $scope.state;
-          if (state.currentPlayer === undefined)
-            return [];
-
-          var hand = state.players[state.currentPlayer].hand;
-          var cards = [];
-          for (var i = 0; i < hand.length; i++) {
-            var cardId = hand[i];
-            var card = state.cards[cardId];
-            card.cardId = cardId;
-            cards.push(card);
-          };
-          return cards;
-        }
-
-        $scope.playCard = function() {
-          postAction('play', { cardId: prompt('card id', 'big-unit'), x: prompt('x', 2), y: prompt('y', 2) });
-        };
-
-        $scope.endTurn = function() {
-          postAction('endTurn', {});
-
-          deselectSelectedCard();
-          deselectSelectedUnit();
-        };
-
-        $scope.selectCard = function(card) {
-          deselectSelectedUnit();
-          deselectSelectedCard();
-          $scope.selectedCard = card;
-          //card.selected = true;
-        };
-
-        $scope.selectUnit = function(unit) {
-          deselectSelectedCard();
-          deselectSelectedUnit();
-          $scope.selectedUnit = unit;
-          unit.selected = true;
-        };
-
-        $scope.selectTile = function(tile) {
-          if (!$scope.selectedUnit && !$scope.selectedCard)
-            return;
-
-          if ($scope.selectedUnit) {
-            var unit = $scope.selectedUnit;
-            if (unit.x === tile.x && unit.y === tile.y)
-              return;
-
-            postAction('move', { "fromX": unit.x, "fromY": unit.y, "toX": tile.x, "toY": tile.y });
-          } else if ($scope.selectedCard) {
-            console.log($scope.selectedCard);
-            postAction('play', { "cardId": $scope.selectedCard.cardId, "x": tile.x, "y": tile.y });
-          }
-        }
-
-        function postAction(action, data) {
-          return $.ajax({
-            type: "POST",
-            url: "game/42",
-            data: { action: action, data: data }
-          })
-          .done(function(msg) {
-            $scope.getState();
-            var $outputField = $('#output');
-            $outputField.html('Action posted with success: ' + msg + '\n' + $outputField.html());
-          })
-          .fail(function(msg) {
-            var $outputField = $('#output');
-            $outputField.html('Action posted with failure: ' + msg + '\n' + $outputField.html());
-          });
-        }
-
-        function getGameState() {
-          return $.ajax({
-            type: "GET",
-            url: "game/42/false" // 'false' for disabling colors
-          });
-        }
-
-        function deselectSelectedUnit() {
-          var oldSelected = $scope.selectedUnit;
-          if (oldSelected)
-            oldSelected.selected = false;
-          $scope.selectedUnit = null;
-        }
-
-        function deselectSelectedCard() {
-          $scope.selectedCard = null;
-        }
-
-        $scope.getState();
-      }
-
-
-    </script>
-
   </body>
 </html>
