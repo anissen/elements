@@ -20,11 +20,25 @@ module.exports = (function () {
   };
 
   var initialState = {
+    cards: {
+      'small-unit': {
+        name: 'Cannon Fodder',
+        attack: 1,
+        maxLife: 1,
+        life: 1
+      },
+      'big-unit': {
+        name: 'Big Guy',
+        attack: 3,
+        maxLife: 3,
+        life: 3
+      }
+    },
     players: [
       {
         id: 'player1',
         library: ['big-unit', 'big-unit', 'big-unit', 'big-unit'],
-        hand: ['big-unit', 'big-unit', 'big-unit', 'big-unit']
+        hand: ['big-unit', 'small-unit', 'big-unit', 'big-unit']
       },
       {
         id: 'player2',
@@ -58,7 +72,7 @@ module.exports = (function () {
       var player = state.players[state.currentPlayer];
       var cardIndex = player.hand.indexOf(data.cardId);
       if (cardIndex < 0)
-        throw new Error('No such card on hand');
+        throw new Error('No card with id "' + data.cardId + '" on the following hand "' + player.hand + '"');
       player.hand.splice(cardIndex, 1);
 
       var card = cards[data.cardId];

@@ -18,7 +18,7 @@ module.exports = (function () {
 
     var endTime = (new Date()).getTime();
     var timeDiff = endTime - startTime;
-    console.log('Elapsed time (getGameState): ' + timeDiff + ' ms. for ' + events.length + ' events (' + timeDiff / events.length + ' ms./event)');
+    console.log('Elapsed time (getGameState): ' + timeDiff + ' ms. for ' + events.length + ' events (' + (timeDiff / events.length).toFixed(2) + ' ms./event)');
     callback(state);
   };
 

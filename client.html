@@ -52,14 +52,14 @@
           <div class="span12">
 
             <div ng-controller="stateCtrl">
-              <table width="100%">
+              <table width="50%">
                 <tr ng-repeat="row in state.board">
                   <td ng-repeat="cell in row" width="33%" ng-click="selectTile(cell)">
 
                     <div ng-switch on="cell.type">
 
                       <div ng-switch-when="unit" class="thumbnail {{cell.player}} selected-{{cell.selected}}" ng-click="selectUnit(cell)">
-                        <p><span class="label label-warning">{{cell.name}}</span> {{cell.id}}</p>
+                        <p><span class="label label-warning">{{cell.name}}</span> <i>{{cell.id}}</i></p>
                         <p>Attack: {{cell.attack}}</p>
                         <p>Life: {{cell.life}} / {{cell.maxLife}}</p>
                       </div>
@@ -75,11 +75,15 @@
 
               <br/>
 
-              <table width="100%" style="background-color: yellow">
+              <table width="100%">
                 <tr>
-                  <td ng-repeat="card in state.players[state.currentPlayer].hand" ng-click="selectCard(card)">
+                  <td ng-repeat="card in getCardsInHand()" ng-click="selectCard(card)">
 
-                    {{card | json}}
+                    <div class="thumbnail {{card.player}} selected-{{card.selected}}" ng-click="selectUnit(card)">
+                      <p><span class="label label-warning">{{card.name}}</span> {{card.id}}</p>
+                      <p>Attack: {{card.attack}}</p>
+                      <p>Life: {{card.life}} / {{card.maxLife}}</p>
+                    </div>
 
                   </td>
                 </tr>
@@ -115,11 +119,27 @@
         $scope.getState = function() {
           getGameState().done(function(state) {
             $scope.$apply(function() {
-              console.log(state);
+              //console.log(state);
               $scope.state = state;
             });
           });
         };
+
+        $scope.getCardsInHand = function() {
+          var state = $scope.state;
+          if (state.currentPlayer === undefined)
+            return [];
+
+          var hand = state.players[state.currentPlayer].hand;
+          var cards = [];
+          for (var i = 0; i < hand.length; i++) {
+            var cardId = hand[i];
+            var card = state.cards[cardId];
+            card.cardId = cardId;
+            cards.push(card);
+          };
+          return cards;
+        }
 
         $scope.playCard = function() {
           postAction('play', { cardId: prompt('card id', 'big-unit'), x: prompt('x', 2), y: prompt('y', 2) });
@@ -128,24 +148,38 @@
         $scope.endTurn = function() {
           postAction('endTurn', {});
 
+          deselectSelectedCard();
           deselectSelectedUnit();
         };
 
+        $scope.selectCard = function(card) {
+          deselectSelectedUnit();
+          deselectSelectedCard();
+          $scope.selectedCard = card;
+          //card.selected = true;
+        };
+
         $scope.selectUnit = function(unit) {
+          deselectSelectedCard();
           deselectSelectedUnit();
           $scope.selectedUnit = unit;
           unit.selected = true;
-        }
+        };
 
         $scope.selectTile = function(tile) {
-          if (!$scope.selectedUnit)
+          if (!$scope.selectedUnit && !$scope.selectedCard)
             return;
 
-          var unit = $scope.selectedUnit;
-          if (unit.x === tile.x && unit.y === tile.y)
-            return;
+          if ($scope.selectedUnit) {
+            var unit = $scope.selectedUnit;
+            if (unit.x === tile.x && unit.y === tile.y)
+              return;
 
-          postAction('move', { "fromX": unit.x, "fromY": unit.y, "toX": tile.x, "toY": tile.y });
+            postAction('move', { "fromX": unit.x, "fromY": unit.y, "toX": tile.x, "toY": tile.y });
+          } else if ($scope.selectedCard) {
+            console.log($scope.selectedCard);
+            postAction('play', { "cardId": $scope.selectedCard.cardId, "x": tile.x, "y": tile.y });
+          }
         }
 
         function postAction(action, data) {
@@ -177,6 +211,10 @@
           if (oldSelected)
             oldSelected.selected = false;
           $scope.selectedUnit = null;
+        }
+
+        function deselectSelectedCard() {
+          $scope.selectedCard = null;
         }
 
         $scope.getState();
