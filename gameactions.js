@@ -12,7 +12,6 @@ module.exports = (function () {
       var card = state.cards[data.cardId];
       card.player = player.id;
       var newCard = clone(card);
-      newCard.type = 'unit';
       newCard.x = data.pos.x;
       newCard.y = data.pos.y;
       setTile(data.pos, newCard);

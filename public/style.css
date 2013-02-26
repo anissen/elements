@@ -8,14 +8,25 @@ table, th, td
 {
   border: 1px solid #AAA;
 }
+
 .player1 {
   background-color: darkblue;
   border: 2px solid blue;
 }
+
 .player2 {
   background-color: darkred;
   border: 2px solid red;
 }
+
+.unit {
+
+}
+
+.energy-source {
+  background-color: gold;
+}
+
 .selected-true {
   border: 2px solid white;
 }

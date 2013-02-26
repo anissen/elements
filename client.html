@@ -44,15 +44,20 @@
 
               <br/>
 
-              <table width="50%">
+              <table width="75%">
                 <tr ng-repeat="row in state.board">
-                  <td ng-repeat="cell in row" width="33%" ng-click="selectTile(cell)">
+                  <td ng-repeat="cell in row" width="25%" ng-click="selectTile(cell)">
 
                     <div ng-switch on="cell.type">
 
-                      <div ng-switch-when="unit" class="thumbnail {{cell.player}} selected-{{cell.selected}}" ng-click="selectUnit(cell)">
+                      <div ng-switch-when="unit" class="thumbnail unit {{cell.player}} selected-{{cell.selected}}" ng-click="selectUnit(cell)">
                         <p><span class="label label-warning">{{cell.name}}</span> <!-- <i>{{cell.id}}</i> --></p>
                         <p>Attack: {{cell.attack}}</p>
+                        <p>Life: {{cell.life}} / {{cell.maxLife}}</p>
+                      </div>
+
+                      <div ng-switch-when="energy-source" class="thumbnail energy-source {{cell.player}} selected-{{cell.selected}}">
+                        <p><span class="label label-inverse">{{cell.name}}</span></p>
                         <p>Life: {{cell.life}} / {{cell.maxLife}}</p>
                       </div>
 
@@ -70,6 +75,7 @@
               <table width="100%">
                 <tr>
                   <td ng-repeat="card in getCardsInOwnHand()" ng-click="selectCard(card)">
+
                     <div class="thumbnail player{{state.currentPlayer+1}} selected-{{card.selected}}">
                       <p><span class="label label-warning">{{card.name}}</span> {{card.id}}</p>
                       <p>Attack: {{card.attack}}</p>
