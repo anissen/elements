@@ -1,8 +1,8 @@
 
 module.exports = (function () {
-  return function() {
+  return function(state) {
 
-    this.play = function(data, state) {
+    this.play = function(data) {
       var player = state.players[state.currentPlayer];
       var cardIndex = player.hand.indexOf(data.cardId);
       if (cardIndex < 0)
@@ -12,37 +12,32 @@ module.exports = (function () {
       var card = state.cards[data.cardId];
       card.player = player.id;
       var newCard = clone(card);
-      //newCard.id = data.cardId + '-' + Math.floor(Math.random() * 100);
       newCard.type = 'unit';
-      newCard.x = data.x;
-      newCard.y = data.y;
-      state.board[data.y][data.x] = newCard;
+      newCard.x = data.pos.x;
+      newCard.y = data.pos.y;
+      setTile(data.pos, newCard);
     };
 
-    this.move = function(data, state) {
-      var unit = state.board[data.fromY][data.fromX];
-      state.board[data.fromY][data.fromX] = {type: 'empty', x: data.fromX, y: data.fromY };
-      unit.x = data.toX;
-      unit.y = data.toY;
-      state.board[data.toY][data.toX] = unit;
+    this.move = function(data) {
+      var unit = getTile(data.from);
+      resetTile(data.from);
+      unit.x = data.to.x;
+      unit.y = data.to.y;
+      setTile(data.to, unit);
     };
 
-    this.attack = function(data, state) {
-      var attackingUnit = state.board[data.fromY][data.fromX];
-      var defendingUnit = state.board[data.toY][data.toX];
+    this.attack = function(data) {
+      var attackingUnit = getTile(data.from);
+      var defendingUnit = getTile(data.to);
       defendingUnit.life -= attackingUnit.attack;
       attackingUnit.life -= defendingUnit.attack;
-      if (defendingUnit.life <= 0) {
-        // reset the defending units tile
-        state.board[data.toY][data.toX] = {type: 'empty', x: data.toX, y: data.toY};
-      }
-      if (attackingUnit.life <= 0) {
-        // reset the attacking units tile
-        state.board[data.fromY][data.fromX] = {type: 'empty', x: data.fromX, y: data.fromY};
-      }
+      if (defendingUnit.life <= 0)
+        resetTile(data.to);
+      if (attackingUnit.life <= 0)
+        resetTile(data.from);
     };
 
-    this.endTurn = function(data, state) {
+    this.endTurn = function(data) {
       state.currentPlayer = (state.currentPlayer + 1) % state.players.length;
 
       // draw a card for the next player
@@ -54,6 +49,18 @@ module.exports = (function () {
 
     function clone(obj) {
       return JSON.parse(JSON.stringify(obj));
+    }
+
+    function getTile(pos) {
+      return state.board[pos.y][pos.x];
+    }
+
+    function setTile(pos, data) {
+      return state.board[pos.y][pos.x] = data;
+    }
+
+    function resetTile(pos) {
+      state.board[pos.y][pos.x] = {type: 'empty', x: pos.x, y: pos.y};
     }
 
   };

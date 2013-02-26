@@ -40,14 +40,15 @@ module.exports = (function () {
     ]
   };
 
-  var gameActions = new GameActions();
+  //var gameActions = new GameActions();
 
   module.playEvents = function(events) {
     var state = clone(initialState);
+    var gameActions = new GameActions(state);
     for (var i in events) {
       var e = events[i];
       console.log('-------------- event --------------\n' + prettyjson.render(e));
-      gameActions[e.action](e.data, state);
+      gameActions[e.action](e.data);
     }
     return state;
   };

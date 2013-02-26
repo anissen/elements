@@ -39,10 +39,6 @@ function stateCtrl($scope, $http) {
     return cards;
   }
 
-  $scope.playCard = function() {
-    postAction('play', { cardId: prompt('card id', 'big-unit'), x: prompt('x', 2), y: prompt('y', 2) });
-  };
-
   $scope.endTurn = function() {
     postAction('endTurn', {});
 
@@ -65,7 +61,17 @@ function stateCtrl($scope, $http) {
     if (!ownUnitIsSelected && enemyUnitSelected) { // selecting only an enemy unit
       alert('not your unit');
     } else if (ownUnitIsSelected && enemyUnitSelected) { // selected own unit THEN an enemy unit
-      postAction('attack', { "fromX": $scope.selectedUnit.x, "fromY": $scope.selectedUnit.y, "toX": unit.x, "toY": unit.y});
+      var attackData = {
+        "from": {
+          "x": $scope.selectedUnit.x,
+          "y": $scope.selectedUnit.y
+        },
+        "to": {
+          "x": unit.x,
+          "y": unit.y
+        }
+      };
+      postAction('attack', attackData);
     } else { // Just selected own unit
       deselectSelectedUnit();
       $scope.selectedUnit = unit;
@@ -87,9 +93,26 @@ function stateCtrl($scope, $http) {
         return;
       }
 
-      postAction('move', { "fromX": unit.x, "fromY": unit.y, "toX": tile.x, "toY": tile.y });
+      var moveData = {
+          "from": {
+            "x": unit.x,
+            "y": unit.y
+          },
+          "to": {
+            "x": tile.x,
+            "y": tile.y
+          }
+        };
+      postAction('move', moveData);
     } else if ($scope.selectedCard) {
-      postAction('play', { "cardId": $scope.selectedCard.cardId, "x": tile.x, "y": tile.y });
+      var playData = {
+        "cardId": $scope.selectedCard.cardId,
+        "pos": {
+          "x": tile.x,
+          "y": tile.y
+        }
+      };
+      postAction('play', playData);
     }
   };
 
