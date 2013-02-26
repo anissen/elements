@@ -54,11 +54,15 @@ function stateCtrl($scope, $http) {
   };
 
   $scope.selectUnit = function(unit) {
-    deselectSelectedCard();
+    //deselectSelectedCard();
 
     var ownUnitIsSelected = ($scope.selectedUnit);
     var enemyUnitSelected = (unit.player !== $scope.state.players[$scope.state.currentPlayer].id);
     if (!ownUnitIsSelected && enemyUnitSelected) { // selecting only an enemy unit
+      /*
+      if ($scope.selectedCard && $scope.selectedCard.type === 'spell') { // throw spell on enemy unit
+        postAction('play', { "cardId": $scope.selectedCard.cardId, "pos": posJson(unit) });
+      }*/
       alert('not your unit');
     } else if (ownUnitIsSelected && enemyUnitSelected) { // selected own unit THEN an enemy unit
       postAction('attack', { "from": posJson($scope.selectedUnit), "to": posJson(unit) });

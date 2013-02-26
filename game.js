@@ -34,6 +34,16 @@ module.exports = (function () {
         attack: 0,
         maxLife: 2,
         life: 2
+      },/*
+      'drown': {
+        type: 'spell',
+        name: 'Drown',
+        spell: 'console.log("I am supposed to do 2 damage")'
+      },*/
+      'wrap-in-flames': {
+        type: 'spell',
+        name: 'Wrap in flames',
+        spell: 'print("This is pretty awesome (" + (40 + 2) + ") " + dummy)'
       }
     },
     players: [
@@ -45,7 +55,7 @@ module.exports = (function () {
       {
         id: 'player2',
         library: ['small-unit', 'fire', 'small-unit', 'small-unit'],
-        hand: ['small-unit', 'small-unit', 'fire']
+        hand: ['small-unit', 'small-unit', 'fire', 'wrap-in-flames']
       }
     ],
     currentPlayer: 0,

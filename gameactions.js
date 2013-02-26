@@ -1,3 +1,10 @@
+var util = require('util'),
+    vm = require('vm'),
+    sandbox = {
+      dummy: 'this is some context variable',
+      print: function(str) { console.log('this is from the context: ' + str ); },
+      result: ''
+    };
 
 module.exports = (function () {
   return function(state) {
@@ -11,10 +18,18 @@ module.exports = (function () {
 
       var card = state.cards[data.cardId];
       card.player = player.id;
-      var newCard = clone(card);
-      newCard.x = data.pos.x;
-      newCard.y = data.pos.y;
-      setTile(data.pos, newCard);
+
+      if (card.type === 'unit' || card.type === 'energy-source') {
+        var newCard = clone(card);
+        newCard.x = data.pos.x;
+        newCard.y = data.pos.y;
+        setTile(data.pos, newCard);
+      } else if (card.type === 'spell') {
+        console.log('Spell thrown at target position: ' + JSON.stringify(data.pos));
+        console.log('Evaluating the spells on-activate script: ');
+        //eval(card.spell);
+        vm.runInNewContext(card.spell, sandbox);
+      }
     };
 
     this.move = function(data) {
