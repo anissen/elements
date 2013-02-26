@@ -61,17 +61,7 @@ function stateCtrl($scope, $http) {
     if (!ownUnitIsSelected && enemyUnitSelected) { // selecting only an enemy unit
       alert('not your unit');
     } else if (ownUnitIsSelected && enemyUnitSelected) { // selected own unit THEN an enemy unit
-      var attackData = {
-        "from": {
-          "x": $scope.selectedUnit.x,
-          "y": $scope.selectedUnit.y
-        },
-        "to": {
-          "x": unit.x,
-          "y": unit.y
-        }
-      };
-      postAction('attack', attackData);
+      postAction('attack', { "from": posJson($scope.selectedUnit), "to": posJson(unit) });
     } else { // Just selected own unit
       deselectSelectedUnit();
       $scope.selectedUnit = unit;
@@ -93,26 +83,9 @@ function stateCtrl($scope, $http) {
         return;
       }
 
-      var moveData = {
-          "from": {
-            "x": unit.x,
-            "y": unit.y
-          },
-          "to": {
-            "x": tile.x,
-            "y": tile.y
-          }
-        };
-      postAction('move', moveData);
+      postAction('move', { "from": posJson(unit), "to": posJson(tile) });
     } else if ($scope.selectedCard) {
-      var playData = {
-        "cardId": $scope.selectedCard.cardId,
-        "pos": {
-          "x": tile.x,
-          "y": tile.y
-        }
-      };
-      postAction('play', playData);
+      postAction('play', { "cardId": $scope.selectedCard.cardId, "pos": posJson(tile) });
     }
   };
 
@@ -125,6 +98,10 @@ function stateCtrl($scope, $http) {
     .error(function(msg) {
       alert('Action posted with failure: ' + msg);
     });
+  }
+
+  function posJson(data) {
+    return { "x": data.x, "y": data.y };
   }
 
   function deselectSelectedUnit() {
