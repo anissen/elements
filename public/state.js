@@ -1,15 +1,16 @@
 
-function stateCtrl($scope) {
+function stateCtrl($scope, $http) {
   $scope.state = {};
   $scope.selectedUnit = null;
 
   $scope.getState = function() {
-    getGameState().done(function(state) {
-      $scope.$apply(function() {
-        //console.log(state);
+    $http.get('game/42/false')
+      .success(function(state) {
         $scope.state = state;
+      })
+      .error(function() {
+        alert('get state failed');
       });
-    });
   };
 
   $scope.getCardsInOwnHand = function() {
@@ -93,26 +94,13 @@ function stateCtrl($scope) {
   };
 
   function postAction(action, data) {
-    return $.ajax({
-      type: "POST",
-      url: "game/42",
-      data: { action: action, data: data }
-    })
-    .done(function(msg) {
+    $http.post('game/42', { action: action, data: data })
+    .success(function(msg) {
       $scope.getState();
-      var $outputField = $('#output');
-      $outputField.html('Action posted with success: ' + msg + '\n' + $outputField.html());
+      console.log('Action posted with success: ' + msg);
     })
-    .fail(function(msg) {
-      var $outputField = $('#output');
-      $outputField.html('Action posted with failure: ' + msg + '\n' + $outputField.html());
-    });
-  }
-
-  function getGameState() {
-    return $.ajax({
-      type: "GET",
-      url: "game/42/false" // 'false' for disabling colors
+    .error(function(msg) {
+      alert('Action posted with failure: ' + msg);
     });
   }
 

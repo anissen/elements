@@ -12,4 +12,8 @@ Extremely simple game
 
  Slightly less simple game
  ✔ Attack unit with unit via GUI @done (25-02-13 22:38)
- ☐ Draw a card at the beginning of the players turn
+ ✔ Draw a card at the beginning of the players turn @done (26-02-13 17:29)
+ ☐ Refactor code (especially modules into classes)
+ ☐ Implement energy sources
+ ☐ Implement spells
+ ☐ Implement a basic AI
