@@ -14,10 +14,10 @@ module.exports = (function () {
       player.hand.splice(cardIndex, 1);
 
       var card = state.cards[data.cardId];
-      card.player = player.id;
 
-      if (card.type === 'unit' || card.type === 'energy-source') {
+      if (card.type === 'unit' || card.type === 'energy') {
         var newCard = clone(card);
+        newCard.player = state.currentPlayer; //player.id;
         newCard.x = data.pos.x;
         newCard.y = data.pos.y;
         setTile(data.pos, newCard);

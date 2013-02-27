@@ -35,8 +35,8 @@
               <table width="100%">
                 <tr>
                   <td ng-repeat="card in getCardsInEnemyHand()">
-                    <div class="thumbnail player{{(state.currentPlayer+1)%2+1}}">
-                      <p>?</p>
+                    <div class="thumbnail player{{(state.currentPlayer+1)%2}}">
+                      <p><span class="label label-inverse cardName">?</span></p>
                     </div>
                   </td>
                 </tr>
@@ -50,14 +50,14 @@
 
                     <div ng-switch on="cell.type">
 
-                      <div ng-switch-when="unit" class="thumbnail unit {{cell.player}} selected-{{cell.selected}}" ng-click="selectUnit(cell)">
-                        <p><span class="label label-warning">{{cell.name}}</span> <!-- <i>{{cell.id}}</i> --></p>
+                      <div ng-switch-when="unit" class="thumbnail unit player{{cell.player}} selected-{{cell.selected}}" ng-click="selectUnit(cell)">
+                        <p><span class="label label-inverse cardName">{{cell.name}}</span> <!-- <i>{{cell.id}}</i> --></p>
                         <p>Attack: {{cell.attack}}</p>
                         <p>Life: {{cell.life}} / {{cell.maxLife}}</p>
                       </div>
 
-                      <div ng-switch-when="energy-source" class="thumbnail energy-source {{cell.player}} selected-{{cell.selected}}">
-                        <p><span class="label label-inverse">{{cell.name}}</span></p>
+                      <div ng-switch-when="energy" class="thumbnail energy player{{cell.player}} selected-{{cell.selected}}">
+                        <p><span class="label label-inverse cardName">{{cell.name}}</span></p>
                         <p>Life: {{cell.life}} / {{cell.maxLife}}</p>
                       </div>
 
@@ -76,8 +76,8 @@
                 <tr>
                   <td ng-repeat="card in getCardsInOwnHand()" ng-click="selectCard(card)">
 
-                    <div class="thumbnail player{{state.currentPlayer+1}} selected-{{card.selected}}">
-                      <p><span class="label label-warning">{{card.name}}</span> {{card.id}}</p>
+                    <div class="thumbnail player{{state.currentPlayer}} selected-{{card.selected}}">
+                      <p><span class="label label-inverse cardName">{{card.name}}</span> {{card.id}}</p>
                       <p>Attack: {{card.attack}}</p>
                       <p>Life: {{card.life}} / {{card.maxLife}}</p>
                     </div>

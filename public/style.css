@@ -9,22 +9,27 @@ table, th, td
   border: 1px solid #AAA;
 }
 
-.player1 {
+.player0 {
   background-color: darkblue;
-  border: 2px solid blue;
+  border: 3px solid blue;
 }
 
-.player2 {
+.player1 {
   background-color: darkred;
-  border: 2px solid red;
+  border: 3px solid red;
+}
+
+.cardName {
+  font-size: 1em;
 }
 
 .unit {
 
 }
 
-.energy-source {
+.energy {
   background-color: gold;
+  color: black;
 }
 
 .selected-true {
