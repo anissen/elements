@@ -63,7 +63,7 @@ function stateCtrl($scope, $http) {
       if ($scope.selectedCard && $scope.selectedCard.type === 'spell') { // throw spell on enemy unit
         postAction('play', { "cardId": $scope.selectedCard.cardId, "pos": posJson(unit) });
       }*/
-      alert('not your unit');
+      //alert('not your unit');
     } else if (ownUnitIsSelected && enemyUnitSelected) { // selected own unit THEN an enemy unit
       postAction('attack', { "from": posJson($scope.selectedUnit), "to": posJson(unit) });
     } else { // Just selected own unit

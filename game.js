@@ -34,16 +34,16 @@ module.exports = (function () {
         attack: 0,
         maxLife: 2,
         life: 2
-      },/*
-      'drown': {
+      },
+      'flame-lick': {
         type: 'spell',
-        name: 'Drown',
-        spell: 'console.log("I am supposed to do 2 damage")'
-      },*/
-      'wrap-in-flames': {
+        name: 'Flame Lick',
+        scriptFile: 'flamelick.js'
+      },
+      'meteor': {
         type: 'spell',
-        name: 'Wrap in flames',
-        spell: 'print("This is pretty awesome (" + (40 + 2) + ") " + dummy)'
+        name: 'Meteor',
+        scriptFile: 'meteor.js'
       }
     },
     players: [
@@ -55,7 +55,7 @@ module.exports = (function () {
       {
         id: 'player2',
         library: ['small-unit', 'fire', 'small-unit', 'small-unit'],
-        hand: ['small-unit', 'small-unit', 'fire', 'wrap-in-flames']
+        hand: ['small-unit', 'small-unit', 'fire', 'flame-lick', 'meteor']
       }
     ],
     currentPlayer: 0,
@@ -71,6 +71,7 @@ module.exports = (function () {
   //var gameActions = new GameActions();
 
   module.playEvents = function(events) {
+    console.log(initialState.cards.meteor.spell);
     var state = clone(initialState);
     var gameActions = new GameActions(state);
     for (var i in events) {

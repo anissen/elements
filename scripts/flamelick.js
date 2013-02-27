@@ -1,0 +1,2 @@
+
+damageUnit(target, 2);

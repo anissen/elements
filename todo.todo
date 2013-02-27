@@ -1,7 +1,7 @@
 
 Elements:
 
-Extremely simple game
+Extremely simple game:
  ✔ One type of card - 1/1 unit with no casting cost @done (22-02-13 17:40)
  ✔ Possible actions @done (22-02-13 17:40)
      ✔ Play card @done (21-02-13 23:14)
@@ -10,11 +10,24 @@ Extremely simple game
      ✔ End turn @done (22-02-13 17:40)
  ✔ Plain page to trigger actions and observe result @done (25-02-13 22:10)
 
- Slightly less simple game
+ Slightly less simple game:
  ✔ Attack unit with unit via GUI @done (25-02-13 22:38)
  ✔ Draw a card at the beginning of the players turn @done (26-02-13 17:29)
  ✔ Refactor code (especially modules into classes) @done (26-02-13 22:09)
- ☐ Implement energy sources
- ☐ Implement spells
+ ✔ Implement energy sources @done (27-02-13 22:18)
+ ✔ Implement spells @done (27-02-13 22:18)
+ ✔ Implement basic spell script system @done (27-02-13 22:18)
+ ✔ Consider expanding spells with precondition information about targets, e.g. { targets: ["unit"] } or { targets: ["unit", "energy-source", "player"]} @done (27-02-13 22:19)
+
+ Somewhat simple game:
+ ☐ Implement card cost
+ ☐ Implement unit movement restrictions
+ ☐ Implement unit attack restrictions
+ ☐ Implement unit placement restrictions
+ ☐ Implement winning/losing condition
+ ☐ Collect all available player actions
+     ☐ Move
+     ☐ Attack
+     ☐ Play
  ☐ Implement a basic AI
  ☐ Unit tests

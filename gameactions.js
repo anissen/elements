@@ -1,10 +1,7 @@
 var util = require('util'),
     vm = require('vm'),
-    sandbox = {
-      dummy: 'this is some context variable',
-      print: function(str) { console.log('this is from the context: ' + str ); },
-      result: ''
-    };
+    fs = require('fs');
+
 
 module.exports = (function () {
   return function(state) {
@@ -25,10 +22,9 @@ module.exports = (function () {
         newCard.y = data.pos.y;
         setTile(data.pos, newCard);
       } else if (card.type === 'spell') {
-        console.log('Spell thrown at target position: ' + JSON.stringify(data.pos));
-        console.log('Evaluating the spells on-activate script: ');
-        //eval(card.spell);
-        vm.runInNewContext(card.spell, sandbox);
+        //console.log('Evaluating the spells on-activate script: ');
+        var script = fs.readFileSync('./scripts/' + card.scriptFile);
+        vm.runInNewContext(script, getScriptContext(data), card.scriptFile);
       }
     };
 
@@ -75,6 +71,26 @@ module.exports = (function () {
 
     function resetTile(pos) {
       state.board[pos.y][pos.x] = {type: 'empty', x: pos.x, y: pos.y};
+    }
+
+    function getScriptContext(data) {
+      return {
+        target: getTile(data.pos),
+        damageUnit: function(unit, damage) {
+          unit.life -= damage;
+        },
+        getAdjacentTiles: function(pos, range) {
+          var tiles = [];
+          for (var y = pos.y - range; y <= pos.y + range; y++) {
+            for (var x = pos.x - range; x <= pos.x + range; x++) {
+              if (!(x === pos.x && y === pos.y))
+                tiles.push(getTile({x: x, y: y}));
+            }
+          }
+          return tiles;
+        },
+        print: function(str) { console.log('SCRIPT: ' + str ); }
+      };
     }
 
   };
