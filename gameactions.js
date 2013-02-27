@@ -62,6 +62,10 @@ module.exports = (function () {
     }
 
     function getTile(pos) {
+      if (pos.y >= state.board.length)
+        return null;
+      if (pos.x >= state.board[pos.y].length)
+        return null;
       return state.board[pos.y][pos.x];
     }
 
@@ -77,14 +81,23 @@ module.exports = (function () {
       return {
         target: getTile(data.pos),
         damageUnit: function(unit, damage) {
+          if (!unit.life)
+            return;
+
           unit.life -= damage;
+          if (unit.life <= 0)
+            resetTile(unit);
         },
         getAdjacentTiles: function(pos, range) {
           var tiles = [];
           for (var y = pos.y - range; y <= pos.y + range; y++) {
             for (var x = pos.x - range; x <= pos.x + range; x++) {
-              if (!(x === pos.x && y === pos.y))
-                tiles.push(getTile({x: x, y: y}));
+              if (x === pos.x && y === pos.y)
+                continue;
+
+              var tile = getTile({x: x, y: y});
+              if (tile)
+                tiles.push(tile);
             }
           }
           return tiles;
