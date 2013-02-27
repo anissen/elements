@@ -1,12 +1,17 @@
+
+body {
+  padding-top: 20px;
+}
+
 td {
-  height: 50px;
   vertical-align: middle;
   text-align: center;
-  padding: 10px;
+  padding: 5px;
 }
+
 table, th, td
 {
-  border: 1px solid #AAA;
+  border: 0;
 }
 
 .player0 {
@@ -33,10 +38,24 @@ table, th, td
 }
 
 .selected-true {
-  border: 2px solid white;
+  border: 3px solid yellow;
 }
 
+.empty {
+  min-height: 60px;
+  background-color: #000;
+  background-color: rgba(255,255,255,0);
+  border: 3px solid rgba(0,0,0,0.1);
+}
+
+.empty:hover {
+  background-color: #222;
+  background-color: rgba(255,255,255,0.2);
+  border: 3px solid rgba(0,0,0,0.3);
+}
+/*
 td:hover {
   background-color: #222;
-  border: 2px solid white;
+  border: 3px solid white;
 }
+*/

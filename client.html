@@ -23,9 +23,6 @@
     <div class="container">
 
       <section>
-        <div class="page-header">
-          <!-- <h1>elements test client</h1> -->
-        </div>
 
         <div class="row">
           <div class="span12">
@@ -44,16 +41,18 @@
 
               <br/>
 
-              <table width="75%">
+              <table width="100%">
                 <tr ng-repeat="row in state.board">
-                  <td ng-repeat="cell in row" width="25%" ng-click="selectTile(cell)">
+                  <td ng-repeat="cell in row" width="20%">
 
                     <div ng-switch on="cell.type">
 
                       <div ng-switch-when="unit" class="thumbnail unit player{{cell.player}} selected-{{cell.selected}}" ng-click="selectUnit(cell)">
                         <p><span class="label label-inverse cardName">{{cell.name}}</span> <!-- <i>{{cell.id}}</i> --></p>
-                        <p>Attack: {{cell.attack}}</p>
-                        <p>Life: {{cell.life}} / {{cell.maxLife}}</p>
+                        <p>
+                          Attack: {{cell.attack}}<br/>
+                          Life: {{cell.life}} / {{cell.maxLife}}
+                        </p>
                       </div>
 
                       <div ng-switch-when="energy" class="thumbnail energy player{{cell.player}} selected-{{cell.selected}}">
@@ -61,7 +60,10 @@
                         <p>Life: {{cell.life}} / {{cell.maxLife}}</p>
                       </div>
 
-                      <span ng-switch-when="empty"></span>
+                      <div ng-switch-when="empty" class="thumbnail empty" ng-click="selectTile(cell)">
+
+                      </div>
+
                       <span ng-switch-default>N/A</span>
 
                     </div>
@@ -78,8 +80,10 @@
 
                     <div class="thumbnail player{{state.currentPlayer}} selected-{{card.selected}}">
                       <p><span class="label label-inverse cardName">{{card.name}}</span> {{card.id}}</p>
-                      <p>Attack: {{card.attack}}</p>
-                      <p>Life: {{card.life}} / {{card.maxLife}}</p>
+                      <p>
+                        Attack: {{card.attack}}<br/>
+                        Life: {{card.life}} / {{card.maxLife}}
+                      </p>
                     </div>
 
                   </td>
@@ -87,7 +91,7 @@
               </table>
 
               <br/>
-              <a href="#" class="btn btn-primary" ng-click="endTurn()">End turn</a>
+              <a href="#" class="btn btn-large btn-primary pull-right" ng-click="endTurn()">End turn</a>
             </div>
 
           </div>
