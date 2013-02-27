@@ -71,11 +71,11 @@ module.exports = (function () {
     ],
     currentPlayer: 0,
     board: [
-      [{card: 'empty'}, {card: 'fire', player: 1}, {card: 'fire', player: 1}, {card: 'empty'}],
-      [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
-      [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
-      [{card: 'empty'}, {card: 'small-unit', player: 0}, {card: 'empty'}, {card: 'empty'}],
-      [{card: 'empty'}, {card: 'water', player: 0}, {card: 'water', player: 0}, {card: 'empty'}]
+      [{card: 'empty'}, {card: 'fire', player: 1}, {card: 'fire', player: 1}, {card: 'empty'}, {card: 'empty'}],
+      [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
+      [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
+      [{card: 'empty'}, {card: 'small-unit', player: 0}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
+      [{card: 'empty'}, {card: 'water', player: 0}, {card: 'water', player: 0}, {card: 'empty'}, {card: 'empty'}]
     ]
     /*
     board: [
