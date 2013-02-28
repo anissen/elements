@@ -55,7 +55,7 @@
                         </p>
                       </div>
 
-                      <div ng-switch-when="energy" class="thumbnail energy player{{tile.player}} selected-{{tile.selected}}">
+                      <div ng-switch-when="energy" class="thumbnail energy player{{tile.player}} selected-{{tile.selected}}" ng-click="selectEnergy(tile)">
                         <p><span class="label label-inverse cardName">{{tile.name}}</span></p>
                         <p>
                           Energy: <span class="badge">{{tile.energy}}</span><br/>
@@ -63,7 +63,7 @@
                         </p>
                       </div>
 
-                      <div ng-switch-when="empty" class="thumbnail empty" ng-click="selectTile(tile)">
+                      <div ng-switch-when="empty" class="thumbnail empty" ng-click="selectEmpty(tile)">
 
                       </div>
 

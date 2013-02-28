@@ -54,26 +54,14 @@ function stateCtrl($scope, $http) {
   };
 
   $scope.selectUnit = function(unit) {
-    //deselectSelectedCard();
-
-    var ownUnitIsSelected = ($scope.selectedUnit);
-    var enemyUnitSelected = (unit.player !== $scope.state.players[$scope.state.currentPlayer].id);
-    if (!ownUnitIsSelected && enemyUnitSelected) { // selecting only an enemy unit
-      /*
-      if ($scope.selectedCard && $scope.selectedCard.type === 'spell') { // throw spell on enemy unit
-        postAction('play', { "cardId": $scope.selectedCard.cardId, "pos": posJson(unit) });
-      }*/
-      //alert('not your unit');
-    } else if (ownUnitIsSelected && enemyUnitSelected) { // selected own unit THEN an enemy unit
-      postAction('attack', { "from": posJson($scope.selectedUnit), "to": posJson(unit) });
-    } else { // Just selected own unit
-      deselectSelectedUnit();
-      $scope.selectedUnit = unit;
-      unit.selected = true;
-    }
+    selectNonEmpty(unit);
   };
 
-  $scope.selectTile = function(tile) {
+  $scope.selectEnergy = function(energy) {
+    selectNonEmpty(energy);
+  };
+
+  $scope.selectEmpty = function(tile) {
     if (!$scope.selectedUnit && !$scope.selectedCard)
       return;
 
@@ -83,7 +71,7 @@ function stateCtrl($scope, $http) {
         return;
 
       if (tile.type !== 'empty') {
-        //alert('cannot move to non-empty tile');
+        alert('cannot move to non-empty tile');
         return;
       }
 
@@ -92,6 +80,28 @@ function stateCtrl($scope, $http) {
       postAction('play', { "cardId": $scope.selectedCard.cardId, "pos": posJson(tile) });
     }
   };
+
+  function selectNonEmpty(tile) {
+    //deselectSelectedCard();
+
+    var ownUnitIsSelected = ($scope.selectedUnit);
+    var enemyUnitSelected = (tile.player !== $scope.state.currentPlayer);
+    if (!ownUnitIsSelected && enemyUnitSelected) { // selecting only an enemy unit
+      console.log(tile.player, $scope.state.players[$scope.state.currentPlayer]);
+      console.log($scope.selectedCard);
+
+      if ($scope.selectedCard && $scope.selectedCard.type === 'spell') { // throw spell on enemy unit
+        postAction('play', { "cardId": $scope.selectedCard.cardId, "pos": posJson(tile) });
+      }
+      //alert('not your unit');
+    } else if (ownUnitIsSelected && enemyUnitSelected) { // selected own unit THEN an enemy unit
+      postAction('attack', { "from": posJson($scope.selectedUnit), "to": posJson(tile) });
+    } else { // Just selected own unit
+      deselectSelectedUnit();
+      $scope.selectedUnit = tile;
+      tile.selected = true;
+    }
+  }
 
   function postAction(action, data) {
     $http.post('game/42', { action: action, data: data })
