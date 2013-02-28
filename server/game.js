@@ -77,15 +77,6 @@ module.exports = (function () {
       [{card: 'empty'}, {card: 'small-unit', player: 0}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
       [{card: 'empty'}, {card: 'water', player: 0}, {card: 'water', player: 0}, {card: 'empty'}, {card: 'empty'}]
     ]
-    /*
-    board: [
-      [{type: 'empty', x: 0, y: 0}, {type: 'empty', x: 1, y: 0}, {type: 'empty', x: 2, y: 0}, {type: 'empty', x: 3, y: 0}],
-      [{type: 'empty', x: 0, y: 1}, {type: 'empty', x: 1, y: 1}, {type: 'empty', x: 2, y: 1}, {type: 'empty', x: 3, y: 1}],
-      [{type: 'empty', x: 0, y: 2}, {type: 'empty', x: 1, y: 2}, {type: 'empty', x: 2, y: 2}, {type: 'empty', x: 3, y: 2}],
-      [{type: 'empty', x: 0, y: 3}, {type: 'empty', x: 1, y: 3}, {type: 'empty', x: 2, y: 3}, {type: 'empty', x: 3, y: 3}],
-      [{type: 'empty', x: 0, y: 4}, {type: 'empty', x: 1, y: 4}, {type: 'empty', x: 2, y: 4}, {type: 'empty', x: 3, y: 4}]
-    ]
-    */
   };
 
   for (var y = 0; y < initialState.board.length; y++) {
@@ -102,8 +93,6 @@ module.exports = (function () {
       row[x] = newCard;
     }
   }
-
-  //var gameActions = new GameActions();
 
   module.playEvents = function(events) {
     var state = clone(initialState);
