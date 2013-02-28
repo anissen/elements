@@ -20,6 +20,7 @@ Extremely simple game:
  ✔ Consider expanding spells with precondition information about targets, e.g. { targets: ["unit"] } or { targets: ["unit", "energy-source", "player"]} @done (27-02-13 22:19)
 
  Somewhat simple game:
+ ☐ Fix introduced bug: Playing spells on units does not work
  ☐ Implement card cost
  ☐ Implement unit movement restrictions
  ☐ Implement unit attack restrictions
