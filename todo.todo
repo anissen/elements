@@ -1,4 +1,3 @@
-
 Elements:
 
 Extremely simple game:
@@ -20,6 +19,7 @@ Extremely simple game:
  ✔ Consider expanding spells with precondition information about targets, e.g. { targets: ["unit"] } or { targets: ["unit", "energy-source", "player"]} @done (27-02-13 22:19)
 
  Somewhat simple game:
+ ☐ Split into /client and /server and let server.js require('./server/api') instead
  ☐ Implement card cost
  ☐ Implement unit movement restrictions
  ☐ Implement unit attack restrictions
@@ -31,3 +31,10 @@ Extremely simple game:
      ☐ Play
  ☐ Implement a basic AI
  ☐ Unit tests
+
+---
+
+Optimizations:
+ ☐ Add socket.io for web network communication
+ ☐ Persist the content of spell script files instead of reading them up on each execution
+ ☐ Share gameactions.js between both client and server and allow the client to do all actions (note: what about spells?) offline until EndTurn(). Persist the actions and send them when ending the turn.
