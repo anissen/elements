@@ -50,11 +50,11 @@ module.exports = (function () {
         cost: 1,
         scriptFile: 'flamelick.js'
       },
-      'meteor': {
+      'Fireball': {
         type: 'spell',
-        name: 'Meteor',
+        name: 'Fireball',
         cost: 5,
-        scriptFile: 'meteor.js'
+        scriptFile: 'fireball.js'
       }
     },
     players: [
@@ -66,7 +66,7 @@ module.exports = (function () {
       {
         id: 'player2',
         library: ['small-unit', 'fire', 'small-unit', 'small-unit'],
-        hand: ['small-unit', 'small-unit', 'fire', 'flame-lick', 'meteor']
+        hand: ['small-unit', 'small-unit', 'fire', 'flame-lick', 'Fireball']
       }
     ],
     currentPlayer: 0,

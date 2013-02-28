@@ -23,7 +23,7 @@ module.exports = (function () {
         setTile(data.pos, newCard);
       } else if (card.type === 'spell') {
         //console.log('Evaluating the spells on-activate script: ');
-        var script = fs.readFileSync('./scripts/' + card.scriptFile);
+        var script = fs.readFileSync('./server/scripts/' + card.scriptFile);
         vm.runInNewContext(script, getScriptContext(data), card.scriptFile);
       }
     };
