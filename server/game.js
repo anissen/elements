@@ -29,6 +29,7 @@ module.exports = (function () {
       'fire': {
         type: 'energy',
         name: 'Flame',
+        cost: 0,
         energy: 1,
         maxEnergy: 1,
         attack: 0,
@@ -38,6 +39,7 @@ module.exports = (function () {
       'water': {
         type: 'energy',
         name: 'Pond',
+        cost: 0,
         energy: 1,
         maxEnergy: 1,
         attack: 0,

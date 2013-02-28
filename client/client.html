@@ -51,7 +51,7 @@
                         <p><span class="label label-inverse cardName">{{tile.name}}</span> <!-- <i>{{tile.id}}</i> --></p>
                         <p>
                           Attack: <span class="badge">{{tile.attack}}</span><br/>
-                          Life: <span ng-show="tile.life < tile.maxLife" class="badge badge-important">{{tile.life}} / {{tile.maxLife}}</span><span ng-show="tile.life == tile.maxLife" class="badge">{{tile.life}}</span>
+                          Life: <span ng-show="tile.life < tile.maxLife" class="badge badge-important">{{tile.life}}</span><span ng-show="tile.life == tile.maxLife" class="badge">{{tile.life}}</span>
                         </p>
                       </div>
 
@@ -82,7 +82,7 @@
                   <td ng-repeat="card in getCardsInOwnHand()" ng-click="selectCard(card)">
 
                     <div class="thumbnail player{{state.currentPlayer}} selected-{{card.selected}}">
-                      <p><span class="label label-inverse cardName">{{card.name}}</span> {{card.id}}</p>
+                      <p><span class="label label-inverse cardName">{{card.name}}</span> <span class="badge badge-info">{{card.cost}}<span></p>
                       <p>
                         Attack: {{card.attack}}<br/>
                         Life: {{card.life}}
