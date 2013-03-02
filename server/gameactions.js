@@ -1,6 +1,7 @@
 var util = require('util'),
     vm = require('vm'),
-    fs = require('fs');
+    fs = require('fs'),
+    _  = require('underscore');
 
 
 module.exports = (function () {
@@ -16,6 +17,28 @@ module.exports = (function () {
       var card = state.cards[data.cardId];
 
       if (card.type === 'unit' || card.type === 'energy') {
+        var cardCost = card.cost;
+
+        var playerEnergySources = _.filter(getTiles(), function(tile) {
+          return tile.player === state.currentPlayer && tile.type === 'energy';
+        });
+
+        var availableEnergy = _.reduce(playerEnergySources, function(sum, tile){ return sum + tile.energy; }, 0);
+        if (cardCost > availableEnergy)
+          throw new Error("Not enough energy. " + cardCost + " requested and " + availableEnergy + " available");
+
+        var requestedEnergy = cardCost;
+
+        var sortedPlayerEnergySources = _.sortBy(playerEnergySources, function(source) {
+          return Math.abs(source.x - data.pos.x) + Math.abs(source.y - data.pos.y);
+        });
+        _.each(sortedPlayerEnergySources, function(source) {
+          if (requestedEnergy <= 0)
+            return;
+          requestedEnergy -= source.energy;
+          source.energy = (requestedEnergy < 0 ? -requestedEnergy : 0);
+        });
+
         var newCard = clone(card);
         newCard.player = state.currentPlayer; //player.id;
         newCard.x = data.pos.x;
@@ -59,6 +82,10 @@ module.exports = (function () {
 
     function clone(obj) {
       return JSON.parse(JSON.stringify(obj));
+    }
+
+    function getTiles() {
+      return _.flatten(state.board);
     }
 
     function getTile(pos) {

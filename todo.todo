@@ -38,6 +38,7 @@ Extremely simple game:
 
 
 Optimizations:
+ ✔ gzip compression @done (02-03-13 15:59)
  ☐ Add socket.io for web network communication
  ☐ Persist the content of spell script files instead of reading them up on each execution
  ☐ Maybe a bad idea: Share gameactions.js between both client and server and allow the client to do all actions (note: what about spells?) offline until EndTurn(). Persist the actions and send them when ending the turn.

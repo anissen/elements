@@ -40,8 +40,8 @@ module.exports = (function () {
         type: 'energy',
         name: 'Pond',
         cost: 0,
-        energy: 1,
-        maxEnergy: 1,
+        energy: 3,
+        maxEnergy: 3,
         attack: 0,
         maxLife: 2,
         life: 2
@@ -101,7 +101,7 @@ module.exports = (function () {
     var gameActions = new GameActions(state);
     for (var i in events) {
       var e = events[i];
-      console.log('-------------- event --------------\n' + prettyjson.render(e));
+      //console.log('-------------- event --------------\n' + prettyjson.render(e));
       gameActions[e.action](e.data);
     }
     return state;

@@ -59,7 +59,7 @@
                         <p><span class="label label-inverse cardName">{{tile.name}}</span></p>
                         <p>
                           Energy: <span class="badge">{{tile.energy}}</span><br/>
-                          Life: <span ng-show="tile.life < tile.maxLife" class="badge badge-important">{{tile.life}}</span><span ng-show="tile.life == tile.maxLife" class="badge">{{tile.life}}</span>
+                          Life: <span ng-show="tile.life < tile.maxLife" title="{{tile.life}}/{{tile.maxLife}}" class="badge badge-important">{{tile.life}}</span><span ng-show="tile.life == tile.maxLife" class="badge">{{tile.life}}</span>
                         </p>
                       </div>
 

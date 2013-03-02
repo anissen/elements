@@ -10,6 +10,7 @@ module.exports = (function() {
   var module = {};
 
   module.start = function(port) {
+    app.use(express.compress());
     app.use(express.bodyParser());
 
     // for the client html page
@@ -26,7 +27,6 @@ module.exports = (function() {
 
     app.get('/game/:id/:colors', function(request, response) {
       var colors = request.params['colors'];
-      console.log(request.params);
       api.getGameState(function(state) {
         if (colors !== 'false')
           state = prettyjson.render(state);
