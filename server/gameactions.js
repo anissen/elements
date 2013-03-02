@@ -19,13 +19,12 @@ module.exports = (function () {
       if (card.type === 'unit' || card.type === 'energy') {
         payCastingCost(card.cost, data.pos);
 
-        var newCard = clone(card);
-        newCard.player = state.currentPlayer; //player.id;
+        var newCard = _.clone(card);
+        newCard.player = state.currentPlayer;
         newCard.x = data.pos.x;
         newCard.y = data.pos.y;
         setTile(data.pos, newCard);
       } else if (card.type === 'spell') {
-        //console.log('Evaluating the spells on-activate script: ');
         var script = fs.readFileSync('./server/scripts/' + card.scriptFile);
         vm.runInNewContext(script, getScriptContext(data), card.scriptFile);
       }
@@ -54,15 +53,8 @@ module.exports = (function () {
       state.currentPlayer = (state.currentPlayer + 1) % state.players.length;
 
       // draw a card for the next player
-      var player = state.players[state.currentPlayer];
-      var numberOfCards = 1;
-      var cards = player.library.splice(0, numberOfCards);
-      player.hand = player.hand.concat(cards);
+      drawCards(1);
     };
-
-    function clone(obj) {
-      return JSON.parse(JSON.stringify(obj));
-    }
 
     function getTiles() {
       return _.flatten(state.board);
@@ -82,6 +74,12 @@ module.exports = (function () {
 
     function resetTile(pos) {
       state.board[pos.y][pos.x] = {type: 'empty', x: pos.x, y: pos.y};
+    }
+
+    function drawCards(numberOfCards) {
+      var player = state.players[state.currentPlayer];
+      var cards = player.library.splice(0, numberOfCards);
+      player.hand = player.hand.concat(cards);
     }
 
     function payCastingCost(cost, pos) {

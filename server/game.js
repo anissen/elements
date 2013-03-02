@@ -1,5 +1,6 @@
 var prettyjson = require('prettyjson');
 var GameActions = require('./gameactions');
+var _ = require('underscore');
 
 module.exports = (function () {
 
@@ -85,19 +86,18 @@ module.exports = (function () {
     var row = initialState.board[y];
     for (var x = 0; x < row.length; x++) {
       var tile = row[x];
-      var card = clone(initialState.cards[tile.card]);
-      var newCard = clone(card);
+      var card = _.clone(initialState.cards[tile.card]);
 
       if (tile.player !== undefined)
-        newCard.player = tile.player;
-      newCard.x = x;
-      newCard.y = y;
-      row[x] = newCard;
+        card.player = tile.player;
+      card.x = x;
+      card.y = y;
+      row[x] = card;
     }
   }
 
   module.playEvents = function(events) {
-    var state = clone(initialState);
+    var state = _.clone(initialState);
     var gameActions = new GameActions(state);
     for (var i in events) {
       var e = events[i];
@@ -106,10 +106,6 @@ module.exports = (function () {
     }
     return state;
   };
-
-  function clone(obj) {
-    return JSON.parse(JSON.stringify(obj));
-  }
 
   return module;
 
