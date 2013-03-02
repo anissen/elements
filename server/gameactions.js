@@ -17,27 +17,7 @@ module.exports = (function () {
       var card = state.cards[data.cardId];
 
       if (card.type === 'unit' || card.type === 'energy') {
-        var cardCost = card.cost;
-
-        var playerEnergySources = _.filter(getTiles(), function(tile) {
-          return tile.player === state.currentPlayer && tile.type === 'energy';
-        });
-
-        var availableEnergy = _.reduce(playerEnergySources, function(sum, tile){ return sum + tile.energy; }, 0);
-        if (cardCost > availableEnergy)
-          throw new Error("Not enough energy. " + cardCost + " requested and " + availableEnergy + " available");
-
-        var requestedEnergy = cardCost;
-
-        var sortedPlayerEnergySources = _.sortBy(playerEnergySources, function(source) {
-          return Math.abs(source.x - data.pos.x) + Math.abs(source.y - data.pos.y);
-        });
-        _.each(sortedPlayerEnergySources, function(source) {
-          if (requestedEnergy <= 0)
-            return;
-          requestedEnergy -= source.energy;
-          source.energy = (requestedEnergy < 0 ? -requestedEnergy : 0);
-        });
+        payCastingCost(card.cost, data.pos);
 
         var newCard = clone(card);
         newCard.player = state.currentPlayer; //player.id;
@@ -102,6 +82,36 @@ module.exports = (function () {
 
     function resetTile(pos) {
       state.board[pos.y][pos.x] = {type: 'empty', x: pos.x, y: pos.y};
+    }
+
+    function payCastingCost(cost, pos) {
+      var playerTilesQuery = function(tile) {
+        return tile.player === state.currentPlayer && tile.type === 'energy';
+      };
+
+      var closestSourcesFirstQuery = function(tile) {
+        return Math.abs(tile.x - pos.x) + Math.abs(tile.y - pos.y);
+      };
+
+      var energySources = _.chain(getTiles())
+        .filter(playerTilesQuery)
+        .sortBy(closestSourcesFirstQuery)
+        .value();
+
+      var availableEnergy = _.reduce(energySources, function(sum, tile){
+        return sum + tile.energy;
+      }, 0);
+
+      if (cost > availableEnergy)
+        throw new Error("Not enough energy. " + cost + " requested and " + availableEnergy + " available");
+
+      var remaingingCost = cost;
+      _.each(energySources, function(source) {
+        if (remaingingCost <= 0)
+          return;
+        remaingingCost -= source.energy;
+        source.energy = (remaingingCost < 0 ? -remaingingCost : 0);
+      });
     }
 
     function getScriptContext(data) {
