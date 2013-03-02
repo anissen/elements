@@ -2,7 +2,7 @@
 <html lang="en" ng-app="" ng-csp>
   <head>
     <title>elements client</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
     <!--[if lt IE 9]>
@@ -32,8 +32,8 @@
               <table width="100%">
                 <tr>
                   <td ng-repeat="card in getCardsInEnemyHand()">
-                    <div class="thumbnail player{{(state.currentPlayer+1)%2}}">
-                      <p><span class="label label-inverse cardName">?</span></p>
+                    <div class="tile well well-small player{{(state.currentPlayer+1)%2}}">
+                      <p><span class="label label-inverse cardName">? ? ?</span></p>
                     </div>
                   </td>
                 </tr>
@@ -47,15 +47,15 @@
 
                     <div ng-switch on="tile.type">
 
-                      <div ng-switch-when="unit" class="thumbnail unit player{{tile.player}} selected-{{tile.selected}}" ng-click="selectUnit(tile)">
-                        <p><span class="label label-inverse cardName">{{tile.name}}</span> <!-- <i>{{tile.id}}</i> --></p>
+                      <div ng-switch-when="unit" class="tile well well-small unit player{{tile.player}} selected-{{tile.selected}}" ng-click="selectUnit(tile)">
+                        <p><span class="label label-inverse cardName">{{tile.name}}</span></p>
                         <p>
                           Attack: <span class="badge">{{tile.attack}}</span><br/>
-                          Life: <span ng-show="tile.life < tile.maxLife" class="badge badge-important">{{tile.life}}</span><span ng-show="tile.life == tile.maxLife" class="badge">{{tile.life}}</span>
+                          Life: <span ng-show="tile.life < tile.maxLife" title="{{tile.life}}/{{tile.maxLife}}" class="badge badge-important">{{tile.life}}</span><span ng-show="tile.life == tile.maxLife" class="badge">{{tile.life}}</span>
                         </p>
                       </div>
 
-                      <div ng-switch-when="energy" class="thumbnail energy player{{tile.player}} selected-{{tile.selected}}" ng-click="selectEnergy(tile)">
+                      <div ng-switch-when="energy" class="tile well well-small energy player{{tile.player}} selected-{{tile.selected}}" ng-click="selectEnergy(tile)">
                         <p><span class="label label-inverse cardName">{{tile.name}}</span></p>
                         <p>
                           Energy: <span class="badge">{{tile.energy}}</span><br/>
@@ -63,7 +63,7 @@
                         </p>
                       </div>
 
-                      <div ng-switch-when="empty" class="thumbnail empty" ng-click="selectEmpty(tile)">
+                      <div ng-switch-when="empty" class="tile well well-small empty" ng-click="selectEmpty(tile)">
 
                       </div>
 
@@ -81,7 +81,7 @@
                 <tr>
                   <td ng-repeat="card in getCardsInOwnHand()" ng-click="selectCard(card)">
 
-                    <div class="thumbnail player{{state.currentPlayer}} selected-{{card.selected}}">
+                    <div class="tile well well-small player{{state.currentPlayer}} selected-{{card.selected}}">
                       <p><span class="label label-inverse cardName">{{card.name}}</span> <span class="badge badge-info">{{card.cost}}<span></p>
                       <p>
                         Attack: {{card.attack}}<br/>

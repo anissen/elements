@@ -6,7 +6,12 @@ body {
 td {
   vertical-align: middle;
   text-align: center;
-  padding: 5px;
+  padding: 4px;
+}
+
+.tile {
+  min-height: 80px;
+  margin-bottom: 0;
 }
 
 table, th, td
@@ -50,7 +55,6 @@ table, th, td
 }
 
 .empty {
-  min-height: 60px;
   background-color: #000;
   background-color: rgba(255,255,255,0);
   border: 3px solid rgba(0,0,0,0.1);
@@ -61,9 +65,3 @@ table, th, td
   background-color: rgba(255,255,255,0.2);
   border: 3px solid rgba(0,0,0,0.3);
 }
-/*
-td:hover {
-  background-color: #222;
-  border: 3px solid white;
-}
-*/
