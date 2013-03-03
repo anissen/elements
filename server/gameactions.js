@@ -62,10 +62,15 @@ module.exports = (function () {
     //
 
     this.getPossibleActions = function() {
+      var turnActions = getPossibleTurnActions();
       var moves = getPossibleMoves();
       var attacks = getPossibleAttacks();
-      return moves.concat(attacks);
+      return turnActions.concat(moves).concat(attacks);
     };
+
+    function getPossibleTurnActions() {
+      return [{ action: "endTurn", data: {} }];
+    }
 
     function getPossibleMoves() {
       return _.chain(getAllUnits())
