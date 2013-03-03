@@ -55,6 +55,75 @@ module.exports = (function () {
       return _.flatten(state.board);
     }
 
+
+
+    //
+    // Generation of possible actions
+    //
+
+    this.getPossibleActions = function() {
+      var moves = getPossibleMoves();
+      var attacks = getPossibleAttacks();
+      return moves.concat(attacks);
+    };
+
+    function getPossibleMoves() {
+      return _.chain(getAllUnits())
+        .map(getValidMovesForUnit)
+        .flatten()
+        .value();
+    }
+
+    function getValidMovesForUnit(unit) {
+      return _.chain(getAdjacentTiles(unit))
+        .filter(function(tile) {
+          return tile.type === 'empty';
+        })
+        .map(function(move) {
+          return {
+            action: 'move',
+            data: {
+              from: { x: unit.x, y: unit.y },
+              to: { x: move.x, y: move.y }
+            }
+          };
+        })
+        .value();
+    }
+
+    function getPossibleAttacks() {
+      return _.chain(getAllUnits())
+        .map(getValidAttacksForUnit)
+        .flatten()
+        .value();
+    }
+
+    function getValidAttacksForUnit(unit) {
+      return _.chain(getAdjacentTiles(unit))
+        .filter(function(tile) {
+          return tile.type !== 'empty' && tile.player !== state.currentPlayer;
+        })
+        .map(function(attack) {
+          return {
+            action: 'attack',
+            data: {
+              from: { x: unit.x, y: unit.y },
+              to: { x: attack.x, y: attack.y }
+            }
+          };
+        })
+        .value();
+    }
+
+    //
+    // End of Generation of possible actions
+    //
+
+
+    function getAllUnits() {
+      return _.filter(getTiles(), playerUnitTilesQuery);
+    }
+
     function getTile(pos) {
       return state.board[pos.y][pos.x];
     }
@@ -93,13 +162,17 @@ module.exports = (function () {
 
       var newCard = clone(card);
       newCard.player = state.currentPlayer;
-      newCard.x = data.pos.x;
-      newCard.y = data.pos.y;
-      setTile(data.pos, newCard);
+      newCard.x = pos.x;
+      newCard.y = pos.y;
+      setTile(pos, newCard);
     }
 
     function playerEnergyTilesQuery(tile) {
       return tile.player === state.currentPlayer && tile.type === 'energy';
+    }
+
+    function playerUnitTilesQuery(tile) {
+      return tile.player === state.currentPlayer && tile.type === 'unit';
     }
 
     function payCastingCost(cost, pos) {
@@ -150,7 +223,8 @@ module.exports = (function () {
             resetTile(unit);
         },
         getAdjacentTiles: getAdjacentTiles,
-        print: function(str) { console.log('SCRIPT: ' + str ); }
+        print: function(str) { console.log('SCRIPT: ' + str ); },
+        util: _
       };
     }
 
