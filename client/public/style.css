@@ -50,6 +50,11 @@ table, th, td
   color: black;
 }
 
+.spell {
+  background-color: #222;
+  color: white;
+}
+
 .selected-true {
   border: 3px solid yellow;
 }

@@ -79,13 +79,28 @@
 
               <table width="100%">
                 <tr>
-                  <td ng-repeat="card in getCardsInOwnHand()" ng-click="selectCard(card)">
+                  <td ng-repeat="card in getCardsInOwnHand()" ng-switch on="card.type" ng-click="selectCard(card)">
 
-                    <div class="tile well well-small player{{state.currentPlayer}} selected-{{card.selected}}">
+                    <div ng-switch-when="unit" class="tile well well-small player{{state.currentPlayer}} selected-{{card.selected}}">
                       <p><span class="label label-inverse cardName">{{card.name}}</span> <span class="badge badge-info">{{card.cost}}<span></p>
                       <p>
                         Attack: {{card.attack}}<br/>
                         Life: {{card.life}}
+                      </p>
+                    </div>
+
+                    <div ng-switch-when="energy" class="tile well well-small energy player{{state.currentPlayer}} selected-{{card.selected}}">
+                      <p><span class="label label-inverse cardName">{{card.name}}</span> <span class="badge badge-info">{{card.cost}}<span></p>
+                      <p>
+                        Energy: {{card.energy}}<br/>
+                        Life: {{card.life}}
+                      </p>
+                    </div>
+
+                    <div ng-switch-when="spell" class="tile well well-small spell player{{state.currentPlayer}} selected-{{card.selected}}">
+                      <p><span class="label label-inverse cardName">{{card.name}}</span> <span class="badge badge-info">{{card.cost}}<span></p>
+                      <p>
+                        Spell description goes here
                       </p>
                     </div>
 

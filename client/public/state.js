@@ -48,6 +48,10 @@ function stateCtrl($scope, $http) {
 
   $scope.selectCard = function(card) {
     deselectSelectedUnit();
+    if (card === $scope.selectedCard) {
+      deselectSelectedCard();
+      return;
+    }
     deselectSelectedCard();
     $scope.selectedCard = card;
     card.selected = true;

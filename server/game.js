@@ -99,15 +99,10 @@ module.exports = (function () {
   module.playEvents = function(events) {
     var state = clone(initialState);
     var gameActions = new GameActions(state);
-    try {
-      for (var i in events) {
-        eventIndex = i;
-        var e = events[i];
-        // console.log('-------------- event --------------\n' + prettyjson.render(e));
-        gameActions[e.action](e.data);
-      }
-    } catch (err) {
-      console.log('error', err);
+    for (var i in events) {
+      var e = events[i];
+      // console.log('-------------- event --------------\n' + prettyjson.render(e));
+      gameActions[e.action](e.data);
     }
     return state;
   };
