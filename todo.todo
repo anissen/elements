@@ -21,10 +21,10 @@ Extremely simple game:
  Somewhat simple game:
  ✔ Fix introduced bug: Playing spells on units does not work @done (28-02-13 23:06)
  ✔ Split into /client and /server and let server.js require('./server/api') instead @done (28-02-13 23:06)
- ☐ Implement card cost
+ ✔ Implement card cost @done (02-03-13 17:51)
+ ☐ Implement unit placement restrictions
  ☐ Implement unit movement restrictions
  ☐ Implement unit attack restrictions
- ☐ Implement unit placement restrictions
  ☐ Implement winning/losing condition
  ☐ Collect all available player actions
      ☐ Move

@@ -18,12 +18,7 @@ module.exports = (function () {
 
       if (card.type === 'unit' || card.type === 'energy') {
         payCastingCost(card.cost, data.pos);
-
-        var newCard = _.clone(card);
-        newCard.player = state.currentPlayer;
-        newCard.x = data.pos.x;
-        newCard.y = data.pos.y;
-        setTile(data.pos, newCard);
+        placeNewUnit(card, data.pos);
       } else if (card.type === 'spell') {
         var script = fs.readFileSync('./server/scripts/' + card.scriptFile);
         vm.runInNewContext(script, getScriptContext(data), card.scriptFile);
@@ -61,10 +56,6 @@ module.exports = (function () {
     }
 
     function getTile(pos) {
-      if (pos.y >= state.board.length)
-        return null;
-      if (pos.x >= state.board[pos.y].length)
-        return null;
       return state.board[pos.y][pos.x];
     }
 
@@ -76,23 +67,48 @@ module.exports = (function () {
       state.board[pos.y][pos.x] = {type: 'empty', x: pos.x, y: pos.y};
     }
 
+    function clone(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+
     function drawCards(numberOfCards) {
       var player = state.players[state.currentPlayer];
       var cards = player.library.splice(0, numberOfCards);
       player.hand = player.hand.concat(cards);
     }
 
-    function payCastingCost(cost, pos) {
-      var playerTilesQuery = function(tile) {
-        return tile.player === state.currentPlayer && tile.type === 'energy';
-      };
+    function placeNewUnit(card, pos) {
+      if (getTile(pos).type !== 'empty')
+        throw new Error('Cannot place unit on non-empty tile');
 
+      // TODO: Generate the list of all posibile actions and guard against invalid actions
+
+      // TODO: Guard that the unit is placed next to (at least) one energy tile
+      if (!_.some(getAdjacentTiles(pos), playerEnergyTilesQuery))
+        throw new Error("sdafasf");
+
+      // TODO: Select all adjacent energy groups
+
+      // TODO: Drain energy from all adjacent energy groups
+
+      var newCard = clone(card);
+      newCard.player = state.currentPlayer;
+      newCard.x = data.pos.x;
+      newCard.y = data.pos.y;
+      setTile(data.pos, newCard);
+    }
+
+    function playerEnergyTilesQuery(tile) {
+      return tile.player === state.currentPlayer && tile.type === 'energy';
+    }
+
+    function payCastingCost(cost, pos) {
       var closestSourcesFirstQuery = function(tile) {
         return Math.abs(tile.x - pos.x) + Math.abs(tile.y - pos.y);
       };
 
       var energySources = _.chain(getTiles())
-        .filter(playerTilesQuery)
+        .filter(playerEnergyTilesQuery)
         .sortBy(closestSourcesFirstQuery)
         .value();
 
@@ -112,6 +128,16 @@ module.exports = (function () {
       });
     }
 
+    function getAdjacentTiles(pos) {
+      return getTilesWithinRange(pos, 1);
+    }
+
+    function getTilesWithinRange(pos, range) {
+      return _.filter(getTiles(), function(tile) {
+        return (Math.abs(tile.x - pos.x) <= range) && (Math.abs(tile.y - pos.y) <= range);
+      });
+    }
+
     function getScriptContext(data) {
       return {
         target: getTile(data.pos),
@@ -123,20 +149,7 @@ module.exports = (function () {
           if (unit.life <= 0)
             resetTile(unit);
         },
-        getAdjacentTiles: function(pos, range) {
-          var tiles = [];
-          for (var y = pos.y - range; y <= pos.y + range; y++) {
-            for (var x = pos.x - range; x <= pos.x + range; x++) {
-              if (x === pos.x && y === pos.y)
-                continue;
-
-              var tile = getTile({x: x, y: y});
-              if (tile)
-                tiles.push(tile);
-            }
-          }
-          return tiles;
-        },
+        getAdjacentTiles: getAdjacentTiles,
         print: function(str) { console.log('SCRIPT: ' + str ); }
       };
     }

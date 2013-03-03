@@ -31,7 +31,7 @@ module.exports = (function () {
         type: 'energy',
         name: 'Flame',
         cost: 0,
-        energy: 1,
+        energy: 3,
         maxEnergy: 1,
         attack: 0,
         maxLife: 2,
@@ -97,15 +97,24 @@ module.exports = (function () {
   }
 
   module.playEvents = function(events) {
-    var state = _.clone(initialState);
+    var state = clone(initialState);
     var gameActions = new GameActions(state);
-    for (var i in events) {
-      var e = events[i];
-      //console.log('-------------- event --------------\n' + prettyjson.render(e));
-      gameActions[e.action](e.data);
+    try {
+      for (var i in events) {
+        eventIndex = i;
+        var e = events[i];
+        // console.log('-------------- event --------------\n' + prettyjson.render(e));
+        gameActions[e.action](e.data);
+      }
+    } catch (err) {
+      console.log('error', err);
     }
     return state;
   };
+
+  function clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  }
 
   return module;
 
