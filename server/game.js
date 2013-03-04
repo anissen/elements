@@ -96,6 +96,10 @@ module.exports = (function () {
     }
   }
 
+  for (var cardId in initialState.cards) {
+    initialState.cards[cardId].id = cardId;
+  }
+
   module.playEvents = function(events) {
     var state = clone(initialState);
     var gameActions = new GameActions(state);

@@ -18,7 +18,7 @@ module.exports = (function () {
     var actionLegal = _.some(possibleActions, function(action) {
       return _.isEqual(eventData, action);
     });
-    console.log("the action is legal: " + actionLegal);
+    console.log("There is " + possibleActions.length + " legal actions. The action you selected is legal: " + actionLegal);
 
     storage.persistEvent(eventData);
   };

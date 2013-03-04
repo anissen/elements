@@ -15,22 +15,30 @@ Extremely simple game:
  ✔ Refactor code (especially modules into classes) @done (26-02-13 22:09)
  ✔ Implement energy sources @done (27-02-13 22:18)
  ✔ Implement spells @done (27-02-13 22:18)
- ✔ Implement basic spell script system @done (27-02-13 22:18)
  ✔ Consider expanding spells with precondition information about targets, e.g. { targets: ["unit"] } or { targets: ["unit", "energy-source", "player"]} @done (27-02-13 22:19)
+ ✔ Implement basic spell script system @done (27-02-13 22:18)
 
  Somewhat simple game:
  ✔ Fix introduced bug: Playing spells on units does not work @done (28-02-13 23:06)
  ✔ Split into /client and /server and let server.js require('./server/api') instead @done (28-02-13 23:06)
  ✔ Implement card cost @done (02-03-13 17:51)
- ☐ Implement unit placement restrictions
- ☐ Implement unit movement restrictions
- ☐ Implement unit attack restrictions
- ☐ Implement winning/losing condition
  ☐ Collect all available player actions
-     ☐ Move
-     ☐ Attack
-     ☐ Play
+     ✔ Move @done (04-03-13 21:40)
+     ✔ Attack @done (04-03-13 21:40)
+     ✔ Play @done (04-03-13 22:57)
+     ✔ End turn @done (04-03-13 21:40)
+     ☐ Implement unit placement restrictions
+     ☐ Implement winning/losing condition
+ ☐ Handle two players
  ☐ Implement a basic AI
+
+ Simple game:
+ ☐ Clean up gameactions.js
+     ☐ Create a utilities-decorator can takes state as an argument OR add utilities functions directly to state
+     ☐ Move calculation of possible actions into its own module
+     ☐ Remove redundant guards
+ ☐ Handle two human players
+ ☐ Trim the data that is sent to the player (e.g. remove library, enemy hand etc.)
  ☐ Unit tests
 
 

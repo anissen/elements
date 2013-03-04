@@ -91,9 +91,6 @@ function stateCtrl($scope, $http) {
     var ownUnitIsSelected = ($scope.selectedUnit);
     var enemyUnitSelected = (tile.player !== $scope.state.currentPlayer);
     if (!ownUnitIsSelected && enemyUnitSelected) { // selecting only an enemy unit
-      console.log(tile.player, $scope.state.players[$scope.state.currentPlayer]);
-      console.log($scope.selectedCard);
-
       if ($scope.selectedCard && $scope.selectedCard.type === 'spell') { // throw spell on enemy unit
         postAction('play', { "cardId": $scope.selectedCard.cardId, "pos": posJson(tile) });
       }
@@ -111,7 +108,7 @@ function stateCtrl($scope, $http) {
     $http.post('game/42', { action: action, data: data })
     .success(function(msg) {
       $scope.getState();
-      console.log('Action posted with success: ' + msg);
+      //console.log('Action posted with success: ' + msg);
     })
     .error(function(msg) {
       alert('Action posted with failure: ' + msg);

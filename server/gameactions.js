@@ -65,7 +65,8 @@ module.exports = (function () {
       var turnActions = getPossibleTurnActions();
       var moves = getPossibleMoves();
       var attacks = getPossibleAttacks();
-      return turnActions.concat(moves).concat(attacks);
+      var plays = getPossiblePlays();
+      return turnActions.concat(moves).concat(attacks).concat(plays);
     };
 
     function getPossibleTurnActions() {
@@ -120,6 +121,48 @@ module.exports = (function () {
         .value();
     }
 
+    function getPossiblePlays() {
+      return _.chain(getAllCardsInHand())
+        .map(getValidPlaysForCard)
+        .flatten()
+        .value();
+    }
+
+    function cardFromCardId(cardId) {
+      return state.cards[cardId];
+    }
+
+    function createCardFromCardId(cardId) {
+      return clone(cardFromCardId(cardId));
+    }
+
+    function getAllCardsInHand() {
+      return _.map(getCurrentPlayerState().hand, function(cardId) {
+        return cardFromCardId(cardId);
+      });
+    }
+
+    function getValidPlaysForCard(card) {
+      return _.map(getValidTargetsForCard(card), function(target) {
+        return {
+          action: 'play',
+          data: {
+            cardId: card.id,
+            pos: { x: target.x, y: target.y }
+          }
+        };
+      });
+    }
+
+    function getValidTargetsForCard(card) {
+      if (card.type === 'spell')
+        return getTiles(); // TODO: Need more precise specification and handling of targets
+
+      return _.filter(getTiles(), function(tile) {
+        return tile.type === 'empty'; // TODO: Need check for placement near energy source and sufficiant energy
+      });
+    }
+
     //
     // End of Generation of possible actions
     //
@@ -145,8 +188,12 @@ module.exports = (function () {
       return JSON.parse(JSON.stringify(obj));
     }
 
+    function getCurrentPlayerState() {
+      return state.players[state.currentPlayer];
+    }
+
     function drawCards(numberOfCards) {
-      var player = state.players[state.currentPlayer];
+      var player = getCurrentPlayerState();
       var cards = player.library.splice(0, numberOfCards);
       player.hand = player.hand.concat(cards);
     }
