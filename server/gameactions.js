@@ -157,7 +157,10 @@ module.exports = (function () {
         return getTiles(); // TODO: Need more precise specification and handling of targets
 
       return _.filter(getTiles(), function(tile) {
-        return tile.type === 'empty'; // TODO: Need check for placement near energy source and sufficiant energy
+        // TODO: Need check for placement near energy source and sufficiant energy
+        return tile.type === 'empty' &&
+          _.some(getAdjacentTiles(tile), playerEnergyTilesQuery) &&
+          getAvailableEnergyAtTile(tile) >= card.cost;
       });
     }
 
@@ -225,22 +228,30 @@ module.exports = (function () {
       return tile.player === state.currentPlayer && tile.type === 'unit';
     }
 
-    function payCastingCost(cost, pos) {
-      var closestSourcesFirstQuery = function(tile) {
-        return Math.abs(tile.x - pos.x) + Math.abs(tile.y - pos.y);
+    function getEnergySourcesConnectedToTile(tile) {
+      var closestSourcesFirstQuery = function(source) {
+        return Math.abs(tile.x - source.x) + Math.abs(tile.y - source.y);
       };
 
-      var energySources = _.chain(getTiles())
+      return _.chain(getTiles())
         .filter(playerEnergyTilesQuery)
         .sortBy(closestSourcesFirstQuery)
         .value();
+    }
 
+    function getAvailableEnergyAtTile(tile) {
+      var energySources = getEnergySourcesConnectedToTile(tile);
       var availableEnergy = _.reduce(energySources, function(sum, tile){
         return sum + tile.energy;
       }, 0);
+      return availableEnergy;
+    }
 
-      if (cost > availableEnergy)
-        throw new Error("Not enough energy. " + cost + " requested and " + availableEnergy + " available");
+    function payCastingCost(cost, pos) {
+      var energySources = getEnergySourcesConnectedToTile(pos);
+
+      //if (cost > availableEnergy)
+      //  throw new Error("Not enough energy. " + cost + " requested and " + availableEnergy + " available");
 
       var remaingingCost = cost;
       _.each(energySources, function(source) {
