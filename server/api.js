@@ -8,7 +8,7 @@ module.exports = (function () {
 
   var module = {};
 
-  module.performAction = function(eventData) {
+  module.performAction = function(eventData, callback) {
     var events = storage.getEvents();
     var state = Game.playEvents(events);
 
@@ -20,7 +20,14 @@ module.exports = (function () {
     });
     console.log("There is " + possibleActions.length + " legal actions. The action you selected is legal: " + actionLegal);
 
-    storage.persistEvent(eventData);
+    var result = { success: actionLegal };
+    if (actionLegal) {
+      storage.persistEvent(eventData);
+    } else {
+      result.message = 'Invalid action: ' + JSON.stringify(eventData);
+    }
+
+    callback(result);
   };
 
   module.getGameState = function(callback) {

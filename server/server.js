@@ -21,8 +21,9 @@ module.exports = (function() {
 
     app.post('/game/:id', function(request, response) {
       var eventData = request.body;
-      api.performAction(eventData);
-      response.send('ok (' + eventData.action + ')\n');
+      api.performAction(eventData, function(result) {
+        response.send(result);
+      });
     });
 
     app.get('/game/:id/:colors', function(request, response) {

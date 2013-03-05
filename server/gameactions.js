@@ -55,8 +55,6 @@ module.exports = (function () {
       return _.flatten(state.board);
     }
 
-
-
     //
     // Generation of possible actions
     //
