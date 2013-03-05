@@ -27,7 +27,7 @@ Extremely simple game:
      ✔ Attack @done (04-03-13 21:40)
      ✔ Play @done (04-03-13 22:57)
      ✔ End turn @done (04-03-13 21:40)
-     ☐ Implement unit placement restrictions
+     ✔ Implement unit placement restrictions @done (05-03-13 22:43)
      ☐ Implement winning/losing condition
  ☐ Handle two players
  ☐ Implement a basic AI

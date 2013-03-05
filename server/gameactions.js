@@ -34,13 +34,13 @@ module.exports = (function () {
     };
 
     this.attack = function(data) {
-      var attackingUnit = getTile(data.from);
-      var defendingUnit = getTile(data.to);
-      defendingUnit.life -= attackingUnit.attack;
-      attackingUnit.life -= defendingUnit.attack;
-      if (defendingUnit.life <= 0)
+      var attacker = getTile(data.from);
+      var defender = getTile(data.to);
+      defender.life -= attacker.attack;
+      attacker.life -= defender.attack;
+      if (defender.life <= 0)
         resetTile(data.to);
-      if (attackingUnit.life <= 0)
+      if (attacker.life <= 0)
         resetTile(data.from);
     };
 

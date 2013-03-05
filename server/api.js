@@ -27,8 +27,33 @@ module.exports = (function () {
       result.message = 'Invalid action: ' + JSON.stringify(eventData);
     }
 
+    // HACK:
+    if (eventData.action === 'endTurn' && actionLegal) {
+      takeTurnByAI();
+    }
+
     callback(result);
   };
+
+  function takeTurnByAI() {
+    console.log('AI taking its turn!');
+    var possibleActions;
+    do {
+      var events = storage.getEvents();
+      var state = Game.playEvents(events);
+      var gameActions = new GameActions(state);
+      possibleActions = gameActions.getPossibleActions();
+
+      if (possibleActions.length > 0) {
+        var randomIndex = _.random(possibleActions.length - 1);
+        var randomAction = possibleActions[randomIndex];
+        console.log('AI choosing action: ' + randomAction.action);
+        storage.persistEvent(randomAction);
+        if (randomAction.action === 'endTurn')
+          return;
+      }
+    } while (possibleActions.length > 0);
+  }
 
   module.getGameState = function(callback) {
     var startTime = (new Date()).getTime();
