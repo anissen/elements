@@ -31,6 +31,8 @@ Extremely simple game:
      ☐ Implement winning/losing condition
  ☐ Handle two players
  ☐ Implement a basic AI
+ ☐ Replenish unit attack and move counts
+ ☐ Replenish energy
 
  Simple game:
  ☐ Clean up gameactions.js

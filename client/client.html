@@ -39,7 +39,7 @@
                 </tr>
               </table>
 
-              <br/>
+              <hr/>
 
               <table width="100%">
                 <tr ng-repeat="row in state.board">
@@ -75,7 +75,7 @@
                 </tr>
               </table>
 
-              <br/>
+              <hr/>
 
               <table width="100%" style="min-height: 110px">
                 <tr>
@@ -108,19 +108,17 @@
                 </tr>
               </table>
 
-
-
-              <br/>
-              <a href="#" class="btn btn-large" ng-click="getState()">Showing action {{state.actionCount}}</a>
-              <a href="#" class="btn btn-large" ng-click="playAllActions()">Play all actions</a>
-              <a href="#" class="btn btn-large btn-primary pull-right" ng-click="endTurn()">End turn</a>
             </div>
 
             <div class="span2">
 
-              <select multiple="multiple" style="min-height: 700px">
+              <select multiple="multiple" style="min-height: 600px">
                 <option ng-repeat="action in state.actions">{{action.player}}: {{action.action}}</option>
               </select>
+
+              <a href="#" class="btn btn-large btn-block btn-primary" ng-click="endTurn()">End turn</a>
+              <a href="#" class="btn btn-large btn-block" ng-click="getState()">Showing action {{state.actionCount}}</a>
+              <a href="#" class="btn btn-large btn-block" ng-click="playAllActions()">Play all actions</a>
 
             </div>
 
