@@ -4,7 +4,8 @@ function stateCtrl($scope, $http) {
   $scope.selectedUnit = null;
 
   $scope.getState = function() {
-    $http.get('game/42/false')
+    var nextActionCount = $scope.state.actionCount + 1;
+    $http.get('game/42/' + nextActionCount)
       .success(function(state) {
         $scope.state = state;
       })
@@ -12,6 +13,21 @@ function stateCtrl($scope, $http) {
         alert('get state failed');
       });
   };
+
+  $scope.playAllActions = function() {
+    playNextAction();
+  };
+
+  function playNextAction() {
+    var actionsBefore;
+    var interval = setInterval(function() {
+      $scope.getState();
+      if ($scope.state.actionCount === actionsBefore)
+        clearInterval(interval);
+
+      actionsBefore = $scope.state.actionCount;
+    }, 250);
+  }
 
   $scope.getCardsInOwnHand = function() {
     return getCardsInHand($scope.state.currentPlayer);

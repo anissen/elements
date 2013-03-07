@@ -3,6 +3,7 @@ var storage = require('./storage');
 var Game = require('./game');
 var GameActions = require('./gameactions');
 var _ = require('underscore');
+var util = require('util');
 
 module.exports = (function () {
 
@@ -47,7 +48,7 @@ module.exports = (function () {
       if (possibleActions.length > 0) {
         var randomIndex = _.random(possibleActions.length - 1);
         var randomAction = possibleActions[randomIndex];
-        console.log('AI choosing action: ' + randomAction.action);
+        console.log('AI choosing action: ' + util.inspect(randomAction));
         storage.persistEvent(randomAction);
         if (randomAction.action === 'endTurn')
           return;
@@ -55,10 +56,10 @@ module.exports = (function () {
     } while (possibleActions.length > 0);
   }
 
-  module.getGameState = function(callback) {
+  module.getGameState = function(actionCount, callback) {
     var startTime = (new Date()).getTime();
 
-    var events = storage.getEvents();
+    var events = storage.getEvents(actionCount);
     var state = Game.playEvents(events);
 
     var endTime = (new Date()).getTime();

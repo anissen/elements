@@ -1,3 +1,4 @@
+var _ = require('underscore');
 
 module.exports = (function () {
 
@@ -8,8 +9,8 @@ module.exports = (function () {
     events.push(eventData);
   };
 
-  module.getEvents = function() {
-    return events;
+  module.getEvents = function(eventCount) {
+    return _.first(events, eventCount || events.length);
   };
 
   return module;

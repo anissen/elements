@@ -26,11 +26,10 @@ module.exports = (function() {
       });
     });
 
-    app.get('/game/:id/:colors', function(request, response) {
-      var colors = request.params['colors'];
-      api.getGameState(function(state) {
-        if (colors !== 'false')
-          state = prettyjson.render(state);
+    app.get('/game/:id/:actionCount', function(request, response) {
+      var actionCount = request.params['actionCount'];
+      console.log('actionCount: ' + actionCount);
+      api.getGameState(actionCount, function(state) {
         response.send(state);
       });
     });

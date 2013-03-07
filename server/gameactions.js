@@ -10,8 +10,6 @@ module.exports = (function () {
     this.play = function(data) {
       var player = state.players[state.currentPlayer];
       var cardIndex = player.hand.indexOf(data.cardId);
-      if (cardIndex < 0)
-        throw new Error('No card with id "' + data.cardId + '" on the following hand "' + player.hand + '"');
       player.hand.splice(cardIndex, 1);
 
       var card = state.cards[data.cardId];
@@ -30,6 +28,7 @@ module.exports = (function () {
       resetTile(data.from);
       unit.x = data.to.x;
       unit.y = data.to.y;
+      unit.movesLeft -= 1;
       setTile(data.to, unit);
     };
 
@@ -38,6 +37,7 @@ module.exports = (function () {
       var defender = getTile(data.to);
       defender.life -= attacker.attack;
       attacker.life -= defender.attack;
+      attacker.attacksLeft -= 1;
       if (defender.life <= 0)
         resetTile(data.to);
       if (attacker.life <= 0)
@@ -73,6 +73,7 @@ module.exports = (function () {
 
     function getPossibleMoves() {
       return _.chain(getAllUnits())
+        .filter(function(unit) { return unit.movesLeft > 0; })
         .map(getValidMovesForUnit)
         .flatten()
         .value();
@@ -97,6 +98,7 @@ module.exports = (function () {
 
     function getPossibleAttacks() {
       return _.chain(getAllUnits())
+        .filter(function(unit) { return unit.attacksLeft > 0; })
         .map(getValidAttacksForUnit)
         .flatten()
         .value();
@@ -200,15 +202,6 @@ module.exports = (function () {
     }
 
     function placeNewUnit(card, pos) {
-      if (getTile(pos).type !== 'empty')
-        throw new Error('Cannot place unit on non-empty tile');
-
-      // TODO: Generate the list of all posibile actions and guard against invalid actions
-
-      // TODO: Guard that the unit is placed next to (at least) one energy tile
-      if (!_.some(getAdjacentTiles(pos), playerEnergyTilesQuery))
-        throw new Error("sdafasf");
-
       // TODO: Select all adjacent energy groups
 
       // TODO: Drain energy from all adjacent energy groups
@@ -217,6 +210,8 @@ module.exports = (function () {
       newCard.player = state.currentPlayer;
       newCard.x = pos.x;
       newCard.y = pos.y;
+      newCard.movesLeft = newCard.moves;
+      newCard.attacksLeft = newCard.attacks;
       setTile(pos, newCard);
     }
 
@@ -249,9 +244,6 @@ module.exports = (function () {
 
     function payCastingCost(cost, pos) {
       var energySources = getEnergySourcesConnectedToTile(pos);
-
-      //if (cost > availableEnergy)
-      //  throw new Error("Not enough energy. " + cost + " requested and " + availableEnergy + " available");
 
       var remaingingCost = cost;
       _.each(energySources, function(source) {

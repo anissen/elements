@@ -15,7 +15,11 @@ module.exports = (function () {
         cost: 1,
         attack: 1,
         maxLife: 1,
-        life: 1
+        life: 1,
+        moves: 1,
+        movesLeft: 1,
+        attacks: 1,
+        attacksLeft: 1
       },
       'big-unit': {
         type: 'unit',
@@ -23,7 +27,11 @@ module.exports = (function () {
         cost: 4,
         attack: 3,
         maxLife: 3,
-        life: 3
+        life: 3,
+        moves: 1,
+        movesLeft: 1,
+        attacks: 1,
+        attacksLeft: 1
       },
       'fire': {
         type: 'energy',
@@ -71,6 +79,8 @@ module.exports = (function () {
       }
     ],
     currentPlayer: 0,
+    actionCount: 0,
+    actions: [],
     board: [
       [{card: 'empty'}, {card: 'fire', player: 1}, {card: 'fire', player: 1}, {card: 'empty'}, {card: 'empty'}],
       [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
@@ -104,6 +114,8 @@ module.exports = (function () {
     for (var i in events) {
       var e = events[i];
       gameActions[e.action](e.data);
+      state.actions.push({"player": state.players[state.currentPlayer].id, "action": e.action});
+      state.actionCount++;
     }
     return state;
   };
