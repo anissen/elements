@@ -68,12 +68,12 @@ module.exports = (function () {
     },
     players: [
       {
-        id: 'player1',
+        id: 'HumanPlayer',
         library: ['water', 'big-unit', 'big-unit', 'big-unit'],
         hand: ['big-unit', 'small-unit', 'water', 'big-unit']
       },
       {
-        id: 'player2',
+        id: 'ComputerPlayer',
         library: ['small-unit', 'fire', 'small-unit', 'small-unit'],
         hand: ['small-unit', 'small-unit', 'fire', 'flame-lick', 'Fireball']
       }
@@ -81,6 +81,7 @@ module.exports = (function () {
     currentPlayer: 0,
     actionCount: 0,
     actions: [],
+    won: null,
     board: [
       [{card: 'empty'}, {card: 'fire', player: 1}, {card: 'fire', player: 1}, {card: 'empty'}, {card: 'empty'}],
       [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
@@ -114,6 +115,7 @@ module.exports = (function () {
     for (var i in events) {
       var e = events[i];
       gameActions[e.action](e.data);
+      gameActions.checkWinner();
       state.actions.push({"player": state.players[state.currentPlayer].id, "action": e.action});
       state.actionCount++;
     }

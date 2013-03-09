@@ -22,17 +22,17 @@ Extremely simple game:
  ✔ Fix introduced bug: Playing spells on units does not work @done (28-02-13 23:06)
  ✔ Split into /client and /server and let server.js require('./server/api') instead @done (28-02-13 23:06)
  ✔ Implement card cost @done (02-03-13 17:51)
- ☐ Collect all available player actions
+ ✔ Collect all available player actions @done (10-03-13 00:02)
      ✔ Move @done (04-03-13 21:40)
      ✔ Attack @done (04-03-13 21:40)
      ✔ Play @done (04-03-13 22:57)
      ✔ End turn @done (04-03-13 21:40)
      ✔ Implement unit placement restrictions @done (05-03-13 22:43)
-     ☐ Implement winning/losing condition
- ☐ Handle two players
- ☐ Implement a basic AI
- ☐ Replenish unit attack and move counts
- ☐ Replenish energy
+     ✔ Implement winning/losing condition @done (10-03-13 00:02)
+ ✔ Handle two players @done (10-03-13 00:02)
+ ✔ Implement a basic AI @done (10-03-13 00:02)
+ ✔ Replenish unit attack and move counts @done (10-03-13 00:02)
+ ✔ Replenish energy @done (10-03-13 00:02)
 
  Simple game:
  ☐ Clean up gameactions.js

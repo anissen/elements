@@ -47,9 +47,29 @@ module.exports = (function () {
     this.endTurn = function(data) {
       state.currentPlayer = (state.currentPlayer + 1) % state.players.length;
 
+      startTurn();
+    };
+
+    function startTurn() {
+      // Replenish 1 energy for all energy sources
+      _.chain(getTiles())
+        .filter(playerEnergyTilesQuery)
+        .each(function(source) {
+          if (source.energy < source.maxEnergy)
+            source.energy++;
+        });
+
+      // Restore unit attacks and moves
+      _.chain(getTiles())
+        .filter(playerUnitTilesQuery)
+        .each(function(unit) {
+          unit.movesLeft = unit.moves;
+          unit.attacksLeft = unit.attacks;
+        });
+
       // draw a card for the next player
       drawCards(1);
-    };
+    }
 
     function getTiles() {
       return _.flatten(state.board);
@@ -66,6 +86,26 @@ module.exports = (function () {
       var plays = getPossiblePlays();
       return turnActions.concat(moves).concat(attacks).concat(plays);
     };
+
+    this.checkWinner = function() {
+      var player0Lost = hasPlayerLost(0);
+      var player1Lost = hasPlayerLost(1);
+      if (!player0Lost && !player1Lost)
+        state.won = null;
+      else if (player0Lost && player1Lost)
+        state.won = -1;
+      else if (player0Lost)
+        state.won = 1;
+      else if (player1Lost)
+        state.won = 0;
+      console.log('won is ' + state.won);
+    };
+
+    function hasPlayerLost(playerId) {
+      return !_.some(getTiles(), function(tile) {
+        return tile.player === playerId && tile.type === 'energy';
+      });
+    }
 
     function getPossibleTurnActions() {
       return [{ action: "endTurn", data: {} }];

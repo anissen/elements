@@ -29,6 +29,8 @@
 
             <div class="span10">
 
+              <div class="alert alert-important" ng-show="state.won == 1 || state.won == -1">{{state.players[1].id}} won the game!</div>
+
               <table width="100%" style="min-height: 110px">
                 <tr>
                   <td ng-repeat="card in getCardsInEnemyHand()">
@@ -76,6 +78,8 @@
               </table>
 
               <hr/>
+
+              <div class="alert alert-success" ng-show="state.won == 0 || state.won == -1">{{state.players[0].id}} won the game!</div>
 
               <table width="100%" style="min-height: 110px">
                 <tr>
