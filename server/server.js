@@ -1,7 +1,6 @@
 
 var express = require('express'),
     app = express(),
-    prettyjson = require('prettyjson'),
     api = require('./api');
 
 

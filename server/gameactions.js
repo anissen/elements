@@ -98,7 +98,6 @@ module.exports = (function () {
         state.won = 1;
       else if (player1Lost)
         state.won = 0;
-      console.log('won is ' + state.won);
     };
 
     function hasPlayerLost(playerId) {
