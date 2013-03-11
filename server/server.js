@@ -15,7 +15,7 @@ module.exports = (function() {
     // for the client html page
     app.use(express.static('./client/public'));
     app.get('/', function(request, response) {
-      response.sendfile('./client/client-raphael.html');
+      response.sendfile('./client/client.html');
     });
 
     app.post('/game/:id', function(request, response) {
