@@ -134,8 +134,8 @@ module.exports = (function () {
     initialState.cards[cardId].id = cardId;
   }
 
-  module.playEvents = function(events) {
-    var state = clone(initialState);
+  module.playEvents = function(events, currentState) {
+    var state = (currentState ? clone(currentState) : clone(initialState));
     var gameActions = new GameActions(state);
     for (var i in events) {
       var e = events[i];

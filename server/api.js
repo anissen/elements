@@ -38,13 +38,35 @@ module.exports = (function () {
 
   function takeTurnByAI() {
     console.log('AI taking its turn!');
-    var possibleActions;
-    do {
+    while (true) {
       var events = storage.getEvents();
       var state = Game.playEvents(events);
       var gameActions = new GameActions(state);
-      possibleActions = gameActions.getPossibleActions();
+      var possibleActions = gameActions.getPossibleActionsWithoutEndTurn();
+      var endTurnAction = { action: 'endTurn', data: {} };
 
+      if (possibleActions.length === 0) {
+        console.log('no more possible actions');
+        storage.persistEvent(endTurnAction);
+        return;
+      }
+
+      _.each(possibleActions, function(action) {
+        action.value = getValueForAction(state, action);
+      });
+
+      var action = _.max(possibleActions, function(action) {
+        return action.value;
+      });
+
+      if (!action || action.value <= 0)
+        action = endTurnAction;
+
+      console.log('AI choosing action: ' + util.inspect(action));
+      storage.persistEvent(action);
+      if (action.action === 'endTurn')
+        return;
+      /*
       if (possibleActions.length > 0) {
         var randomIndex = _.random(possibleActions.length - 1);
         var randomAction = possibleActions[randomIndex];
@@ -52,8 +74,15 @@ module.exports = (function () {
         storage.persistEvent(randomAction);
         if (randomAction.action === 'endTurn')
           return;
-      }
-    } while (possibleActions.length > 0);
+        */
+    }
+  }
+
+  function getValueForAction(state, action) {
+    var tempState = Game.playEvents([action], state);
+    var gameActions = new GameActions(tempState);
+    var value = gameActions.getStateValue();
+    return value;
   }
 
   module.getGameState = function(actionCount, callback) {

@@ -92,11 +92,48 @@ module.exports = (function () {
 
     this.getPossibleActions = function() {
       var turnActions = getPossibleTurnActions();
+      return this.getPossibleActionsWithoutEndTurn().concat(turnActions);
+    };
+
+    this.getPossibleActionsWithoutEndTurn = function() {
       var moves = getPossibleMoves();
       var attacks = getPossibleAttacks();
       var plays = getPossiblePlays();
-      return turnActions.concat(moves).concat(attacks).concat(plays);
+      return moves.concat(attacks).concat(plays);
     };
+
+    this.getStateValue = function() {
+      var value = 0;
+      value += getValueOfPlayersThings(state.currentPlayer);
+      value -= getValueOfPlayersThings((state.currentPlayer + 1) % 2);
+      return value;
+    };
+
+    function getValueOfPlayersThings(playerId) {
+      var unitValue = _.chain(getTiles())
+        .filter(function(tile) {
+          return tile.player === playerId && tile.type === 'unit';
+        })
+        .reduce(function(sum, unit) {
+          return sum + unit.attack + unit.life;
+        }, 0)
+        .value();
+
+      var valuePerCard = 2;
+      var cardsOnHandValue = state.players[playerId].hand.length * valuePerCard;
+
+      var energyLifeValue = 3;
+      var energyValue = _.chain(getTiles())
+        .filter(function(tile) {
+          return tile.player === playerId && tile.type === 'energy';
+        })
+        .reduce(function(sum, energy) {
+          return sum + energy.life * energyLifeValue + energy.energy;
+        }, 0)
+        .value();
+
+        return unitValue + cardsOnHandValue + energyValue;
+    }
 
     this.checkWinner = function() {
       var player0Lost = hasPlayerLost(0);
