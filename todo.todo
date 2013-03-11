@@ -35,12 +35,15 @@ Extremely simple game:
  ✔ Replenish energy @done (10-03-13 00:02)
 
  Simple game:
+ ✔ Defender does not attack @done (11-03-13 21:35)
+ ☐ Create a unit with an ability
  ☐ Clean up gameactions.js
      ☐ Create a utilities-decorator can takes state as an argument OR add utilities functions directly to state
      ☐ Move calculation of possible actions into its own module
-     ☐ Remove redundant guards
+     ✔ Remove redundant guards @done (11-03-13 21:35)
  ☐ Handle two human players
  ☐ Trim the data that is sent to the player (e.g. remove library, enemy hand etc.)
+ ☐ Naive greedy AI: Improve AI by selecting the best possible action amount the available
  ☐ Unit tests
 
 
@@ -52,3 +55,5 @@ Optimizations:
  ☐ Add socket.io for web network communication
  ☐ Persist the content of spell script files instead of reading them up on each execution
  ☐ Maybe a bad idea: Share gameactions.js between both client and server and allow the client to do all actions (note: what about spells?) offline until EndTurn(). Persist the actions and send them when ending the turn.
+ ☐ Get list of all players units and use that for the current state instead of querying it each time
+ ☐ Get list of all players energy sources and use that for the current state instead of querying it each time

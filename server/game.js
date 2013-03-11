@@ -33,6 +33,31 @@ module.exports = (function () {
         attacks: 1,
         attacksLeft: 1
       },
+      'regenerator': {
+        type: 'unit',
+        name: 'Ever-flowing Stream',
+        cost: 4,
+        attack: 2,
+        maxLife: 3,
+        life: 3,
+        moves: 1,
+        movesLeft: 1,
+        attacks: 1,
+        attacksLeft: 1,
+        onTurnStart: 'heal-self.js'
+      },
+      'scout': {
+        type: 'unit',
+        name: 'Liquid Scout',
+        cost: 2,
+        attack: 1,
+        maxLife: 2,
+        life: 2,
+        moves: 3,
+        movesLeft: 3,
+        attacks: 1,
+        attacksLeft: 1
+      },
       'fire': {
         type: 'energy',
         name: 'Flame',
@@ -59,7 +84,7 @@ module.exports = (function () {
         cost: 1,
         scriptFile: 'flamelick.js'
       },
-      'Fireball': {
+      'fireball': {
         type: 'spell',
         name: 'Fireball',
         cost: 5,
@@ -70,12 +95,12 @@ module.exports = (function () {
       {
         id: 'HumanPlayer',
         library: ['water', 'big-unit', 'big-unit', 'big-unit'],
-        hand: ['big-unit', 'small-unit', 'water', 'big-unit']
+        hand: ['big-unit', 'small-unit', 'water', 'big-unit', 'regenerator', 'scout']
       },
       {
         id: 'ComputerPlayer',
         library: ['small-unit', 'fire', 'small-unit', 'small-unit'],
-        hand: ['small-unit', 'small-unit', 'fire', 'flame-lick', 'Fireball']
+        hand: ['small-unit', 'small-unit', 'fire', 'flame-lick', 'fireball']
       }
     ],
     currentPlayer: 0,

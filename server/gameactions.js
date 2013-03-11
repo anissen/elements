@@ -18,8 +18,7 @@ module.exports = (function () {
         payCastingCost(card.cost, data.pos);
         placeNewUnit(card, data.pos);
       } else if (card.type === 'spell') {
-        var script = fs.readFileSync('./server/scripts/' + card.scriptFile);
-        vm.runInNewContext(script, getScriptContext(data), card.scriptFile);
+        executeScript(card.scriptFile, data);
       }
     };
 
@@ -36,12 +35,9 @@ module.exports = (function () {
       var attacker = getTile(data.from);
       var defender = getTile(data.to);
       defender.life -= attacker.attack;
-      attacker.life -= defender.attack;
       attacker.attacksLeft -= 1;
       if (defender.life <= 0)
         resetTile(data.to);
-      if (attacker.life <= 0)
-        resetTile(data.from);
     };
 
     this.endTurn = function(data) {
@@ -67,8 +63,23 @@ module.exports = (function () {
           unit.attacksLeft = unit.attacks;
         });
 
+      // Execute onTurnStart for each unit
+      _.chain(getTiles())
+        .filter(playerUnitTilesQuery)
+        .each(function(unit) {
+          if (unit.onTurnStart) {
+            var data = { pos: unit };
+            executeScript(unit.onTurnStart, data);
+          }
+        });
+
       // draw a card for the next player
       drawCards(1);
+    }
+
+    function executeScript(scriptFile, data) {
+      var script = fs.readFileSync('./server/scripts/' + scriptFile);
+      vm.runInNewContext(script, getScriptContext(data), scriptFile);
     }
 
     function getTiles() {
@@ -313,6 +324,13 @@ module.exports = (function () {
           unit.life -= damage;
           if (unit.life <= 0)
             resetTile(unit);
+        },
+        heal: function(unit, amount) {
+          if (!unit.life)
+            return;
+
+          if (unit.life < unit.maxLife)
+            unit.life++;
         },
         getAdjacentTiles: getAdjacentTiles,
         print: function(str) { console.log('SCRIPT: ' + str ); },
