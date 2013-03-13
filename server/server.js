@@ -27,7 +27,6 @@ module.exports = (function() {
 
     app.get('/game/:id/:actionCount', function(request, response) {
       var actionCount = request.params['actionCount'];
-      console.log('actionCount: ' + actionCount);
       api.getGameState(actionCount, function(state) {
         response.send(state);
       });
