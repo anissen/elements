@@ -62,7 +62,7 @@ module.exports = (function () {
         type: 'energy',
         name: 'Flame',
         cost: 0,
-        energy: 3,
+        energy: 1,
         maxEnergy: 1,
         attack: 0,
         maxLife: 2,
@@ -72,7 +72,7 @@ module.exports = (function () {
         type: 'energy',
         name: 'Pond',
         cost: 0,
-        energy: 3,
+        energy: 1,
         maxEnergy: 3,
         attack: 0,
         maxLife: 2,
@@ -94,11 +94,13 @@ module.exports = (function () {
     players: [
       {
         id: 'HumanPlayer',
+        type: 'human',
         library: ['water', 'big-unit', 'big-unit', 'big-unit'],
         hand: ['big-unit', 'small-unit', 'water', 'big-unit', 'regenerator', 'scout']
       },
       {
         id: 'ComputerPlayer',
+        type: 'ai',
         library: ['small-unit', 'fire', 'small-unit', 'small-unit'],
         hand: ['small-unit', 'small-unit', 'fire', 'flame-lick', 'fireball']
       }

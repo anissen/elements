@@ -42,6 +42,7 @@ module.exports = (function () {
       var events = storage.getEvents();
       var state = Game.playEvents(events);
       var gameActions = new GameActions(state);
+      var initialStateValue = gameActions.getStateValue();
       var possibleActions = gameActions.getPossibleActionsWithoutEndTurn();
       var endTurnAction = { action: 'endTurn', data: {} };
 
@@ -52,7 +53,7 @@ module.exports = (function () {
       }
 
       _.each(possibleActions, function(action) {
-        action.value = getValueForAction(state, action);
+        action.value = getValueForAction(state, action) - initialStateValue;
       });
 
       var action = _.max(possibleActions, function(action) {

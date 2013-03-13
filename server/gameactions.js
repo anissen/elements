@@ -18,6 +18,7 @@ module.exports = (function () {
         payCastingCost(card.cost, data.pos);
         placeNewUnit(card, data.pos);
       } else if (card.type === 'spell') {
+        payCastingCost(card.cost);
         executeScript(card.scriptFile, data);
       }
     };
@@ -110,12 +111,13 @@ module.exports = (function () {
     };
 
     function getValueOfPlayersThings(playerId) {
+      var valuePerUnit = 2;
       var unitValue = _.chain(getTiles())
         .filter(function(tile) {
           return tile.player === playerId && tile.type === 'unit';
         })
         .reduce(function(sum, unit) {
-          return sum + unit.attack + unit.life;
+          return sum + valuePerUnit + unit.attack + unit.life;
         }, 0)
         .value();
 
@@ -209,7 +211,17 @@ module.exports = (function () {
     }
 
     function getPossiblePlays() {
+      var availableEnergy = _.chain(getTiles())
+        .filter(playerEnergyTilesQuery)
+        .reduce(function(sum, energy) {
+          return sum + energy.energy;
+        }, 0)
+        .value();
+
       return _.chain(getAllCardsInHand())
+        .filter(function(card) {
+          return card.cost <= availableEnergy;
+        })
         .map(getValidPlaysForCard)
         .flatten()
         .value();
@@ -330,7 +342,11 @@ module.exports = (function () {
     }
 
     function payCastingCost(cost, pos) {
-      var energySources = getEnergySourcesConnectedToTile(pos);
+      var energySources;
+      if (pos)
+        energySources = getEnergySourcesConnectedToTile(pos);
+      else
+        energySources = _.filter(getTiles(), playerEnergyTilesQuery);
 
       var remaingingCost = cost;
       _.each(energySources, function(source) {

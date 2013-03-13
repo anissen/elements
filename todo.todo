@@ -37,6 +37,7 @@ Extremely simple game:
  Simple game:
  ✔ Defender does not attack @done (11-03-13 21:35)
  ✔ Create a unit with an ability @done (13-03-13 18:20)
+ ✔ Handle paying for spells when generating list of possible actions @done (13-03-13 23:19)
  ☐ Clean up gameactions.js
      ☐ Move the non-specific functions into prototype objects
      ☐ Create a utilities-decorator can takes state as an argument OR add utilities functions directly to state
