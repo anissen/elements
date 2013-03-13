@@ -11,6 +11,7 @@ module.exports = (function() {
   module.start = function(port) {
     app.use(express.compress());
     app.use(express.bodyParser());
+    //app.use(express.basicAuth('test', 'test'));
 
     // for the client html page
     app.use(express.static('./client/public'));
@@ -18,7 +19,12 @@ module.exports = (function() {
       response.sendfile('./client/client.html');
     });
 
-    app.post('/game/:id', function(request, response) {
+    var gameAuth = express.basicAuth(function(user, pass, callback) {
+      var result = (user === 'test' && pass === 'test');
+      callback(null /* error */, result);
+    });
+
+    app.post('/game/:id', gameAuth, function(request, response) {
       var eventData = request.body;
       api.performAction(eventData, function(result) {
         response.send(result);

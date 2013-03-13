@@ -38,6 +38,7 @@ Extremely simple game:
  ✔ Defender does not attack @done (11-03-13 21:35)
  ✔ Create a unit with an ability @done (13-03-13 18:20)
  ☐ Clean up gameactions.js
+     ☐ Move the non-specific functions into prototype objects
      ☐ Create a utilities-decorator can takes state as an argument OR add utilities functions directly to state
      ☐ Move calculation of possible actions into its own module
      ✔ Remove redundant guards @done (11-03-13 21:35)
@@ -45,6 +46,13 @@ Extremely simple game:
  ☐ Trim the data that is sent to the player (e.g. remove library, enemy hand etc.)
  ✔ Naive greedy AI: Improve AI by selecting the best possible action amount the available @done (13-03-13 18:20)
  ☐ Unit tests
+
+ Persistent games:
+ ☐ Multiple games in progress at once
+ ☐ Users in database
+ ☐ Games in database
+ ☐ Game actions in database
+ ☐ Page to view games
 
 
 --- ✄ -----------------------
