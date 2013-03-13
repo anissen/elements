@@ -14,11 +14,7 @@ function stateCtrl($scope, $http) {
       });
   };
 
-  $scope.playAllActions = function() {
-    playNextAction();
-  };
-
-  function playNextAction() {
+  function playAllActions() {
     var actionsBefore;
     var interval = setInterval(function() {
       $scope.getState();
@@ -26,7 +22,7 @@ function stateCtrl($scope, $http) {
         clearInterval(interval);
 
       actionsBefore = $scope.state.actionCount;
-    }, 250);
+    }, 500);
   }
 
   $scope.getCardsInOwnHand = function() {
@@ -57,6 +53,7 @@ function stateCtrl($scope, $http) {
 
   $scope.endTurn = function() {
     postAction('endTurn', {});
+    playAllActions();
 
     deselectSelectedCard();
     deselectSelectedUnit();
@@ -127,7 +124,7 @@ function stateCtrl($scope, $http) {
         alert('Action "' + action + '" could not be performed.\n\nReason: ' + msg.message);
         return;
       }
-      $scope.getState();
+      playAllActions();
     })
     .error(function(msg) {
       alert('Action posted with failure: ' + msg);
@@ -152,5 +149,5 @@ function stateCtrl($scope, $http) {
     $scope.selectedCard = null;
   }
 
-  $scope.getState();
+  playAllActions();
 }
