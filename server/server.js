@@ -19,6 +19,10 @@ module.exports = (function() {
       response.sendfile('./client/client.html');
     });
 
+    app.get('/test', function(request, response) {
+      response.sendfile('./client/client-raphael.html');
+    });
+
     var gameAuth = express.basicAuth(function(user, pass, callback) {
       var result = (user === 'test' && pass === 'test');
       callback(null /* error */, result);

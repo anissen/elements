@@ -15,9 +15,10 @@ function stateCtrl($scope, $http) {
   };
 
   function playAllActions() {
-    var actionsBefore;
+    var actionsBefore = $scope.state.actionCount || 0;
     var interval = setInterval(function() {
       $scope.getState();
+
       if ($scope.state.actionCount === actionsBefore)
         clearInterval(interval);
 

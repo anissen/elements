@@ -72,8 +72,24 @@ table, th, td
 }
 
 .board {
-  height: 640px;
+  min-height: 800px;
   margin: 0 auto;
   text-align: left;
-  width: 640px;
+  min-width: 640px;
+  border: 1px dashed black;
+}
+
+/*
+Emoji Symbols Font (c)blockworks - Kenichi Kaneko
+http://emojisymbols.com/
+*/
+@font-face {
+  font-family: "emj";
+  src: url('font/EmojiSymbols-Regular.woff') format('woff');
+  text-decoration: none;
+  font-style: normal;
+}
+
+.emj {
+  font-family: "emj";
 }

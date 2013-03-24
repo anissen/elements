@@ -129,7 +129,7 @@ var startArrow = function () {
       stroke: 'black'
     }, 100, 'bounce');
   };
-
+/*
 for (var y = 0; y < 5; y++) {
   tiles.push(new Array());
   for (var x = 0; x < 5; x++) {
@@ -149,9 +149,8 @@ var unit = R.unitTile(5 + 2 * 125, 5 + 3 * 125, "red");
 
 R.set(unit).hover(hoverIn, hoverOut);
 R.set(unit).drag(moveArrow, startArrow, upArrow);
+*/
 
-
-/*
 Raphael.fn.star = function (cx, cy, r, r2, rays) {
     r2 = r2 || r * 0.382;
     rays = rays || 5;
@@ -171,8 +170,8 @@ Raphael.fn.hexagon = function (cx, cy, size) {
 };
 
 var hexagons = [];
-var xstart = 70;
-var ystart = 80;
+var xstart = 60;
+var ystart = 60;
 var hexsize = 60;
 var margin = 4;
 var hexwidth = hexsize * Math.PI/2 + margin * 2;
@@ -200,6 +199,5 @@ var hexagonHoverOut = function() {
 };
 
 R.set(hexagons)
-    .attr({fill:'#3333FF'})
-    .hover(hexagonHoverIn, hexagonHoverOut);
-*/
+  .attr({fill:'#3333FF'})
+  .hover(hexagonHoverIn, hexagonHoverOut);

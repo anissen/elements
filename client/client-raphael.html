@@ -33,54 +33,9 @@
 
               <div class="alert alert-important" ng-show="state.won == 1 || state.won == -1">{{state.players[1].id}} won the game!</div>
 
-              <table width="100%" style="min-height: 110px">
-                <tr>
-                  <td ng-repeat="card in getCardsInEnemyHand()">
-                    <div class="tile well well-small player{{(state.currentPlayer+1)%2}}">
-                      <p><span class="label label-inverse cardName">? ? ?</span></p>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-
-              <hr/>
-
               <div id="board" class="board"></div>
 
-              <hr/>
-
               <div class="alert alert-success" ng-show="state.won == 0 || state.won == -1">{{state.players[0].id}} won the game!</div>
-
-              <table width="100%" style="min-height: 110px">
-                <tr>
-                  <td ng-repeat="card in getCardsInOwnHand()" ng-switch on="card.type" ng-click="selectCard(card)">
-
-                    <div ng-switch-when="unit" class="tile well well-small player{{state.currentPlayer}} selected-{{card.selected}}">
-                      <p><span class="label label-inverse cardName">{{card.name}}</span> <span class="badge badge-info">{{card.cost}}<span></p>
-                      <p>
-                        Attack: {{card.attack}}<br/>
-                        Life: {{card.life}}
-                      </p>
-                    </div>
-
-                    <div ng-switch-when="energy" class="tile well well-small energy player{{state.currentPlayer}} selected-{{card.selected}}">
-                      <p><span class="label label-inverse cardName">{{card.name}}</span> <span class="badge badge-info">{{card.cost}}<span></p>
-                      <p>
-                        Energy: {{card.energy}}<br/>
-                        Life: {{card.life}}
-                      </p>
-                    </div>
-
-                    <div ng-switch-when="spell" class="tile well well-small spell player{{state.currentPlayer}} selected-{{card.selected}}">
-                      <p><span class="label label-inverse cardName">{{card.name}}</span> <span class="badge badge-info">{{card.cost}}<span></p>
-                      <p>
-                        Spell description goes here
-                      </p>
-                    </div>
-
-                  </td>
-                </tr>
-              </table>
 
             </div>
 
@@ -91,8 +46,6 @@
               </select>
 
               <a href="#" class="btn btn-large btn-block btn-primary" ng-click="endTurn()">End turn</a>
-              <a href="#" class="btn btn-large btn-block" ng-click="getState()">Showing action {{state.actionCount}}</a>
-              <a href="#" class="btn btn-large btn-block" ng-click="playAllActions()">Play all actions</a>
 
             </div>
 
