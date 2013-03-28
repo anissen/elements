@@ -269,7 +269,6 @@ module.exports = (function () {
     // End of Generation of possible actions
     //
 
-
     function getAllUnits() {
       return _.filter(getTiles(), playerUnitTilesQuery);
     }

@@ -19,18 +19,21 @@ module.exports = (function () {
     var actionLegal = _.some(possibleActions, function(action) {
       return _.isEqual(eventData, action);
     });
-    //console.log("There is " + possibleActions.length + " legal actions. The action you selected is legal: " + actionLegal);
 
     var result = { success: actionLegal };
-    if (actionLegal) {
-      storage.persistEvent(eventData);
-    } else {
+    if (!actionLegal) {
       result.message = 'Invalid action: ' + JSON.stringify(eventData);
+      callback(result);
+      return;
     }
 
+    storage.persistEvent(eventData);
+
     // HACK:
-    if (eventData.action === 'endTurn' && actionLegal) {
-      takeTurnByAI();
+    if (eventData.action === 'endTurn') {
+      var nextPlayer = state.players[(state.currentPlayer+1)%state.players.length];
+      if (nextPlayer.type === 'ai')
+        takeTurnByAI();
     }
 
     callback(result);
