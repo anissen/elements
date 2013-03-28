@@ -279,7 +279,7 @@ module.exports = (function () {
     }
 
     function setTile(pos, data) {
-      return state.board[pos.y][pos.x] = data;
+      state.board[pos.y][pos.x] = data;
     }
 
     function resetTile(pos) {

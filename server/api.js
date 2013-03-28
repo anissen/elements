@@ -19,7 +19,7 @@ module.exports = (function () {
     var actionLegal = _.some(possibleActions, function(action) {
       return _.isEqual(eventData, action);
     });
-    console.log("There is " + possibleActions.length + " legal actions. The action you selected is legal: " + actionLegal);
+    //console.log("There is " + possibleActions.length + " legal actions. The action you selected is legal: " + actionLegal);
 
     var result = { success: actionLegal };
     if (actionLegal) {
@@ -37,7 +37,7 @@ module.exports = (function () {
   };
 
   function takeTurnByAI() {
-    console.log('AI taking its turn!');
+    //console.log('AI taking its turn!');
     while (true) {
       var events = storage.getEvents();
       var state = Game.playEvents(events);
@@ -47,7 +47,7 @@ module.exports = (function () {
       var endTurnAction = { action: 'endTurn', data: {} };
 
       if (possibleActions.length === 0) {
-        console.log('no more possible actions');
+        console.log('AI: No more possible actions');
         storage.persistEvent(endTurnAction);
         return;
       }
@@ -63,19 +63,10 @@ module.exports = (function () {
       if (!action || action.value <= 0)
         action = endTurnAction;
 
-      console.log('AI choosing action: ' + util.inspect(action));
+      console.log('AI: Chose action: ' + action.action); //util.inspect(action));
       storage.persistEvent(action);
       if (action.action === 'endTurn')
         return;
-      /*
-      if (possibleActions.length > 0) {
-        var randomIndex = _.random(possibleActions.length - 1);
-        var randomAction = possibleActions[randomIndex];
-        console.log('AI choosing action: ' + util.inspect(randomAction));
-        storage.persistEvent(randomAction);
-        if (randomAction.action === 'endTurn')
-          return;
-        */
     }
   }
 
