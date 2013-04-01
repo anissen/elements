@@ -3,7 +3,6 @@ var express = require('express'),
     app = express(),
     api = require('./api');
 
-
 module.exports = (function() {
 
   var module = {};
