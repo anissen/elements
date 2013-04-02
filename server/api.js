@@ -1,9 +1,31 @@
 
-var storage = require('./storage').mongodb,
-    Game = require('./game'),
+var Game = require('./game'),
     GameActions = require('./gameactions'),
     _ = require('underscore'),
-    util = require('util');
+    util = require('util'),
+    mongoose = require('mongoose');
+
+
+// --------
+
+var databaseConnectionString = process.env.ELEMENTS_MONGODB_CONNECTION_STRING || 'mongodb://localhost/elements';
+mongoose.connect(databaseConnectionString);
+console.log('Database string: ' + databaseConnectionString);
+
+var gameSchema = mongoose.Schema({
+  id: Number,
+  actions: [{ action: String, data: mongoose.Schema.Types.Mixed }]
+});
+
+var GameModel = mongoose.model('games', gameSchema);
+
+var storage = require('./storage')({
+  Model: GameModel,
+  underscore: _
+});
+
+// --------
+
 
 module.exports = (function () {
 
@@ -107,3 +129,4 @@ module.exports = (function () {
   return module;
 
 }());
+
