@@ -4,14 +4,19 @@ block main
   h1 Game
 
 block content
-  each game in games
-    .game
-      a.title(href='/games/' + game._id, title=game.title) Game Title
-      p game body
-      .author
-        span= formatDate(game.createdAt, "%b %d, %Y at %I:%M %p")
-        span &nbsp;| Author :&nbsp;
-        a(href="/users/"+game.owner._id)=game.owner.name
+  .row-fluid
+    ul.thumbnails
+      each game in games
+        li.span4
+          .thumbnail
+            img(style="width: 400px; height: 300px;", src="http://lorempixel.com/400/300/abstract/?" + Math.random())
+            .caption
+              h5
+                a.title(href='/games/' + game._id, title=game.title) Game Title
+              p
+                span= formatDate(game.createdAt, "%b %d, %Y at %I:%M %p")
+                span &nbsp;| Owner:&nbsp;
+                a(href="/users/"+game.owner._id)=game.owner.name
 
   if (pages > 1)
     .pagination

@@ -8,7 +8,7 @@ block content
     .span9
       p=game.body
       p.author
-        span Author :&nbsp;
+        span Owner :&nbsp;
         a(href="/users/"+game.owner._id)=game.owner.name
       .date= formatDate(game.createdAt, "%b %d, %Y at %I:%M %p")
 
@@ -19,15 +19,15 @@ block content
     .span12
       for player in game.players
         .well
-          h3 #{player.user}
+          h3 #{player.user.name}
           ul
             for card in player.cards
               li #{card}
 
   p
     br
-    form.center.form-inline.confirm(action="/games/"+game.id, method="post")
-      a.btn(href='/games/'+game._id+'/edit', title="edit") Edit
+    form.center.form-inline.confirm(action="/games/" + game.id, method="post")
+      a.btn(href='/games/' + game._id + '/edit', title="edit") Edit
       &nbsp;&nbsp;
       input(type="hidden", name="_method", value="DELETE")
       button.btn.btn-danger(type="submit") delete

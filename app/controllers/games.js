@@ -6,7 +6,7 @@
 var mongoose = require('mongoose');
     async = require('async');
     Game = mongoose.model('Game');
-    _ = require('underscore')
+    _ = require('underscore');
 
 /**
  * Find game by id
@@ -19,18 +19,18 @@ exports.game = function(req, res, next, id){
     req.game = game;
     next();
   });
-}
+};
 
 /**
  * New game
  */
 
-exports.new = function(req, res){
+exports.new = function(req, res) {
   res.render('games/new', {
     title: 'New Game',
     game: new Game({})
   });
-}
+};
 
 /**
  * Create an game
@@ -68,8 +68,8 @@ exports.edit = function (req, res) {
   res.render('games/edit', {
     title: 'Edit '+req.game.title,
     game: req.game
-  })
-}
+  });
+};
 
 /**
  * Update game
@@ -108,34 +108,35 @@ exports.show = function(req, res){
  */
 
 exports.destroy = function(req, res){
-  var game = req.game
+  var game = req.game;
   game.remove(function(err){
     // req.flash('notice', 'Deleted successfully')
-    res.redirect('/games')
-  })
-}
+    res.redirect('/games');
+  });
+};
 
 /**
  * List of Games
  */
 
 exports.index = function(req, res){
-  var page = req.param('page') > 0 ? req.param('page') : 0
-  var perPage = 15
+  var page = req.param('page') > 0 ? req.param('page') : 0;
+  var perPage = 15;
   var options = {
     perPage: perPage,
     page: page
-  }
+  };
 
   Game.list(options, function(err, games) {
-    if (err) return res.render('500')
+    if (err)
+      return res.render('500');
     Game.count().exec(function (err, count) {
       res.render('games/index', {
         title: 'List of Games',
         games: games,
         page: page,
         pages: count / perPage
-      })
-    })
-  })
-}
+      });
+    });
+  });
+};
