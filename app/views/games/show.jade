@@ -9,12 +9,20 @@ block content
       p=game.body
       p.author
         span Author :&nbsp;
-        a(href="/users/"+game.user._id)=game.user.name
+        a(href="/users/"+game.owner._id)=game.owner.name
       .date= formatDate(game.createdAt, "%b %d, %Y at %I:%M %p")
 
     .span3
-      if (!game.isNew && game.image && game.image.files && game.image.files.length)
-        img(src=game.image.cdnUri + '/mini_' + game.image.files[0])
+      p Stuff can also go here
+
+  .row
+    .span12
+      for player in game.players
+        .well
+          h3 #{player.user}
+          ul
+            for card in player.cards
+              li #{card}
 
   p
     br

@@ -40,7 +40,7 @@ exports.article = {
 
 exports.game = {
     hasAuthorization : function (req, res, next) {
-      if (req.game.user.id != req.user.id) {
+      if (req.game.owner.id != req.user.id) {
         return res.redirect('/games/'+req.game.id);
       }
       next();

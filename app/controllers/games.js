@@ -3,24 +3,22 @@
  * Module dependencies.
  */
 
-var mongoose = require('mongoose')
-  , async = require('async')
-  , Game = mongoose.model('Game')
-  , _ = require('underscore')
+var mongoose = require('mongoose');
+    async = require('async');
+    Game = mongoose.model('Game');
+    _ = require('underscore')
 
 /**
  * Find game by id
  */
 
 exports.game = function(req, res, next, id){
-  var User = mongoose.model('User')
-
   Game.load(id, function (err, game) {
-    if (err) return next(err)
-    if (!game) return next(new Error('Failed to load game ' + id))
-    req.game = game
-    next()
-  })
+    if (err) return next(err);
+    if (!game) return next(new Error('Failed to load game ' + id));
+    req.game = game;
+    next();
+  });
 }
 
 /**
@@ -31,7 +29,7 @@ exports.new = function(req, res){
   res.render('games/new', {
     title: 'New Game',
     game: new Game({})
-  })
+  });
 }
 
 /**
@@ -39,22 +37,28 @@ exports.new = function(req, res){
  */
 
 exports.create = function (req, res) {
-  var game = new Game(req.body)
-  game.user = req.user
+  var players = [
+    {
+      user: req.user,
+      cards: ["small-unit", "small-unit", "small-unit", "small-unit", "big-unit", "big-unit", "water", "water", "water", "water", "water", "water", "fireball"]
+    }
+  ];
+  var game = new Game({ players: players } /*req.body*/);
+  game.owner = req.user;
 
-  game.uploadAndSave(req.files.image, function (err) {
+  game.uploadAndSave(null, function (err) {
     if (err) {
       res.render('games/new', {
         title: 'New Game',
         game: game,
         errors: err.errors
-      })
+      });
     }
     else {
-      res.redirect('/games/'+game._id)
+      res.redirect('/games/'+game._id);
     }
-  })
-}
+  });
+};
 
 /**
  * Edit an game
@@ -72,22 +76,21 @@ exports.edit = function (req, res) {
  */
 
 exports.update = function(req, res){
-  var game = req.game
-  game = _.extend(game, req.body)
-
-  game.uploadAndSave(req.files.image, function(err) {
+  var game = req.game;
+  game = _.extend(game, req.body);
+  game.uploadAndSave(null, function(err) {
     if (err) {
       res.render('games/edit', {
         title: 'Edit Game',
         game: game,
         errors: err.errors
-      })
+      });
     }
     else {
-      res.redirect('/games/' + game._id)
+      res.redirect('/games/' + game._id);
     }
-  })
-}
+  });
+};
 
 /**
  * View an game
@@ -97,8 +100,8 @@ exports.show = function(req, res){
   res.render('games/show', {
     title: req.game.title,
     game: req.game
-  })
-}
+  });
+};
 
 /**
  * Delete an game
