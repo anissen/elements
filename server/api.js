@@ -26,7 +26,6 @@ var storage = require('./storage')({
 
 // --------
 
-
 module.exports = (function () {
 
   var module = {};
