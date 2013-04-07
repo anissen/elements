@@ -1,12 +1,32 @@
 {
-  "name": "elements-server",
-  "version": "0.0.1",
-  "dependencies": {
-    "express": "3.x",
-    "underscore": "1.4.4"
-  },
+  "name": "elements",
+  "description": "...",
+  "version": "0.1.0",
+  "private": true,
+  "author": "Anders Nissen <andnis@gmail.com> (http://www.andersnissen.com)",
   "engines": {
     "node": "0.8.x",
     "npm": "1.1.x"
+  },
+  "scripts": {
+    "start": "./node_modules/.bin/nodemon server.js"
+  },
+  "dependencies": {
+    "express": "latest",
+    "jade": "latest",
+    "mongoose": "latest",
+    "connect-mongo": "latest",
+    "connect-flash": "latest",
+    "passport": "latest",
+    "passport-local": "latest",
+    "passport-facebook": "latest",
+    "passport-twitter": "latest",
+    "passport-github": "latest",
+    "passport-google-oauth": "latest",
+    "underscore": "latest",
+    "gzippo": "latest",
+    "async": "latest",
+    "nodemon": "latest",
+    "view-helpers": "latest"
   }
 }

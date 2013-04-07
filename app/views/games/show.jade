@@ -1,0 +1,25 @@
+extends ../layouts/default
+
+block main
+  h1= game.title
+
+block content
+  .row
+    .span9
+      p=game.body
+      p.author
+        span Author :&nbsp;
+        a(href="/users/"+game.user._id)=game.user.name
+      .date= formatDate(game.createdAt, "%b %d, %Y at %I:%M %p")
+
+    .span3
+      if (!game.isNew && game.image && game.image.files && game.image.files.length)
+        img(src=game.image.cdnUri + '/mini_' + game.image.files[0])
+
+  p
+    br
+    form.center.form-inline.confirm(action="/games/"+game.id, method="post")
+      a.btn(href='/games/'+game._id+'/edit', title="edit") Edit
+      &nbsp;&nbsp;
+      input(type="hidden", name="_method", value="DELETE")
+      button.btn.btn-danger(type="submit") delete

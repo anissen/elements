@@ -1,0 +1,19 @@
+extends ../layouts/default
+
+block main
+  h1 Game
+
+block content
+  each game in games
+    .game
+      a.title(href='/games/'+game._id, title=game.title) #{game.title}
+      p=game.body
+      .author
+        span= formatDate(game.createdAt, "%b %d, %Y at %I:%M %p")
+        span &nbsp;| Author :&nbsp;
+        a(href="/users/"+game.user._id)=game.user.name
+
+  if (pages > 1)
+    .pagination
+      ul
+        != createPagination(pages, page)

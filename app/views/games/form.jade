@@ -1,0 +1,47 @@
+extends ../layouts/default
+
+block content
+  - var action = '/games'
+  if (!game.isNew)
+    - action += '/'+game.id
+
+  if (typeof errors !== 'undefined')
+    .fade.in.alert.alert-block.alert-error
+      a.close(data-dismiss="alert", href="javascript:void(0)") x
+      ul
+        each error in errors
+          li= error.type
+
+  .row
+    .span7
+      form.form-horizontal(method="post", action=action, enctype="multipart/form-data")
+        if (!game.isNew)
+          input(type="hidden", name="_method", value="PUT")
+
+        .control-group
+          label.control-label(for='title') Title
+          .controls
+            input#title.input-xlarge(type='text', name="title", value=game.title, placeholder='Enter the title')
+
+        .control-group
+          label.control-label(for='title') Image
+          .controls
+            input(type='file', name="image[]")
+
+        .control-group
+          label.control-label(for='desc') Body
+          .controls
+            textarea#desc.input-xlarge(type='text', rows="5", name="body", placeholder='Enter the game description')=game.body
+
+        .control-group
+          label.control-label(for='desc') Tags
+          .controls
+            input#tags(type='text', name="tags", value=game.tags, placeholder='Enter the tags')
+
+        .form-actions
+          button.btn.btn-primary(type='submit') Save changes
+          &nbsp;
+          a.btn(href='/games', title="cancel") Cancel
+    .span5
+      if (!game.isNew && game.image && game.image.files && game.image.files.length)
+        img(src=game.image.cdnUri + '/mini_' + game.image.files[0])

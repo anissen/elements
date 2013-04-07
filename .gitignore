@@ -53,3 +53,5 @@ node_modules
 deploy.sh
 
 db
+
+config/config.js
