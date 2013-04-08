@@ -50,7 +50,7 @@ GameSchema.methods = {
     this.save(cb);
   }
 
-}
+};
 
 /**
  * Statics

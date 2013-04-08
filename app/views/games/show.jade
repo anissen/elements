@@ -16,8 +16,8 @@ block content
       p Stuff can also go here
 
   .row
-    .span12
-      for player in game.players
+    for player in game.players
+      .span4
         .well
           h3 #{player.user.name}
           ul
