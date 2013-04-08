@@ -13,15 +13,8 @@ var GameSchema = new Schema({
     user: { type: Schema.ObjectId, ref: 'User' },
     cards: [String]
   }],
-  //playable: Boolean,
+  invites: [{ type: Schema.ObjectId, ref: 'User' }],
   owner: {type: Schema.ObjectId, ref: 'User'},
-  /*
-  comments: [{
-    body: { type: String, "default": '' },
-    user: { type: Schema.ObjectId, ref: 'User' },
-    createdAt: { type: Date, "default": Date.now }
-  }],
-  */
   createdAt : {type: Date, "default": Date.now}
 });
 
@@ -29,11 +22,10 @@ var GameSchema = new Schema({
  * Validations
  */
 
+GameSchema.path('invites').validate(function (invites) {
+  return invites && invites.length > 0;
+}, 'You must invite somebody to play against');
 /*
-GameSchema.path('title').validate(function (title) {
-  return title.length > 0;
-}, 'Game title cannot be blank');
-
 GameSchema.path('body').validate(function (body) {
   return body.length > 0;
 }, 'Game body cannot be blank');
@@ -54,14 +46,6 @@ GameSchema.pre('remove', function (next) {
 
 GameSchema.methods = {
 
-  /**
-   * Save game and upload image
-   *
-   * @param {Object} images
-   * @param {Function} cb
-   * @api public
-   */
-
   uploadAndSave: function (images, cb) {
     this.save(cb);
   }
@@ -74,14 +58,6 @@ GameSchema.methods = {
 
 GameSchema.statics = {
 
-  /**
-   * Find game by id
-   *
-   * @param {ObjectId} id
-   * @param {Function} cb
-   * @api public
-   */
-
   load: function (id, cb) {
     this.findOne({ _id : id })
       .populate('owner', 'name')
@@ -89,19 +65,12 @@ GameSchema.statics = {
       .exec(cb);
   },
 
-  /**
-   * List games
-   *
-   * @param {Object} options
-   * @param {Function} cb
-   * @api public
-   */
-
   list: function (options, cb) {
     var criteria = options.criteria || {};
 
     this.find(criteria)
       .populate('owner', 'name')
+      .populate('invites', 'name')
       .sort({'createdAt': -1}) // sort by date
       .limit(options.perPage)
       .skip(options.perPage * options.page)

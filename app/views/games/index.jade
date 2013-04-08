@@ -9,14 +9,13 @@ block content
       each game in games
         li.span4
           .thumbnail
-            img(style="width: 400px; height: 300px;", src="http://lorempixel.com/400/300/abstract/?" + Math.random())
-            .caption
-              h5
-                a.title(href='/games/' + game._id, title=game.title) Game Title
-              p
-                span= formatDate(game.createdAt, "%b %d, %Y at %I:%M %p")
-                span &nbsp;| Owner:&nbsp;
-                a(href="/users/"+game.owner._id)=game.owner.name
+            a(href='/games/' + game._id)
+              img(style="width: 400px; height: 300px;", src="http://lorempixel.com/400/300/abstract/?" + Math.random()).img-rounded
+            h3.text-center
+              a(href='users/' + game.owner._id)=game.owner.name
+              each invitee in game.invites
+                | &nbsp; vs. &nbsp;
+                a(href='users/' + invitee._id)=invitee.name
 
   if (pages > 1)
     .pagination

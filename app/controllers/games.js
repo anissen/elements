@@ -37,14 +37,15 @@ exports.new = function(req, res) {
  */
 
 exports.create = function (req, res) {
-  var players = [
-    {
+  //["small-unit", "small-unit", "small-unit", "small-unit", "big-unit", "big-unit", "water", "water", "water", "water", "water", "water", "fireball"]
+  var game = new Game({
+    players: [{
       user: req.user,
-      cards: ["small-unit", "small-unit", "small-unit", "small-unit", "big-unit", "big-unit", "water", "water", "water", "water", "water", "water", "fireball"]
-    }
-  ];
-  var game = new Game({ players: players } /*req.body*/);
-  game.owner = req.user;
+      cards: req.body.cards
+    }],
+    invites: req.body.invites,
+    owner: req.user
+  });
 
   game.uploadAndSave(null, function (err) {
     if (err) {
