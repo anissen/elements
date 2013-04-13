@@ -23,7 +23,11 @@ var UserSchema = new Schema({
   facebook: {},
   twitter: {},
   github: {},
-  google: {}
+  google: {},
+  invites: [{
+    game: { type: Schema.ObjectId, ref: 'Game' },
+    invitedBy: { type: Schema.ObjectId, ref: 'Game' }
+  }]
 });
 
 /**
@@ -137,6 +141,7 @@ UserSchema.statics = {
 
     this.find(criteria)
       //.populate('user', 'name')
+      //.populate('invites', 'owner')
       .sort({'createdAt': -1}) // sort by date
       .limit(options.perPage)
       .skip(options.perPage * options.page)

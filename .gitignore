@@ -53,5 +53,6 @@ node_modules
 deploy.sh
 
 db
+old-db
 
 config/config.js

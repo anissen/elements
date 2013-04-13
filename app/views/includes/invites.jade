@@ -1,0 +1,7 @@
+if (req.isAuthenticated())
+  each invite in req.user.invites
+    .alert.alert-info
+      a(href="#", class="close", data-dismiss="alert") &times;
+      p #{invite.invitedBy.name} invited you to play a game. 
+        b
+          a(href="/games/" + invite.game) Accept invitation

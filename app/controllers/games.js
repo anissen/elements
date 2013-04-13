@@ -3,9 +3,10 @@
  * Module dependencies.
  */
 
-var mongoose = require('mongoose');
-    async = require('async');
-    Game = mongoose.model('Game');
+var mongoose = require('mongoose'),
+    async = require('async'),
+    Game = mongoose.model('Game'),
+    User = mongoose.model('User'),
     _ = require('underscore');
 
 /**
@@ -26,10 +27,16 @@ exports.game = function(req, res, next, id){
  */
 
 exports.new = function(req, res) {
-  res.render('games/new', {
-    title: 'New Game',
-    game: new Game({})
-  });
+  User
+    .find({}, {'name': 1})
+    .exec(function (err, users) {
+      console.log(users);
+      res.render('games/new', {
+        title: 'New Game',
+        game: new Game({}),
+        users: users
+      });
+    })
 };
 
 /**
@@ -38,17 +45,20 @@ exports.new = function(req, res) {
 
 exports.create = function (req, res) {
   //["small-unit", "small-unit", "small-unit", "small-unit", "big-unit", "big-unit", "water", "water", "water", "water", "water", "water", "fireball"]
+  var invites = [].concat(req.body.invites);
+
   var game = new Game({
     players: [{
       user: req.user,
       cards: req.body.cards
     }],
-    invites: req.body.invites,
+    invites: invites,
     owner: req.user
   });
 
   game.uploadAndSave(null, function (err) {
     if (err) {
+      console.log('error!', err);
       res.render('games/new', {
         title: 'New Game',
         game: game,
@@ -56,6 +66,22 @@ exports.create = function (req, res) {
       });
     }
     else {
+      console.log('invites', invites);
+      for (var key in invites) {
+        var invitee = invites[key];
+        User.findByIdAndUpdate(invitee, {
+          $addToSet: {
+            invites: {
+              game: game._id,
+              invitedBy: game.owner
+            }
+          }
+        }, function (err, user) {
+          if (err)
+            console.log('Error adding game ' + game._id + ' invite to user' + user._id);
+        });
+      }
+
       res.redirect('/games/'+game._id);
     }
   });

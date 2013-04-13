@@ -11,10 +11,10 @@ block content
           .thumbnail
             a(href='/games/' + game._id)
               img(style="width: 400px; height: 300px;", src="http://lorempixel.com/400/300/abstract/?" + Math.random()).img-rounded
-            h3.text-center
-              a(href='users/' + game.owner._id)=game.owner.name
+            h4.text-center
+              a(href='users/' + game.owner._id)=game.owner.name 
               each invitee in game.invites
-                | &nbsp; vs. &nbsp;
+                | &nbsp;vs. 
                 a(href='users/' + invitee._id)=invitee.name
 
   if (pages > 1)
