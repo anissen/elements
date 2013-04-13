@@ -26,12 +26,10 @@ module.exports = function (passport, config) {
         done(err, user);
       });*/
     User.findById(id)
-      .populate('invites.game')
+      .lean()
+      .populate('invites.invitedBy', 'name')
       .exec(function (err, user) {
-        User.populate(user, {path: 'invites.game.owner', select: 'name'}, function (err, user) {
-          console.log('sf user', user);
-          done(err, user);
-        });
+        done(err, user);
       });
   });
 

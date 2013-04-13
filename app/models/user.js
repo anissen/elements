@@ -26,7 +26,7 @@ var UserSchema = new Schema({
   google: {},
   invites: [{
     game: { type: Schema.ObjectId, ref: 'Game' },
-    invitedBy: { type: Schema.ObjectId, ref: 'Game' }
+    invitedBy: { type: Schema.ObjectId, ref: 'User' }
   }]
 });
 

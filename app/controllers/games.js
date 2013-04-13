@@ -30,7 +30,7 @@ exports.new = function(req, res) {
   User
     .find({}, {'name': 1})
     .exec(function (err, users) {
-      console.log(users);
+      // console.log(users);
       res.render('games/new', {
         title: 'New Game',
         game: new Game({}),
@@ -46,6 +46,7 @@ exports.new = function(req, res) {
 exports.create = function (req, res) {
   //["small-unit", "small-unit", "small-unit", "small-unit", "big-unit", "big-unit", "water", "water", "water", "water", "water", "water", "fireball"]
   var invites = [].concat(req.body.invites);
+  console.log('owner', req.user);
 
   var game = new Game({
     players: [{
