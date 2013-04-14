@@ -18,7 +18,7 @@ block content
   .row
     for player in game.players
       .span4
-        .well
+        .well.well-small
           h3 #{player.user.name}
           ul
             for card in player.cards

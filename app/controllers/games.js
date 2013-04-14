@@ -50,11 +50,11 @@ exports.create = function (req, res) {
 
   var game = new Game({
     players: [{
-      user: req.user,
+      user: req.user._id,
       cards: req.body.cards
     }],
     invites: invites,
-    owner: req.user
+    owner: req.user._id
   });
 
   game.uploadAndSave(null, function (err) {
