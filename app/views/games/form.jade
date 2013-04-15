@@ -21,20 +21,19 @@ block content
         .control-group
           label.control-label(for='title') Opponent
           .controls
-            //input.input-xlarge(type='text', name="players", value="", placeholder='Enter an opponent or leave blank for random')
-            select(multiple, name="invites")
-              //option(value="#{req.user._id}", selected) #{req.user.name}
+            select(name="invites").input-large
               each user in users
                 option(value=user._id)=user.name
 
         .control-group
           label.control-label(for='desc') Cards
           .controls
-            select(multiple, name="cards")
+            select(multiple, name="cards").input-large
               option(value="small-guy") Cannon Fodder
               option(value="big-guy") Big Guy
-              option(value="water") Water
-              option(value="water") Water
+              option(value="water1") Water
+              option(value="water2") Water
+              option(value="regenerator") Regenerator
 
         .form-actions
           button.btn.btn-primary(type='submit') Save changes

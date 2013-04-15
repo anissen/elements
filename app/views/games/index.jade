@@ -8,7 +8,7 @@ block content
     ul.thumbnails
       each game in games
         li.span4
-          .thumbnail
+          .thumbnail.well.well-small
             a(href='/games/' + game._id)
               img(style="width: 400px; height: 300px;", src="http://lorempixel.com/400/300/abstract/?" + Math.random()).img-rounded
             h4.text-center

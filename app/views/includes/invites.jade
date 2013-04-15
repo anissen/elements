@@ -2,7 +2,7 @@ if (req.isAuthenticated())
   each invite in req.user.invites
     .alert.alert-info
       a(href="#", class="close", data-dismiss="alert") &times;
-      p 
+      p.lead 
         a(href="/users/" + invite.invitedBy._id) #{invite.invitedBy.name}
         | &nbsp;invited you to play a game. 
         b 
