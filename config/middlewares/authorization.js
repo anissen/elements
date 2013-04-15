@@ -44,5 +44,9 @@ exports.game = {
         return res.redirect('/games/'+req.game.id);
       }
       next();
+    },
+    isInvited : function (req, res, next) {
+      -- is user invited?
+      next();
     }
 };

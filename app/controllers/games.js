@@ -36,7 +36,7 @@ exports.new = function(req, res) {
         game: new Game({}),
         users: users
       });
-    })
+    });
 };
 
 /**
@@ -118,6 +118,22 @@ exports.update = function(req, res){
       res.redirect('/games/' + game._id);
     }
   });
+};
+
+exports.acceptInvitation = function(req, res) {
+  var game = req.game;
+  var user = req.user;
+  game.players.push({ user: user, cards: ['some', 'dummy', 'cards'] });
+  game.uploadAndSave(null, function(err) {
+    if (err) {
+      console.log('error!', err);
+    } else {
+      res.render('games/show', {
+        title: game.title,
+        game: game
+      });
+    }
+  })
 };
 
 /**

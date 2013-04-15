@@ -28,6 +28,7 @@ module.exports = function (app, passport, auth) {
   app.post('/games', auth.requiresLogin, games.create);
   app.get('/games/:id', games.show);
   app.get('/games/:id/edit', auth.requiresLogin, auth.game.hasAuthorization, games.edit);
+  app.get('/games/:id/accept', auth.requiresLogin, auth.game.isInvited, games.acceptInvitation);
   app.put('/games/:id', auth.requiresLogin, auth.game.hasAuthorization, games.update);
   app.del('/games/:id', auth.requiresLogin, auth.game.hasAuthorization, games.destroy);
 

@@ -6,4 +6,4 @@ if (req.isAuthenticated())
         a(href="/users/" + invite.invitedBy._id) #{invite.invitedBy.name}
         | &nbsp;invited you to play a game. 
         b 
-          a(href="/games/" + invite.game) Accept invitation
+          a(href="/games/" + invite.game + "/accept") Accept invitation
