@@ -11,9 +11,9 @@ var mongoose = require('mongoose'),
 var GameSchema = new Schema({
   players: [{
     user: { type: Schema.ObjectId, ref: 'User' },
-    cards: [String]
+    cards: [String],
+    readyStatus: String
   }],
-  invites: [{ type: Schema.ObjectId, ref: 'User' }],
   owner: {type: Schema.ObjectId, ref: 'User'},
   createdAt : {type: Date, "default": Date.now}
 });
@@ -22,9 +22,9 @@ var GameSchema = new Schema({
  * Validations
  */
 
-GameSchema.path('invites').validate(function (invites) {
-  return invites && invites.length > 0;
-}, 'You must invite somebody to play against');
+// GameSchema.path('players').validate(function (players) {
+//   return players && players.length > 1;
+// }, 'You must invite somebody to play against');
 /*
 GameSchema.path('body').validate(function (body) {
   return body.length > 0;
@@ -74,7 +74,6 @@ GameSchema.statics = {
       .find(criteria)
       .lean()
       .populate('owner', 'name')
-      .populate('invites', 'name')
       .sort({'createdAt': -1}) // sort by date
       .limit(options.perPage)
       .skip(options.perPage * options.page)

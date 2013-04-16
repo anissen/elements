@@ -123,21 +123,25 @@ exports.update = function(req, res){
 exports.acceptInvitation = function(req, res) {
   var game = req.game;
   var user = req.user;
-  game.players.push({ user: user._id, cards: ['some', 'dummy', 'cards'] });
+  //game.players.push({ user: user._id, cards: ['some', 'dummy', 'cards'] });
+  console.log("players", game.players);
+  var player = _.findWhere(game.players, { user: { _id: user._id, name: user.name } });
+  console.log('player', player);
+  player.readyStatus = 'accepted';
+
   game.uploadAndSave(null, function(err) {
     if (err) {
       console.log('error!', err);
     } else {
-      User.findByIdAndUpdate(invitee, {
-        $addToSet: {
+      User.findByIdAndUpdate(user._id, {
+        $pull: {
           invites: {
-            game: game._id,
-            invitedBy: game.owner
+            game: game._id
           }
         }
       }, function (err, user) {
         if (err)
-          console.log('Error adding game ' + game._id + ' invite to user' + user._id);
+          console.log('Error removing game ' + game._id + ' invite from user' + user._id);
       });
 
       res.render('games/show', {
