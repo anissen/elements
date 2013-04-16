@@ -59,7 +59,9 @@ GameSchema.methods = {
 GameSchema.statics = {
 
   load: function (id, cb) {
-    this.findOne({ _id : id })
+    this
+      .findOne({ _id : id })
+      //.lean()
       .populate('owner', 'name')
       .populate('players.user', 'name')
       .exec(cb);
@@ -68,7 +70,9 @@ GameSchema.statics = {
   list: function (options, cb) {
     var criteria = options.criteria || {};
 
-    this.find(criteria)
+    this
+      .find(criteria)
+      .lean()
       .populate('owner', 'name')
       .populate('invites', 'name')
       .sort({'createdAt': -1}) // sort by date

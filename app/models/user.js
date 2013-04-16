@@ -140,6 +140,7 @@ UserSchema.statics = {
     var criteria = options.criteria || {};
 
     this.find(criteria)
+      .lean()
       //.populate('user', 'name')
       //.populate('invites', 'owner')
       .sort({'createdAt': -1}) // sort by date

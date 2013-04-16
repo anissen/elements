@@ -123,17 +123,29 @@ exports.update = function(req, res){
 exports.acceptInvitation = function(req, res) {
   var game = req.game;
   var user = req.user;
-  game.players.push({ user: user, cards: ['some', 'dummy', 'cards'] });
+  game.players.push({ user: user._id, cards: ['some', 'dummy', 'cards'] });
   game.uploadAndSave(null, function(err) {
     if (err) {
       console.log('error!', err);
     } else {
+      User.findByIdAndUpdate(invitee, {
+        $addToSet: {
+          invites: {
+            game: game._id,
+            invitedBy: game.owner
+          }
+        }
+      }, function (err, user) {
+        if (err)
+          console.log('Error adding game ' + game._id + ' invite to user' + user._id);
+      });
+
       res.render('games/show', {
         title: game.title,
         game: game
       });
     }
-  })
+  });
 };
 
 /**
