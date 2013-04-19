@@ -26,7 +26,7 @@ block content
 
   p
     br
-    form.center.form-inline.confirm(action="/games/" + game.id, method="post")
+    form.center.form-inline.confirm(action="/games/" + game._id, method="post")
       a.btn(href='/games/' + game._id + '/edit', title="edit") Edit
       &nbsp;&nbsp;
       input(type="hidden", name="_method", value="DELETE")

@@ -12,7 +12,7 @@ var GameSchema = new Schema({
   players: [{
     user: { type: Schema.ObjectId, ref: 'User' },
     cards: [String],
-    readyStatus: String
+    readyState: String
   }],
   owner: {type: Schema.ObjectId, ref: 'User'},
   createdAt : {type: Date, "default": Date.now}
@@ -59,9 +59,10 @@ GameSchema.methods = {
 GameSchema.statics = {
 
   load: function (id, cb) {
+    console.log('attempting to load ' + id);
     this
       .findOne({ _id : id })
-      .lean()
+      //.lean()
       .populate('owner', 'name')
       .populate('players.user', 'name')
       .exec(cb);

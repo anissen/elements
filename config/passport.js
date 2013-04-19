@@ -18,14 +18,6 @@ module.exports = function (passport, config) {
   });
 
   passport.deserializeUser(function(id, done) {
-    /*User.findById(id)
-      //.populate('invites.game', '')
-      .populate('invites.invitedBy', 'name')
-      //.populate('invites.owner', 'name')
-      .exec(function (err, user) {
-        console.log(user);
-        done(err, user);
-      });*/
     User
       .findById(id)
       .lean()
@@ -33,6 +25,8 @@ module.exports = function (passport, config) {
 
         Game
           .find({ 'players.user': id })
+          .lean()
+          .select('owner players')
           .populate('owner', 'name')
           .exec(function (err, games) {
             console.log('games', games);

@@ -13,7 +13,10 @@ var mongoose = require('mongoose'),
  * Find game by id
  */
 
-exports.game = function(req, res, next, id){
+exports.game = function(req, res, next, id) {
+  console.trace('track');
+  console.log('finding game with id ' + id);
+
   Game.load(id, function (err, game) {
     if (err) return next(err);
     if (!game) return next(new Error('Failed to load game ' + id));
@@ -44,12 +47,12 @@ exports.new = function(req, res) {
  */
 
 exports.create = function (req, res) {
-  var owner = {
+  var player = {
     user: req.user._id,
     cards: req.body.cards,
     readyState: 'ready'
   };
-  var invitedPlayers = _.map(req.body.invites, function (playerId) {
+  var invitedPlayers = _.map([].concat(req.body.invites), function (playerId) {
     return {
       user: playerId,
       cards: [],
@@ -58,7 +61,7 @@ exports.create = function (req, res) {
   });
 
   var game = new Game({
-    players: [owner].concat(invitedPlayers),
+    players: [player].concat(invitedPlayers),
     owner: req.user._id
   });
 
@@ -71,24 +74,8 @@ exports.create = function (req, res) {
         errors: err.errors
       });
     }
-    // else {
-    //   console.log('invites', invites);
-    //   for (var key in invites) {
-    //     var invitee = invites[key];
-    //     User.findByIdAndUpdate(invitee, {
-    //       $addToSet: {
-    //         invites: {
-    //           game: game._id,
-    //           invitedBy: game.owner
-    //         }
-    //       }
-    //     }, function (err, user) {
-    //       if (err)
-    //         console.log('Error adding game ' + game._id + ' invite to user' + user._id);
-    //     });
-    //   }
 
-      res.redirect('/games/'+game._id);
+    res.redirect('/games/' + game._id);
   });
 };
 
@@ -125,34 +112,15 @@ exports.update = function(req, res){
 };
 
 exports.acceptInvitation = function(req, res) {
-  var game = req.game;
-  var user = req.user;
-  //game.players.push({ user: user._id, cards: ['some', 'dummy', 'cards'] });
-  console.log("players", game.players);
-  var player = _.findWhere(game.players, { user: { _id: user._id, name: user.name } });
-  console.log('player', player);
-  player.readyState = 'accepted';
-
-  game.uploadAndSave(null, function(err) {
-    if (err) {
-      console.log('error!', err);
-    } else {
-      User.findByIdAndUpdate(user._id, {
-        $pull: {
-          invites: {
-            game: game._id
-          }
-        }
-      }, function (err, user) {
-        if (err)
-          console.log('Error removing game ' + game._id + ' invite from user' + user._id);
-      });
-
-      res.render('games/show', {
-        title: game.title,
-        game: game
-      });
+  for (var i = 0; i < req.game.players.length; i++) {
+    var player = req.game.players[i];
+    if (player.user === req.user._id) {
+      console.log('asf');
     }
+  }
+  res.render('games/show', {
+    title: 'some game',
+    game: req.game
   });
 };
 
@@ -173,8 +141,13 @@ exports.show = function(req, res){
 
 exports.destroy = function(req, res){
   var game = req.game;
-  game.remove(function(err){
-    // req.flash('notice', 'Deleted successfully')
+  game.remove(function(err) {
+    if (err)
+      req.flash('notice', 'Could not delete: ' + err);
+    else
+      req.flash('notice', 'Deleted successfully');
+
+    console.log('redirecting to /games');
     res.redirect('/games');
   });
 };
