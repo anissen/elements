@@ -13,9 +13,9 @@ block content
               img(style="width: 400px; height: 300px;", src="http://lorempixel.com/400/300/abstract/?" + Math.random()).img-rounded
             h4.text-center
               a(href='users/' + game.owner._id)=game.owner.name 
-              each invitee in game.invites
+              each player in game.players
                 | &nbsp;vs. 
-                a(href='users/' + invitee._id)=invitee.name
+                a(href='users/' + player._id)=player.name
 
   if (pages > 1)
     .pagination

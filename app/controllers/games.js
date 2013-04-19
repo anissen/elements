@@ -44,16 +44,21 @@ exports.new = function(req, res) {
  */
 
 exports.create = function (req, res) {
-  //["small-unit", "small-unit", "small-unit", "small-unit", "big-unit", "big-unit", "water", "water", "water", "water", "water", "water", "fireball"]
-  var invites = [].concat(req.body.invites);
-  console.log('owner', req.user);
+  var owner = {
+    user: req.user._id,
+    cards: req.body.cards,
+    readyState: 'ready'
+  };
+  var invitedPlayers = _.map(req.body.invites, function (playerId) {
+    return {
+      user: playerId,
+      cards: [],
+      readyState: 'pending'
+    };
+  });
 
   var game = new Game({
-    players: [{
-      user: req.user._id,
-      cards: req.body.cards
-    }],
-    invites: invites,
+    players: [owner].concat(invitedPlayers),
     owner: req.user._id
   });
 
@@ -66,25 +71,24 @@ exports.create = function (req, res) {
         errors: err.errors
       });
     }
-    else {
-      console.log('invites', invites);
-      for (var key in invites) {
-        var invitee = invites[key];
-        User.findByIdAndUpdate(invitee, {
-          $addToSet: {
-            invites: {
-              game: game._id,
-              invitedBy: game.owner
-            }
-          }
-        }, function (err, user) {
-          if (err)
-            console.log('Error adding game ' + game._id + ' invite to user' + user._id);
-        });
-      }
+    // else {
+    //   console.log('invites', invites);
+    //   for (var key in invites) {
+    //     var invitee = invites[key];
+    //     User.findByIdAndUpdate(invitee, {
+    //       $addToSet: {
+    //         invites: {
+    //           game: game._id,
+    //           invitedBy: game.owner
+    //         }
+    //       }
+    //     }, function (err, user) {
+    //       if (err)
+    //         console.log('Error adding game ' + game._id + ' invite to user' + user._id);
+    //     });
+    //   }
 
       res.redirect('/games/'+game._id);
-    }
   });
 };
 
@@ -127,7 +131,7 @@ exports.acceptInvitation = function(req, res) {
   console.log("players", game.players);
   var player = _.findWhere(game.players, { user: { _id: user._id, name: user.name } });
   console.log('player', player);
-  player.readyStatus = 'accepted';
+  player.readyState = 'accepted';
 
   game.uploadAndSave(null, function(err) {
     if (err) {

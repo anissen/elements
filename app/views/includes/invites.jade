@@ -3,7 +3,7 @@ if (req.isAuthenticated())
     .alert.alert-info
       a(href="#", class="close", data-dismiss="alert") &times;
       p.lead 
-        a(href="/users/" + invite.invitedBy._id) #{invite.invitedBy.name}
+        a(href="/users/" + invite.owner._id) #{invite.owner.name}
         | &nbsp;invited you to play a game. 
         b 
-          a(href="/games/" + invite.game + "/accept") Accept invitation
+          a(href="/games/" + invite._id + "/accept") Accept invitation

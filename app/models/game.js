@@ -61,7 +61,7 @@ GameSchema.statics = {
   load: function (id, cb) {
     this
       .findOne({ _id : id })
-      //.lean()
+      .lean()
       .populate('owner', 'name')
       .populate('players.user', 'name')
       .exec(cb);

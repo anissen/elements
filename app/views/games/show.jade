@@ -19,7 +19,7 @@ block content
     for player in game.players
       .span4
         .well.well-small
-          h3 #{player.user.name}
+          h3 #{player.user.name} (#{player.readyState})
           ul
             for card in player.cards
               li #{card}

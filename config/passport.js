@@ -5,7 +5,8 @@ var mongoose = require('mongoose'),
     FacebookStrategy = require('passport-facebook').Strategy,
     GitHubStrategy = require('passport-github').Strategy,
     GoogleStrategy = require('passport-google-oauth').Strategy,
-    User = mongoose.model('User');
+    User = mongoose.model('User'),
+    Game = mongoose.model('Game');
 
 
 module.exports = function (passport, config) {
@@ -25,11 +26,20 @@ module.exports = function (passport, config) {
         console.log(user);
         done(err, user);
       });*/
-    User.findById(id)
+    User
+      .findById(id)
       .lean()
-      .populate('invites.invitedBy', 'name')
       .exec(function (err, user) {
-        done(err, user);
+
+        Game
+          .find({ 'players.user': id })
+          .populate('owner', 'name')
+          .exec(function (err, games) {
+            console.log('games', games);
+            user.invites = games;
+            done(err, user);
+          });
+
       });
   });
 
