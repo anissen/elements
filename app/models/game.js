@@ -59,7 +59,6 @@ GameSchema.methods = {
 GameSchema.statics = {
 
   load: function (id, cb) {
-    console.log('attempting to load ' + id);
     this
       .findOne({ _id : id })
       //.lean()

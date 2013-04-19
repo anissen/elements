@@ -32,7 +32,8 @@ block content
   p
     br
     form.center.form-inline.confirm(action="/games/" + game._id, method="post")
-      a.btn(href='/games/' + game._id + '/edit', title="edit") Edit
-      &nbsp;&nbsp;
-      input(type="hidden", name="_method", value="DELETE")
-      button.btn.btn-danger(type="submit") delete
+      .form-actions.pull-right
+        a.btn(href='/games/' + game._id + '/edit', title="edit") Edit
+        &nbsp;&nbsp;
+        input(type="hidden", name="_method", value="DELETE")
+        button.btn.btn-danger(type="submit") Delete

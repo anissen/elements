@@ -29,7 +29,6 @@ module.exports = function (passport, config) {
           .select('owner players')
           .populate('owner', 'name')
           .exec(function (err, games) {
-            console.log('games', games);
             user.invites = games;
             done(err, user);
           });

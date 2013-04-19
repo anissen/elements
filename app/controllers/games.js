@@ -14,9 +14,6 @@ var mongoose = require('mongoose'),
  */
 
 exports.game = function(req, res, next, id) {
-  console.trace('track');
-  console.log('finding game with id ' + id);
-
   Game.load(id, function (err, game) {
     if (err) return next(err);
     if (!game) return next(new Error('Failed to load game ' + id));
@@ -112,15 +109,22 @@ exports.update = function(req, res){
 };
 
 exports.acceptInvitation = function(req, res) {
-  for (var i = 0; i < req.game.players.length; i++) {
-    var player = req.game.players[i];
-    if (player.user === req.user._id) {
-      console.log('asf');
-    }
-  }
-  res.render('games/show', {
-    title: 'some game',
-    game: req.game
+  _.chain(req.game.players)
+    .filter(function(player) {
+      return player.user.readyState === 'pending' &&
+        player.user._id.toString() === req.user._id.toString();
+    })
+    .each(function(user) {
+      user.readyState = 'accepted';
+    });
+
+  req.game.save(function (err) {
+    if (err)
+      res.redirect('/games');
+    res.render('games/show', {
+      title: 'some game',
+      game: req.game
+    });
   });
 };
 
@@ -147,7 +151,6 @@ exports.destroy = function(req, res){
     else
       req.flash('notice', 'Deleted successfully');
 
-    console.log('redirecting to /games');
     res.redirect('/games');
   });
 };
