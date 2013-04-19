@@ -4,22 +4,27 @@ block main
   h1= game.title
 
 block content
-  .row
-    .span9
-      p=game.body
-      p.author
-        span Owner :&nbsp;
-        a(href="/users/"+game.owner._id)=game.owner.name
-      .date= formatDate(game.createdAt, "%b %d, %Y at %I:%M %p")
+  //- .row
+  //-   .span9
+  //-     p=game.body
+  //-     p.author
+  //-       span Owner :&nbsp;
+  //-       a(href="/users/"+game.owner._id)=game.owner.name
+  //-     .date= formatDate(game.createdAt, "%b %d, %Y at %I:%M %p")
 
-    .span3
-      p Stuff can also go here
+  //-   .span3
+  //-     p Stuff can also go here
 
   .row
     for player in game.players
       .span4
         .well.well-small
-          h3 #{player.user.name} (#{player.readyState})
+          p.lead 
+            a(href='/users/' + player.user._id)=player.user.name
+            case player.readyState
+              when 'pending': span.text-error &nbsp;(pending)
+              when 'accepted': span.text-warning &nbsp;(accepted)
+              when 'ready': span.text-success &nbsp;(ready)
           ul
             for card in player.cards
               li #{card}

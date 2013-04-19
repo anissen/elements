@@ -75,6 +75,7 @@ GameSchema.statics = {
       .find(criteria)
       .lean()
       .populate('owner', 'name')
+      .populate('players.user', 'name')
       .sort({'createdAt': -1}) // sort by date
       .limit(options.perPage)
       .skip(options.perPage * options.page)
