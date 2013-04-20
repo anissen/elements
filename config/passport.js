@@ -25,6 +25,7 @@ module.exports = function (passport, config) {
 
         Game
           .find({ 'players.user': id })
+          .where('players.readyState').equals('pending')
           .lean()
           .select('owner players')
           .populate('owner', 'name')

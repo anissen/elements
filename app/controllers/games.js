@@ -111,11 +111,11 @@ exports.update = function(req, res){
 exports.acceptInvitation = function(req, res) {
   _.chain(req.game.players)
     .filter(function(player) {
-      return player.user.readyState === 'pending' &&
+      return player.readyState === 'pending' &&
         player.user._id.toString() === req.user._id.toString();
     })
-    .each(function(user) {
-      user.readyState = 'accepted';
+    .each(function(player) {
+      player.readyState = 'accepted';
     });
 
   req.game.save(function (err) {
