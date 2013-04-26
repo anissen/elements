@@ -7,7 +7,8 @@ var mongoose = require('mongoose'),
     async = require('async'),
     Game = mongoose.model('Game'),
     User = mongoose.model('User'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    api = require('../../game-server/api');
 
 /**
  * Find game by id
@@ -136,6 +137,21 @@ exports.show = function(req, res){
   res.render('games/show', {
     title: req.game.title,
     game: req.game
+  });
+};
+
+exports.play = function(req, res){
+  res.render('games/play', {
+    title: 'playing!',
+    game: req.game
+  });
+};
+
+exports.getState = function(req, res) {
+  console.log('attempting to get state!');
+  var actionCount = req.params['actionCount'];
+  api.getGameState(actionCount, function(state) {
+    res.send(state);
   });
 };
 

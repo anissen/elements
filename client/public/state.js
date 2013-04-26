@@ -4,8 +4,8 @@ function stateCtrl($scope, $http) {
   $scope.selectedUnit = null;
 
   $scope.getState = function() {
-    var nextActionCount = $scope.state.actionCount + 1;
-    $http.get('game/42/' + nextActionCount)
+    var nextActionCount = ($scope.state.actionCount || 0) + 1;
+    $http.get('' + nextActionCount)
       .success(function(state) {
         $scope.state = state;
       })

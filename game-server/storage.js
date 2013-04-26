@@ -5,7 +5,7 @@ module.exports = function (config) {
   var _ = config.underscore;
 
   module.persistEvent = function(eventData) {
-    GameModel.findOneAndUpdate({id: 43}, { $push: { actions: eventData } }, function (err, game) {
+    GameModel.findOneAndUpdate({_id: '5172ff550a40dee13f000003'}, { $push: { actions: eventData } }, function (err, game) {
       if (err) {
         console.log('persistEvent failed: ', err);
         return;
@@ -19,7 +19,7 @@ module.exports = function (config) {
   };
 
   module.persistEvents = function(eventsData) {
-    GameModel.findOneAndUpdate({id: 43}, { $push: { actions: { $each: eventsData } } }, function (err, game) {
+    GameModel.findOneAndUpdate({_id: '5172ff550a40dee13f000003'}, { $push: { actions: { $each: eventsData } } }, function (err, game) {
       if (err) {
         console.log('persistEvent failed: ', err);
         return;
@@ -33,7 +33,7 @@ module.exports = function (config) {
   };
 
   module.getEvents = function(callback, eventCount) {
-    GameModel.findOne({id: 43}, function (err, game) {
+    GameModel.findOne({_id: '5172ff550a40dee13f000003'}, function (err, game) {
       if (err) {
         console.log('getEvents failed: ', err);
         callback([]);

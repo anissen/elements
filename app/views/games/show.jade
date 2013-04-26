@@ -4,17 +4,6 @@ block main
   h1= game.title
 
 block content
-  //- .row
-  //-   .span9
-  //-     p=game.body
-  //-     p.author
-  //-       span Owner :&nbsp;
-  //-       a(href="/users/"+game.owner._id)=game.owner.name
-  //-     .date= formatDate(game.createdAt, "%b %d, %Y at %I:%M %p")
-
-  //-   .span3
-  //-     p Stuff can also go here
-
   .row
     for player in game.players
       .span4

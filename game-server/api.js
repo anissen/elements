@@ -8,9 +8,9 @@ var Game = require('./game'),
 
 // --------
 
-var databaseConnectionString = process.env.ELEMENTS_MONGODB_CONNECTION_STRING || 'mongodb://localhost/elements';
-mongoose.connect(databaseConnectionString);
-console.log('Database string: ' + databaseConnectionString);
+// var databaseConnectionString = process.env.ELEMENTS_MONGODB_CONNECTION_STRING || 'mongodb://localhost/elements';
+// mongoose.connect(databaseConnectionString);
+// console.log('Database string: ' + databaseConnectionString);
 
 var gameSchema = mongoose.Schema({
   id: Number,
