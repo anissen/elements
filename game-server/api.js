@@ -13,7 +13,6 @@ var Game = require('./game'),
 // console.log('Database string: ' + databaseConnectionString);
 
 var gameSchema = mongoose.Schema({
-  id: Number,
   actions: [{ action: String, data: mongoose.Schema.Types.Mixed }]
 });
 
@@ -30,8 +29,8 @@ module.exports = (function () {
 
   var module = {};
 
-  module.performAction = function(eventData, callback) {
-    storage.getEvents(function (events) {
+  module.performAction = function(gameId, eventData, callback) {
+    storage.getEvents(gameId, function (events) {
       var state = Game.playEvents(events);
 
       var gameActions = new GameActions(state);
@@ -48,20 +47,20 @@ module.exports = (function () {
         return;
       }
 
-      storage.persistEvent(eventData);
+      storage.persistEvent(gameId, eventData);
 
       // HACK:
       if (eventData.action === 'endTurn') {
         var nextPlayer = state.players[(state.currentPlayer+1)%state.players.length];
         if (nextPlayer.type === 'ai')
-          takeTurnByAI();
+          takeTurnByAI(gameId);
       }
 
       callback(result);
     });
   };
 
-  function takeTurnByAI() {
+  function takeTurnByAI(gameId) {
 
     var generateAIActions = function (events) {
       var aiActions = [];
@@ -98,10 +97,10 @@ module.exports = (function () {
           break;
       }
 
-      storage.persistEvents(aiActions);
+      storage.persistEvents(gameId, aiActions);
     };
 
-    storage.getEvents(generateAIActions);
+    storage.getEvents(gameId, generateAIActions);
   }
 
   function getValueForAction(state, action) {
@@ -111,10 +110,10 @@ module.exports = (function () {
     return value;
   }
 
-  module.getGameState = function(actionCount, callback) {
+  module.getGameState = function(gameId, actionCount, callback) {
     var startTime = (new Date()).getTime();
 
-    var events = storage.getEvents(function(events) {
+    var events = storage.getEvents(gameId, function(events) {
       var state = Game.playEvents(events);
 
       var endTime = (new Date()).getTime();

@@ -155,14 +155,14 @@ exports.play = function(req, res){
 
 exports.getState = function(req, res) {
   var actionCount = req.params['actionCount'];
-  api.getGameState(actionCount, function(state) {
+  api.getGameState(req.game._id, actionCount, function(state) {
     res.send(state);
   });
 };
 
 exports.performAction = function(req, res) {
   var eventData = req.body;
-  api.performAction(eventData, function(result) {
+  api.performAction(req.game._id, eventData, function(result) {
     res.send(result);
   });
 };

@@ -4,8 +4,8 @@ module.exports = function (config) {
   var GameModel = config.Model;
   var _ = config.underscore;
 
-  module.persistEvent = function(eventData) {
-    GameModel.findOneAndUpdate({_id: '5172ff550a40dee13f000003'}, { $push: { actions: eventData } }, function (err, game) {
+  module.persistEvent = function(gameId, eventData) {
+    GameModel.findOneAndUpdate({_id: gameId}, { $push: { actions: eventData } }, function (err, game) {
       if (err) {
         console.log('persistEvent failed: ', err);
         return;
@@ -18,8 +18,8 @@ module.exports = function (config) {
     });
   };
 
-  module.persistEvents = function(eventsData) {
-    GameModel.findOneAndUpdate({_id: '5172ff550a40dee13f000003'}, { $push: { actions: { $each: eventsData } } }, function (err, game) {
+  module.persistEvents = function(gameId, eventsData) {
+    GameModel.findOneAndUpdate({_id: gameId}, { $push: { actions: { $each: eventsData } } }, function (err, game) {
       if (err) {
         console.log('persistEvent failed: ', err);
         return;
@@ -32,8 +32,8 @@ module.exports = function (config) {
     });
   };
 
-  module.getEvents = function(callback, eventCount) {
-    GameModel.findOne({_id: '5172ff550a40dee13f000003'}, function (err, game) {
+  module.getEvents = function(gameId, callback, eventCount) {
+    GameModel.findOne({_id: gameId}, function (err, game) {
       if (err) {
         console.log('getEvents failed: ', err);
         callback([]);
