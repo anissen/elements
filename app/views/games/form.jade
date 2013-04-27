@@ -13,7 +13,7 @@ block content
           li= error.type
 
   .row
-    .span7
+    .col-span-7
       form.form-horizontal(method="post", action=action)
         if (!game.isNew)
           input(type="hidden", name="_method", value="PUT")
@@ -21,14 +21,14 @@ block content
         .control-group
           label.control-label(for='title') Opponent
           .controls
-            select(name="invites").input-large
+            select(name="invites")
               each user in users
                 option(value=user._id)=user.name
 
         .control-group
           label.control-label(for='desc') Cards
           .controls
-            select(multiple, name="cards").input-large
+            select(multiple, name="cards")
               option(value="small-guy") Cannon Fodder
               option(value="big-guy") Big Guy
               option(value="water1") Water

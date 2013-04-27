@@ -1,23 +1,26 @@
 
 header#header
-  .navbar.navbar-fixed-top(role='navigation')
-    .navbar-inner
-      .container
-        a.brand(href='/') Elements
-        .nav-collapse.collapse
-          ul.nav
+  .navbar
+    .container
+      a.navbar-toggle(data-toggle='collapse', data-target='.nav-collapse')
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      a.navbar-brand(href='/') Elements
+      .nav-collapse.collapse
+        ul.nav
+          li(class=(req.path === '/games') ? 'active' : '')
+            a(href='/games', title="games").active Games
+          li(class=(req.path === '/games/new') ? 'active' : '')
+            a(href="/games/new", title="new game") New game
+          li(class=(req.path === '/users') ? 'active' : '')
+            a(href="/users", title="users") Users
+        ul.nav.pull-right
+          if (req.isAuthenticated())
+            li(class=(req.path === '/users/' + req.user._id) ? 'active' : '')
+              a(href="/users/" + req.user._id, title="Profile") Profile (#{req.user.name})
             li
-              a(href='/games', title="game listing") Games
+              a(href="/logout", title="logout") Logout
+          else
             li
-              a(href="/games/new", title="new game") New game
-            li
-              a(href="/users", title="users") Users
-          ul.nav.pull-right
-            if (req.isAuthenticated())
-              li
-                a(href="/users/"+req.user.id, title="Profile") Profile (#{req.user.name})
-              li
-                a(href="/logout", title="logout") Logout
-            else
-              li
-                a(href="/login", title="Login") Login
+              a(href="/login", title="Login") Login

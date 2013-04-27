@@ -415,6 +415,7 @@ var bootbox = window.bootbox || (function($) {
         }
 
         var parts = ["<div class='bootbox modal'>"];
+        parts.push("<div class='modal-dialog'><div class='modal-content'>");
 
         if (options['header']) {
             var closeButton = '';
@@ -429,10 +430,10 @@ var bootbox = window.bootbox || (function($) {
         parts.push("<div class='modal-body'></div>");
 
         if (buttons) {
-            parts.push("<div class='modal-footer'>"+buttons+"</div>")
+            parts.push("<div class='modal-footer'>"+buttons+"</div>");
         }
 
-        parts.push("</div>");
+        parts.push("</div></div></div>");
 
         var div = $(parts.join("\n"));
 

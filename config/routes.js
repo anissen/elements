@@ -37,5 +37,5 @@ module.exports = function (app, passport, auth) {
   app.param('id', games.game);
 
   // home route
-  app.get('/', games.index);
+  app.get('/', function (req, res) { res.render('index'); });
 };

@@ -4,13 +4,13 @@ block main
   h1 Game
 
 block content
-  .row-fluid
-    ul.thumbnails
-      each game in games
-        li.span4
-          .thumbnail.well.well-small
-            a(href='/games/' + game._id)
-              img(style="width: 400px; height: 300px;", src="http://lorempixel.com/400/300/abstract/?" + Math.random()).img-rounded
+  .row
+    each game in games
+      .col-span-4
+        .thumbnail.well.well-small
+          a(href='/games/' + game._id)
+            img(style="width: 400px; height: 300px;", src="http://lorempixel.com/400/300/abstract/?" + Math.random()).img-rounded
+          .caption
             h4.text-center
               each player, index in game.players
                 a(href='users/' + player.user._id)=player.user.name

@@ -31,7 +31,6 @@ exports.new = function(req, res) {
   User
     .find({}, {'name': 1})
     .exec(function (err, users) {
-      // console.log(users);
       res.render('games/new', {
         title: 'New Game',
         game: new Game({}),
@@ -82,10 +81,17 @@ exports.create = function (req, res) {
  */
 
 exports.edit = function (req, res) {
-  res.render('games/edit', {
-    title: 'Edit '+req.game.title,
-    game: req.game
-  });
+  User
+    .find({}, {'name': 1})
+    .exec(function (err, users) {
+
+      res.render('games/edit', {
+        title: 'Edit '+req.game.title,
+        users: users,
+        game: req.game
+      });
+
+    });
 };
 
 /**

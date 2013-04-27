@@ -6,7 +6,7 @@ block main
 block content
   .row
     for player in game.players
-      .span4
+      .col-span-4
         .well.well-small
           p.lead 
             a(href='/users/' + player.user._id)=player.user.name
