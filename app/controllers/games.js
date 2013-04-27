@@ -154,10 +154,16 @@ exports.play = function(req, res){
 };
 
 exports.getState = function(req, res) {
-  console.log('attempting to get state!');
   var actionCount = req.params['actionCount'];
   api.getGameState(actionCount, function(state) {
     res.send(state);
+  });
+};
+
+exports.performAction = function(req, res) {
+  var eventData = req.body;
+  api.performAction(eventData, function(result) {
+    res.send(result);
   });
 };
 

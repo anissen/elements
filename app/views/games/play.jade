@@ -7,79 +7,71 @@ block content
   section
     .row
       div(ng-controller='stateCtrl')
-        .span10
+        .col-span-10
           .alert.alert-important(ng-show='state.won == 1 || state.won == -1') {{state.players[1].id}} won the game!
           table(width='100%', style='min-height: 110px;')
             tr
               td(ng-repeat='card in getCardsInEnemyHand()')
-                .tile.well.well-small(class='player{{(state.currentPlayer+1)%2}}')
+                .tile(class='player{{(state.currentPlayer+1)%2}}')
                   p
-                    span.label.label-inverse.cardName ? ? ?
-          hr
+                    span.label.label-danger.cardName ? ? ?
+
           table(width='100%')
             tr(ng-repeat='row in state.board')
               td(ng-repeat='tile in row', width='20%')
                 div(ng-switch, on='tile.type')
-                  .tile.well.well-small.unit(class='.player{{tile.player}} selected-{{tile.selected}}', ng-switch-when='unit', ng-click='selectUnit(tile)')
+                  .tile.unit(class='player{{tile.player}} selected-{{tile.selected}}', ng-switch-when='unit', ng-click='selectUnit(tile)')
                     p
-                      span.label.label-inverse.cardName {{tile.name}}
+                      span.label.label-danger.cardName {{tile.name}}
                     p.emj.pull-left(ng-show='tile.player == 0', style='font-size: 4em; color: blue;') &#x1F30A;
                     p.emj.pull-left(ng-show='tile.player == 1', style='font-size: 4em; color: red;') &#x1F525;
-                    p
-                      | Attack:
-                      span.badge {{tile.attack}}
+                    p Attack: 
+                      span.label.label-success {{tile.attack}}
                       br
-                      | Life:
-                      span(ng-show='ng-show', tile.life='tile.life')
-                      span.badge(ng-show='tile.life == tile.maxLife') {{tile.life}}
-                  .tile.well.well-small.energy(class='player{{tile.player}} selected-{{tile.selected}}', ng-switch-when='energy', ng-click='selectEnergy(tile)')
+                      | Life: 
+                      span.label.label-success(ng-show='tile.life == tile.maxLife') {{tile.life}}
+                      span.label.label-danger(ng-show='tile.life != tile.maxLife') {{tile.life}}
+                  .tile.energy(class='player{{tile.player}} selected-{{tile.selected}}', ng-switch-when='energy', ng-click='selectEnergy(tile)')
                     p
-                      span.label.label-inverse.cardName {{tile.name}}
+                      span.label.label-danger.cardName {{tile.name}}
                     p.emj.pull-left(ng-show='tile.player == 0', style='font-size: 4em; color: blue;') &#x1F30A;
                     p.emj.pull-left(ng-show='tile.player == 1', style='font-size: 4em; color: red;') &#x1F525;
-                    p
-                      | Energy:
-                      span.badge {{tile.energy}}
+                    p Energy: 
+                      span.label.label-info {{tile.energy}}
                       br
-                      | Life:
-                      span(ng-show='ng-show', tile.life='tile.life')
-                      span.badge(ng-show='tile.life == tile.maxLife') {{tile.life}}
-                  .tile.well.well-small.empty(ng-switch-when='empty', ng-click='selectEmpty(tile)')
+                      | Life: 
+                      span.label.label-success(ng-show='tile.life == tile.maxLife') {{tile.life}}
+                      span.label.label-danger(ng-show='tile.life != tile.maxLife') {{tile.life}}
+                  .tile.empty(ng-switch-when='empty', ng-click='selectEmpty(tile)')
                   span(ng-switch-default) N/A
-          hr
+
           .alert.alert-success(ng-show='state.won == 0 || state.won == -1') {{state.players[0].id}} won the game!
           table(width='100%', style='min-height: 110px;')
             tr
               td(ng-repeat='card in getCardsInOwnHand()', ng-switch, on='card.type', ng-click='selectCard(card)')
-                .tile.well.well-small(class='player{{state.currentPlayer}} selected-{{card.selected}}', ng-switch-when='unit')
+                .tile.hand(class='player{{state.currentPlayer}} selected-{{card.selected}}', ng-switch-when='unit')
                   p
-                    span.label.label-inverse.cardName {{card.name}}
-                    span.badge.badge-info
-                      | {{card.cost}}
-                      span
-                  p
-                    | Attack: {{card.attack}}
+                    span.label.label-danger.cardName {{card.name}}
+                    | &nbsp;
+                    span.label.cardCost {{card.cost}}
+                  p Attack: {{card.attack}}
                     br
                     | Life: {{card.life}}
-                .tile.well.well-small.energy(class='player{{state.currentPlayer}} selected-{{card.selected}}', ng-switch-when='energy')
+                .tile.hand.energy(class='player{{state.currentPlayer}} selected-{{card.selected}}', ng-switch-when='energy')
                   p
-                    span.label.label-inverse.cardName {{card.name}}
-                    span.badge.badge-info
-                      | {{card.cost}}
-                      span
-                  p
-                    | Energy: {{card.energy}}
+                    span.label.label-danger.cardName {{card.name}}
+                    | &nbsp;
+                    span.label.cardCost {{card.cost}}
+                  p Energy: {{card.energy}}
                     br
                     | Life: {{card.life}}
-                .tile.well.well-small.spell(class='player{{state.currentPlayer}} selected-{{card.selected}}', ng-switch-when='spell')
+                .tile.hand.spell(class='player{{state.currentPlayer}} selected-{{card.selected}}', ng-switch-when='spell')
                   p
-                    span.label.label-inverse.cardName {{card.name}}
-                    span.badge.badge-info
-                      | {{card.cost}}
-                      span
-                  p
-                    | Spell description goes here
-        .span2
+                    span.label.label-danger.cardName {{card.name}}
+                    | &nbsp;
+                    span.label.cardCost {{card.cost}}
+                  p Spell description goes here
+        .col-span-2
           select(multiple='multiple', style='min-height: 600px;')
             option(ng-repeat='action in state.actions') {{action.player}}: {{action.action}}
           a.btn.btn-large.btn-block.btn-primary(href='#', ng-click='endTurn()') End turn

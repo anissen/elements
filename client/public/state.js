@@ -119,7 +119,7 @@ function stateCtrl($scope, $http) {
   }
 
   function postAction(action, data) {
-    $http.post('game/42', { action: action, data: data })
+    $http.post('', { action: action, data: data })
     .success(function(msg) {
       if (!msg.success) {
         alert('Action "' + action + '" could not be performed.\n\nReason: ' + msg.message);

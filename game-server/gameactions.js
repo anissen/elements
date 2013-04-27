@@ -79,7 +79,7 @@ module.exports = (function () {
     }
 
     function executeScript(scriptFile, data) {
-      var script = fs.readFileSync('./server/scripts/' + scriptFile);
+      var script = fs.readFileSync('./game-server/scripts/' + scriptFile);
       vm.runInNewContext(script, getScriptContext(data), scriptFile);
     }
 
