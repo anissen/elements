@@ -29,35 +29,33 @@ module.exports = (function () {
 
   var module = {};
 
-  module.performAction = function(gameId, eventData, callback) {
-    storage.getEvents(gameId, function (events) {
-      var state = Game.playEvents(events);
+  module.performAction = function(game, eventData, callback) {
+    var state = Game.playEvents(game.actions);
 
-      var gameActions = new GameActions(state);
-      var possibleActions = gameActions.getPossibleActions();
+    var gameActions = new GameActions(state);
+    var possibleActions = gameActions.getPossibleActions();
 
-      var actionLegal = _.some(possibleActions, function(action) {
-        return _.isEqual(eventData, action);
-      });
-
-      var result = { success: actionLegal };
-      if (!actionLegal) {
-        result.message = 'Invalid action: ' + JSON.stringify(eventData);
-        callback(result);
-        return;
-      }
-
-      storage.persistEvent(gameId, eventData);
-
-      // HACK:
-      if (eventData.action === 'endTurn') {
-        var nextPlayer = state.players[(state.currentPlayer+1)%state.players.length];
-        if (nextPlayer.type === 'ai')
-          takeTurnByAI(gameId);
-      }
-
-      callback(result);
+    var actionLegal = _.some(possibleActions, function(action) {
+      return _.isEqual(eventData, action);
     });
+
+    var result = { success: actionLegal };
+    if (!actionLegal) {
+      result.message = 'Invalid action: ' + JSON.stringify(eventData);
+      callback(result);
+      return;
+    }
+
+    game.persistAction(eventData);
+
+    // HACK:
+    if (eventData.action === 'endTurn') {
+      var nextPlayer = state.players[(state.currentPlayer+1)%state.players.length];
+      if (nextPlayer.type === 'ai')
+        takeTurnByAI(game._id);
+    }
+
+    callback(result);
   };
 
   function takeTurnByAI(gameId) {

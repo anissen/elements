@@ -57,9 +57,58 @@ exports.create = function (req, res) {
     };
   });
 
+  var cardTemplates = {
+    'empty': {
+      type: 'empty'
+    },
+    'fire': {
+      type: 'energy',
+      name: 'Flame',
+      cost: 0,
+      energy: 1,
+      maxEnergy: 1,
+      attack: 0,
+      maxLife: 2,
+      life: 2
+    },
+    'water': {
+      type: 'energy',
+      name: 'Pond',
+      cost: 0,
+      energy: 1,
+      maxEnergy: 3,
+      attack: 0,
+      maxLife: 2,
+      life: 2
+    }
+  };
+
+  var initialBoard = [
+    { row: [{card: 'empty'}, {card: 'empty'}, {card: 'fire', player: 1}, {card: 'empty'}, {card: 'empty'}] },
+    { row: [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}] },
+    { row: [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}] },
+    { row: [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}] },
+    { row: [{card: 'empty'}, {card: 'empty'}, {card: 'water', player: 0}, {card: 'empty'}, {card: 'empty'}] }
+  ];
+
+  for (var y = 0; y < initialBoard.length; y++) {
+    var row = initialBoard[y].row;
+    for (var x = 0; x < row.length; x++) {
+      var tile = row[x];
+      var card = clone(cardTemplates[tile.card]);
+
+      if (tile.player !== undefined)
+        card.player = tile.player;
+      card.x = x;
+      card.y = y;
+      row[x] = card;
+    }
+  }
+
   var game = new Game({
     players: [player].concat(invitedPlayers),
-    owner: req.user._id
+    owner: req.user._id,
+    initialBoard: initialBoard
   });
 
   game.uploadAndSave(null, function (err) {
@@ -75,6 +124,11 @@ exports.create = function (req, res) {
     res.redirect('/games/' + game._id);
   });
 };
+
+
+function clone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
 
 /**
  * Edit an game
@@ -162,7 +216,7 @@ exports.getState = function(req, res) {
 
 exports.performAction = function(req, res) {
   var eventData = req.body;
-  api.performAction(req.game._id, eventData, function(result) {
+  api.performAction(req.game, eventData, function(result) {
     res.send(result);
   });
 };

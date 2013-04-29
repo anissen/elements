@@ -4,6 +4,16 @@ module.exports = function (config) {
   var GameModel = config.Model;
   var _ = config.underscore;
 
+
+
+
+
+  // TODO: Remove this file!
+
+
+
+
+
   module.persistEvent = function(gameId, eventData) {
     GameModel.findOneAndUpdate({_id: gameId}, { $push: { actions: eventData } }, function (err, game) {
       if (err) {

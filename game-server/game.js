@@ -1,6 +1,7 @@
 var GameActions = require('./gameactions'),
     _ = require('underscore'),
-    cardList = require('./cards');
+    cardList = require('./cards'),
+    Storage = require('./storage');
 
 module.exports = (function () {
 
@@ -18,8 +19,6 @@ module.exports = (function () {
       {
         id: 'ComputerPlayer',
         type: 'ai',
-        //library: ['water', 'big-unit', 'water', 'big-unit', 'water', 'big-unit', 'water', 'big-unit', 'water', 'big-unit', 'water', 'big-unit'],
-        //hand: ['big-unit', 'small-unit', 'water', 'big-unit', 'flame-lick', 'regenerator', 'scout']
         library: ['small-unit', 'fire', 'small-unit', 'fire', 'small-unit', 'small-unit', 'fire', 'small-unit', 'fire', 'small-unit'],
         hand: ['small-unit', 'small-unit', 'fire', 'flame-lick', 'fireball']
       }
@@ -51,6 +50,8 @@ module.exports = (function () {
     }
   }
 
+  // var initialState = {};
+
   for (var cardId in initialState.cards) {
     initialState.cards[cardId].id = cardId;
   }
@@ -62,7 +63,7 @@ module.exports = (function () {
   module.playEvents = function(events, currentState) {
     var state = (currentState ? clone(currentState) : clone(initialState));
     var gameActions = new GameActions(state);
-    for (var i in events) {
+    for (var i = 0; i < events.length; i++) {
       var e = events[i];
       gameActions[e.action](e.data);
       gameActions.checkWinner();

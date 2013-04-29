@@ -50,12 +50,17 @@ Extremely simple game:
  ☐ Unit tests
 
  Persistent games:
- ☐ Multiple games in progress at once
- ☐ Users in database
- ☐ Games in database
- ☐ Game actions in database
- ☐ Page to view games
+ ✔ Multiple games in progress at once @done (29-04-13 22:04)
+ ✔ Users in database @done (29-04-13 22:04)
+ ✔ Games in database @done (29-04-13 22:04)
+ ✔ Game actions in database @done (29-04-13 22:04)
+ ✔ Page to view games @done (29-04-13 22:04)
+ ☐ Load initial state from database
+ ☐ Notify players when it's their turn
 
+ Improved persistent games:
+ ☐ Store all cards in database
+ ☐ Handle decks of cards in database
 
 --- ✄ -----------------------
 

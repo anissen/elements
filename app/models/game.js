@@ -8,14 +8,27 @@ var mongoose = require('mongoose'),
  * Game Schema
  */
 
+var GameActionSchema = new Schema({
+  action: String,
+  data: Schema.Types.Mixed
+});
+
+var BoardRowSchema = new Schema({
+  row: [{ type: Schema.Types.Mixed }]
+});
+
 var GameSchema = new Schema({
   players: [{
     user: { type: Schema.ObjectId, ref: 'User' },
     cards: [String],
     readyState: String
   }],
-  owner: {type: Schema.ObjectId, ref: 'User'},
-  createdAt : {type: Date, "default": Date.now}
+  owner: { type: Schema.ObjectId, ref: 'User' },
+  createdAt: {type: Date, "default": Date.now},
+  currentPlayer: { type: Number, "default": 0 },
+  won: [{ type: Number }],
+  initialBoard: [BoardRowSchema],
+  actions: [GameActionSchema]
 });
 
 /**
@@ -48,6 +61,11 @@ GameSchema.methods = {
 
   uploadAndSave: function (images, cb) {
     this.save(cb);
+  },
+
+  persistAction: function (action, callback) {
+    this.actions.push(action);
+    this.save(callback);
   }
 
 };
@@ -80,6 +98,10 @@ GameSchema.statics = {
       .skip(options.perPage * options.page)
       .exec(cb);
   }
+
+  // persistAction: function (action, callback) {
+  //   this.findOneAndUpdate({_id: gameId}, { $push: { actions: eventData } }, callback);
+  // }
 
 };
 
