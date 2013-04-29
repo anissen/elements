@@ -52,13 +52,13 @@ module.exports = (function () {
     if (eventData.action === 'endTurn') {
       var nextPlayer = state.players[(state.currentPlayer+1)%state.players.length];
       if (nextPlayer.type === 'ai')
-        takeTurnByAI(game._id);
+        takeTurnByAI(game);
     }
 
     callback(result);
   };
 
-  function takeTurnByAI(gameId) {
+  function takeTurnByAI(game) {
 
     var generateAIActions = function (events) {
       var aiActions = [];
@@ -95,10 +95,10 @@ module.exports = (function () {
           break;
       }
 
-      storage.persistEvents(gameId, aiActions);
+      storage.persistEvents(game, aiActions);
     };
 
-    storage.getEvents(gameId, generateAIActions);
+    storage.getEvents(game, generateAIActions);
   }
 
   function getValueForAction(state, action) {
@@ -108,18 +108,16 @@ module.exports = (function () {
     return value;
   }
 
-  module.getGameState = function(gameId, actionCount, callback) {
+  module.getGameState = function(game, actionCount, callback) {
     var startTime = (new Date()).getTime();
+    var actions = _.first(game.actions, actionCount);
+    var state = Game.playEvents(actions);
 
-    var events = storage.getEvents(gameId, function(events) {
-      var state = Game.playEvents(events);
-
-      var endTime = (new Date()).getTime();
-      var timeDiff = endTime - startTime;
-      var timePerEvent = (events.length === 0 ? '0' : (timeDiff / events.length).toFixed(2));
-      console.log('[getGameState] Elapsed time: ' + timeDiff + ' ms. for ' + events.length + ' events (' + timePerEvent + ' ms./event)');
-      callback(state);
-    }, actionCount);
+    var endTime = (new Date()).getTime();
+    var timeDiff = endTime - startTime;
+    var timePerEvent = (actions.length === 0 ? '0' : (timeDiff / actions.length).toFixed(2));
+    console.log('[getGameState] Elapsed time: ' + timeDiff + ' ms. for ' + actions.length + ' actions (' + timePerEvent + ' ms./event)');
+    callback(state);
   };
 
   return module;
