@@ -18,10 +18,6 @@ var gameSchema = mongoose.Schema({
 
 var GameModel = mongoose.model('games', gameSchema);
 
-var storage = require('./storage')({
-  Model: GameModel,
-  underscore: _
-});
 
 // --------
 
@@ -59,46 +55,45 @@ module.exports = (function () {
   };
 
   function takeTurnByAI(game) {
+    console.log('AI considering actions...');
 
-    var generateAIActions = function (events) {
-      var aiActions = [];
+    var aiActions = [];
 
-      while (true) {
-        console.log('AI loop');
-        var allEvents = events.concat(aiActions);
-        var state = Game.playEvents(allEvents);
-        var gameActions = new GameActions(state);
-        var initialStateValue = gameActions.getStateValue();
-        var possibleActions = gameActions.getPossibleActionsWithoutEndTurn();
-        var endTurnAction = { action: 'endTurn', data: {} };
+    while (true) {
+      var events = [].concat(game.actions);
+      var allEvents = events.concat(aiActions);
+      var state = Game.playEvents(allEvents);
+      var gameActions = new GameActions(state);
+      var initialStateValue = gameActions.getStateValue();
+      var possibleActions = gameActions.getPossibleActionsWithoutEndTurn();
+      var endTurnAction = { action: 'endTurn', data: {} };
 
-        if (possibleActions.length === 0) {
-          console.log('AI: No more possible actions');
-          aiActions.push(endTurnAction);
-          break;
-        }
-
-        _.each(possibleActions, function(action) {
-          action.value = getValueForAction(state, action) - initialStateValue;
-        });
-
-        var action = _.max(possibleActions, function(action) {
-          return action.value;
-        });
-
-        if (!action || action.value <= 0)
-          action = endTurnAction;
-
-        console.log('AI: Chose action: ' + action.action); //util.inspect(action));
-        aiActions.push(action);
-        if (action.action === 'endTurn')
-          break;
+      if (possibleActions.length === 0) {
+        console.log('AI: No more possible actions');
+        aiActions.push(endTurnAction);
+        break;
       }
 
-      storage.persistEvents(game, aiActions);
-    };
+      _.each(possibleActions, function(action) {
+        action.value = getValueForAction(state, action) - initialStateValue;
+      });
 
-    storage.getEvents(game, generateAIActions);
+      var action = _.max(possibleActions, function(action) {
+        return action.value;
+      });
+
+      if (!action || action.value <= 0)
+        action = endTurnAction;
+
+      console.log('AI: Chose action: ' + action.action); //util.inspect(action));
+      aiActions.push(action);
+      if (action.action === 'endTurn')
+        break;
+    }
+
+    for (var i = 0; i < aiActions.length; i++) {
+      game.persistAction(aiActions[i]);
+    };
   }
 
   function getValueForAction(state, action) {
