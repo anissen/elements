@@ -1,6 +1,5 @@
 
-var Game = require('./game'),
-    GameActions = require('./gameactions'),
+var GameActions = require('./gameactions'),
     _ = require('underscore'),
     util = require('util'),
     mongoose = require('mongoose');
@@ -26,7 +25,7 @@ module.exports = (function () {
   var module = {};
 
   module.performAction = function(game, eventData, callback) {
-    var state = Game.playEvents(game.actions);
+    var state = playEventsOnState(game, game.actions);
 
     var gameActions = new GameActions(state);
     var possibleActions = gameActions.getPossibleActions();
@@ -62,7 +61,7 @@ module.exports = (function () {
     while (true) {
       var events = [].concat(game.actions);
       var allEvents = events.concat(aiActions);
-      var state = Game.playEvents(allEvents);
+      var state = playEventsOnState(game, allEvents);
       var gameActions = new GameActions(state);
       var initialStateValue = gameActions.getStateValue();
       var possibleActions = gameActions.getPossibleActionsWithoutEndTurn();
@@ -75,7 +74,7 @@ module.exports = (function () {
       }
 
       _.each(possibleActions, function(action) {
-        action.value = getValueForAction(state, action) - initialStateValue;
+        action.value = getValueForAction(game, action) - initialStateValue;
       });
 
       var action = _.max(possibleActions, function(action) {
@@ -96,17 +95,34 @@ module.exports = (function () {
     };
   }
 
-  function getValueForAction(state, action) {
-    var tempState = Game.playEvents([action], state);
+  function getValueForAction(game, action) {
+    var tempState = playEventsOnState(game, [action]);
     var gameActions = new GameActions(tempState);
     var value = gameActions.getStateValue();
     return value;
   }
 
+  function playEventsOnState(state, actions) {
+    var newState = clone(state);
+    var gameActions = new GameActions(newState);
+    for (var i = 0; i < actions.length; i++) {
+      var a = actions[i];
+      gameActions[a.action](a.data);
+      gameActions.checkWinner();
+      newState.actions.push({"player": newState.players[newState.currentPlayer].id, "action": a.action});
+      newState.actionCount++;
+    }
+    return newState;
+  }
+
+  function clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  }
+
   module.getGameState = function(game, actionCount, callback) {
     var startTime = (new Date()).getTime();
     var actions = _.first(game.actions, actionCount);
-    var state = Game.playEvents(actions);
+    var state = playEventsOnState(game, actions);
 
     var endTime = (new Date()).getTime();
     var timeDiff = endTime - startTime;

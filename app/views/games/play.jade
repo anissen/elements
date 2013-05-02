@@ -8,7 +8,7 @@ block content
     .row
       div(ng-controller='stateCtrl')
         .col-span-10
-          .alert.alert-important(ng-show='state.won == 1 || state.won == -1') {{state.players[1].id}} won the game!
+          .alert.alert-important(ng-show='state.won.indexOf(1) >= 0') {{state.players[1].id}} won the game!
           table(width='100%', style='min-height: 110px;')
             tr
               td(ng-repeat='card in getCardsInEnemyHand()')
@@ -45,7 +45,7 @@ block content
                   .tile.empty(ng-switch-when='empty', ng-click='selectEmpty(tile)')
                   span(ng-switch-default) N/A
 
-          .alert.alert-success(ng-show='state.won == 0 || state.won == -1') {{state.players[0].id}} won the game!
+          .alert.alert-success(ng-show='state.won.indexOf(0) >= 0') {{state.players[0].id}} won the game!
           table(width='100%', style='min-height: 110px;')
             tr
               td(ng-repeat='card in getCardsInOwnHand()', ng-switch, on='card.type', ng-click='selectCard(card)')

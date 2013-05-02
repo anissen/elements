@@ -47,12 +47,16 @@ exports.create = function (req, res) {
   var player = {
     user: req.user._id,
     cards: req.body.cards,
+    library: req.body.cards,  // HACK
+    hand: req.body.cards,     // HACK
     readyState: 'ready'
   };
   var invitedPlayers = _.map([].concat(req.body.invites), function (playerId) {
     return {
       user: playerId,
       cards: [],
+      library: [],
+      hand: [],
       readyState: 'pending'
     };
   });
@@ -84,15 +88,15 @@ exports.create = function (req, res) {
   };
 
   var initialBoard = [
-    { row: [{card: 'empty'}, {card: 'empty'}, {card: 'fire', player: 1}, {card: 'empty'}, {card: 'empty'}] },
-    { row: [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}] },
-    { row: [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}] },
-    { row: [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}] },
-    { row: [{card: 'empty'}, {card: 'empty'}, {card: 'water', player: 0}, {card: 'empty'}, {card: 'empty'}] }
+    [{card: 'empty'}, {card: 'empty'}, {card: 'fire', player: 1}, {card: 'empty'}, {card: 'empty'}],
+    [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
+    [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
+    [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
+    [{card: 'empty'}, {card: 'empty'}, {card: 'water', player: 0}, {card: 'empty'}, {card: 'empty'}]
   ];
 
   for (var y = 0; y < initialBoard.length; y++) {
-    var row = initialBoard[y].row;
+    var row = initialBoard[y];
     for (var x = 0; x < row.length; x++) {
       var tile = row[x];
       var card = clone(cardTemplates[tile.card]);
@@ -108,7 +112,8 @@ exports.create = function (req, res) {
   var game = new Game({
     players: [player].concat(invitedPlayers),
     owner: req.user._id,
-    initialBoard: initialBoard
+    initialBoard: initialBoard,
+    board: initialBoard
   });
 
   game.uploadAndSave(null, function (err) {

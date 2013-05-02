@@ -5,14 +5,14 @@ var util = require('util'),
 
 
 module.exports = (function () {
-  return function(state) {
+  return function(game) {
 
     this.play = function(data) {
-      var player = state.players[state.currentPlayer];
+      var player = getCurrentPlayer();
       var cardIndex = player.hand.indexOf(data.cardId);
       player.hand.splice(cardIndex, 1);
 
-      var card = state.cards[data.cardId];
+      var card = getCardFromCardId(data.cardId);
 
       if (card.type === 'unit' || card.type === 'energy') {
         payCastingCost(card.cost, data.pos);
@@ -42,7 +42,7 @@ module.exports = (function () {
     };
 
     this.endTurn = function(data) {
-      state.currentPlayer = (state.currentPlayer + 1) % state.players.length;
+      game.currentPlayer = (game.currentPlayer + 1) % game.players.length;
 
       startTurn();
     };
@@ -84,7 +84,7 @@ module.exports = (function () {
     }
 
     function getTiles() {
-      return _.flatten(state.board);
+      return _.flatten(game.board);
     }
 
     //
@@ -105,8 +105,8 @@ module.exports = (function () {
 
     this.getStateValue = function() {
       var value = 0;
-      value += getValueOfPlayersThings(state.currentPlayer);
-      value -= getValueOfPlayersThings((state.currentPlayer + 1) % 2);
+      value += getValueOfPlayersThings(game.currentPlayer);
+      value -= getValueOfPlayersThings((game.currentPlayer + 1) % 2);
       return value;
     };
 
@@ -122,7 +122,7 @@ module.exports = (function () {
         .value();
 
       var valuePerCard = 2;
-      var cardsOnHandValue = state.players[playerId].hand.length * valuePerCard;
+      var cardsOnHandValue = game.players[playerId].hand.length * valuePerCard;
 
       var energyLifeValue = 3;
       var energyValue = _.chain(getTiles())
@@ -141,13 +141,13 @@ module.exports = (function () {
       var player0Lost = hasPlayerLost(0);
       var player1Lost = hasPlayerLost(1);
       if (!player0Lost && !player1Lost)
-        state.won = null;
+        game.won = null;
       else if (player0Lost && player1Lost)
-        state.won = -1;
+        game.won = -1;
       else if (player0Lost)
-        state.won = 1;
+        game.won = 1;
       else if (player1Lost)
-        state.won = 0;
+        game.won = 0;
     };
 
     function hasPlayerLost(playerId) {
@@ -196,7 +196,7 @@ module.exports = (function () {
     function getValidAttacksForUnit(unit) {
       return _.chain(getAdjacentTiles(unit))
         .filter(function(tile) {
-          return tile.type !== 'empty' && tile.player !== state.currentPlayer;
+          return tile.type !== 'empty' && tile.player !== game.currentPlayer;
         })
         .map(function(attack) {
           return {
@@ -227,17 +227,21 @@ module.exports = (function () {
         .value();
     }
 
-    function cardFromCardId(cardId) {
-      return state.cards[cardId];
+    function getCurrentPlayer() {
+      return game.players[game.currentPlayer];
+    }
+
+    function getCardFromCardId(cardId) {
+      return game.cards[cardId];
     }
 
     function createCardFromCardId(cardId) {
-      return clone(cardFromCardId(cardId));
+      return clone(getCardFromCardId(cardId));
     }
 
     function getAllCardsInHand() {
-      return _.map(getCurrentPlayerState().hand, function(cardId) {
-        return cardFromCardId(cardId);
+      return _.map(getCurrentPlayer().hand, function(cardId) {
+        return getCardFromCardId(cardId);
       });
     }
 
@@ -274,27 +278,23 @@ module.exports = (function () {
     }
 
     function getTile(pos) {
-      return state.board[pos.y][pos.x];
+      return game.board[pos.y][pos.x];
     }
 
     function setTile(pos, data) {
-      state.board[pos.y][pos.x] = data;
+      game.board[pos.y][pos.x] = data;
     }
 
     function resetTile(pos) {
-      state.board[pos.y][pos.x] = {type: 'empty', x: pos.x, y: pos.y};
+      game.board[pos.y][pos.x] = {type: 'empty', x: pos.x, y: pos.y};
     }
 
     function clone(obj) {
       return JSON.parse(JSON.stringify(obj));
     }
 
-    function getCurrentPlayerState() {
-      return state.players[state.currentPlayer];
-    }
-
     function drawCards(numberOfCards) {
-      var player = getCurrentPlayerState();
+      var player = getCurrentPlayer();
       var cards = player.library.splice(0, numberOfCards);
       player.hand = player.hand.concat(cards);
     }
@@ -305,7 +305,7 @@ module.exports = (function () {
       // TODO: Drain energy from all adjacent energy groups
 
       var newCard = clone(card);
-      newCard.player = state.currentPlayer;
+      newCard.player = game.currentPlayer;
       newCard.x = pos.x;
       newCard.y = pos.y;
       newCard.movesLeft = newCard.moves;
@@ -314,11 +314,11 @@ module.exports = (function () {
     }
 
     function playerEnergyTilesQuery(tile) {
-      return tile.player === state.currentPlayer && tile.type === 'energy';
+      return tile.player === game.currentPlayer && tile.type === 'energy';
     }
 
     function playerUnitTilesQuery(tile) {
-      return tile.player === state.currentPlayer && tile.type === 'unit';
+      return tile.player === game.currentPlayer && tile.type === 'unit';
     }
 
     function getEnergySourcesConnectedToTile(tile) {

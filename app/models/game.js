@@ -13,21 +13,20 @@ var GameActionSchema = new Schema({
   data: Schema.Types.Mixed
 });
 
-var BoardRowSchema = new Schema({
-  row: [{ type: Schema.Types.Mixed }]
-});
-
 var GameSchema = new Schema({
   players: [{
     user: { type: Schema.ObjectId, ref: 'User' },
     cards: [String],
+    library: [String],
+    hand: [String],
     readyState: String
   }],
   owner: { type: Schema.ObjectId, ref: 'User' },
   createdAt: {type: Date, "default": Date.now},
   currentPlayer: { type: Number, "default": 0 },
   won: [{ type: Number }],
-  initialBoard: [BoardRowSchema],
+  initialBoard: { type: Schema.Types.Mixed }, // TODO: This might also need player state (library, hand, etc.)
+  board: { type: Schema.Types.Mixed },
   actions: [GameActionSchema]
 });
 
