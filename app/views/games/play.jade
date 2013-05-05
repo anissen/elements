@@ -26,11 +26,11 @@ block content
                     p.emj.pull-left(ng-show='tile.player == 0', style='font-size: 4em; color: blue;') &#x1F30A;
                     p.emj.pull-left(ng-show='tile.player == 1', style='font-size: 4em; color: red;') &#x1F525;
                     p Attack: 
-                      span.label.label-success {{tile.attack}}
+                      span.label.label-success {{tile.data.attack}}
                       br
                       | Life: 
-                      span.label.label-success(ng-show='tile.life == tile.maxLife') {{tile.life}}
-                      span.label.label-danger(ng-show='tile.life != tile.maxLife') {{tile.life}}
+                      span.label.label-success(ng-show='tile.data.life == tile.data.maxLife') {{tile.data.life}}
+                      span.label.label-danger(ng-show='tile.data.life != tile.data.maxLife') {{tile.data.life}}
                   .tile.energy(class='player{{tile.player}} selected-{{tile.selected}}', ng-switch-when='energy', ng-click='selectEnergy(tile)')
                     p
                       span.label.label-danger.cardName {{tile.name}}
@@ -40,8 +40,8 @@ block content
                       span.label.label-info {{tile.energy}}
                       br
                       | Life: 
-                      span.label.label-success(ng-show='tile.life == tile.maxLife') {{tile.life}}
-                      span.label.label-danger(ng-show='tile.life != tile.maxLife') {{tile.life}}
+                      span.label.label-success(ng-show='tile.data.life == tile.data.maxLife') {{tile.data.life}}
+                      span.label.label-danger(ng-show='tile.data.life != tile.data.maxLife') {{tile.data.life}}
                   .tile.empty(ng-switch-when='empty', ng-click='selectEmpty(tile)')
                   span(ng-switch-default) N/A
 
@@ -54,9 +54,9 @@ block content
                     span.label.label-danger.cardName {{card.name}}
                     | &nbsp;
                     span.label.cardCost {{card.cost}}
-                  p Attack: {{card.attack}}
+                  p Attack: {{card.data.attack}}
                     br
-                    | Life: {{card.life}}
+                    | Life: {{card.data.life}}
                 .tile.hand.energy(class='player{{state.currentPlayer}} selected-{{card.selected}}', ng-switch-when='energy')
                   p
                     span.label.label-danger.cardName {{card.name}}
@@ -64,13 +64,19 @@ block content
                     span.label.cardCost {{card.cost}}
                   p Energy: {{card.energy}}
                     br
-                    | Life: {{card.life}}
+                    | Life: {{card.data.life}}
                 .tile.hand.spell(class='player{{state.currentPlayer}} selected-{{card.selected}}', ng-switch-when='spell')
                   p
                     span.label.label-danger.cardName {{card.name}}
                     | &nbsp;
                     span.label.cardCost {{card.cost}}
                   p Spell description goes here
+                .tile.hand(ng-switch-default)
+                  p
+                    span.label.label-danger.cardName ???
+                    | &nbsp;
+                    span.label.cardCost ?
+                  p Card type unknown
         .col-span-2
           select(multiple='multiple', style='min-height: 600px;')
             option(ng-repeat='action in state.actions') {{action.player}}: {{action.action}}
