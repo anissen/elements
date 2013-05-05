@@ -41,18 +41,7 @@ function stateCtrl($scope, $http) {
     if (playerId === undefined)
       return [];
 
-    var hand = state.players[playerId].hand;
-    var cards = [];
-    for (var i = 0; i < hand.length; i++) {
-      //var cardId = hand[i];
-      //var card = state.cards[cardId];
-      //card.cardId = cardId;
-
-      var card = hand[i];
-      card.cardId = card.id;
-      cards.push(card);
-    }
-    return cards;
+    return state.players[playerId].hand;
   }
 
   $scope.endTurn = function() {

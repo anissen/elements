@@ -7,12 +7,10 @@ var util = require('util'),
 module.exports = (function () {
   return function(game) {
 
-    this.play = function(data) {
+    this.play = function(card) {
       var player = getCurrentPlayer();
-      var cardIndex = player.hand.indexOf(data.cardId);
+      var cardIndex = player.hand.indexOf(card);
       player.hand.splice(cardIndex, 1);
-
-      var card = getCardFromCardId(data.cardId);
 
       if (card.type === 'unit' || card.type === 'energy') {
         payCastingCost(card.cost, data.pos);
@@ -231,18 +229,8 @@ module.exports = (function () {
       return game.players[game.currentPlayer];
     }
 
-    function getCardFromCardId(cardId) {
-      return game.cards[cardId];
-    }
-
-    function createCardFromCardId(cardId) {
-      return clone(getCardFromCardId(cardId));
-    }
-
     function getAllCardsInHand() {
-      return _.map(getCurrentPlayer().hand, function(cardId) {
-        return getCardFromCardId(cardId);
-      });
+      return getCurrentPlayer().hand;
     }
 
     function getValidPlaysForCard(card) {

@@ -2,7 +2,6 @@
 var mongoose = require('mongoose'),
     env = process.env.NODE_ENV || 'development',
     config = require('../../config/config')[env],
-    // CardSchema = mongoose.model('Card').schema,
     Schema = mongoose.Schema;
 
 /**
@@ -14,23 +13,10 @@ var GameActionSchema = new Schema({
   data: Schema.Types.Mixed
 });
 
-// var GameStateSchema = new Schema({
-//   players: [{
-//     user: { type: Schema.ObjectId, ref: 'User' },
-//     library: [{ type: Schema.ObjectId, ref: 'Card' }],
-//     hand: [{ type: Schema.ObjectId, ref: 'Card' }]
-//   }],
-//   currentPlayer: { type: Number, "default": 0 },
-//   won: [{ type: Number }],
-//   board: Schema.Types.Mixed
-// });
-
 var GameSchema = new Schema({
   players: [{
     user: { type: Schema.ObjectId, ref: 'User' },
     deck: [{ type: Schema.ObjectId, ref: 'Card' }], // TODO: Ref. deck object
-    // library: [{ type: Schema.ObjectId, ref: 'Card' }],
-    // hand: [{ type: Schema.ObjectId, ref: 'Card' }],
     readyState: String
   }],
   owner: { type: Schema.ObjectId, ref: 'User' },
@@ -45,8 +31,6 @@ var GameSchema = new Schema({
     won: [{ type: Number }],
     board: Schema.Types.Mixed
   },
-  //initialBoard: { type: Schema.Types.Mixed }, // TODO: This might also need player state (library, hand, etc.)
-  //board: { type: Schema.Types.Mixed },
   actions: [GameActionSchema]
 });
 

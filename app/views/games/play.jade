@@ -79,5 +79,5 @@ block content
                   p Card type unknown
         .col-span-2
           select(multiple='multiple', style='min-height: 600px;')
-            option(ng-repeat='action in state.actions') {{action.player}}: {{action.action}}
+            option(ng-repeat='action in state.actionList') {{action.player}}: {{action.action}}
           a.btn.btn-large.btn-block.btn-primary(href='#', ng-click='endTurn()') End turn

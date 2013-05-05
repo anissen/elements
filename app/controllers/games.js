@@ -230,8 +230,8 @@ exports.play = function(req, res){
 exports.getState = function(req, res) {
   var actionCount = req.params['actionCount'];
   api.getGameState(req.game, actionCount, function(state) {
-    console.log(JSON.stringify(state.initialState, null, 2));
-    res.send(state.initialState);
+    // console.log(JSON.stringify(state, null, 2));
+    res.send(state);
   });
 };
 
