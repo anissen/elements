@@ -4,5 +4,7 @@ block main
   h1 Users
 
 block content
-  each user in users
-    a.title(href='/users/'+user._id, title=user.name) #{user.name}
+  ol
+    each user in users
+      li
+        a.title(href='/users/'+user._id, title=user.name) #{user.name}

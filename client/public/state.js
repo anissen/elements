@@ -87,7 +87,7 @@ function stateCtrl($scope, $http) {
 
       postAction('move', { "from": posJson(unit), "to": posJson(tile) });
     } else if ($scope.selectedCard) {
-      postAction('play', { "cardId": $scope.selectedCard.cardId, "pos": posJson(tile) });
+      postAction('play', { "cardId": $scope.selectedCard.id, "pos": posJson(tile) });
     }
   };
 
@@ -98,7 +98,7 @@ function stateCtrl($scope, $http) {
     var enemyUnitSelected = (tile.player !== $scope.state.currentPlayer);
     if (!ownUnitIsSelected && enemyUnitSelected) { // selecting only an enemy unit
       if ($scope.selectedCard && $scope.selectedCard.type === 'spell') { // throw spell on enemy unit
-        postAction('play', { "cardId": $scope.selectedCard.cardId, "pos": posJson(tile) });
+        postAction('play', { "cardId": $scope.selectedCard.id, "pos": posJson(tile) });
       }
       //alert('not your unit');
     } else if (ownUnitIsSelected && enemyUnitSelected) { // selected own unit THEN an enemy unit

@@ -6,7 +6,10 @@
       "folder_exclude_patterns": [
         "node_modules",
         "db"
-      ]
+      ],
+      "settings": {
+        "tab_size": 2        
+      }
 		}
 	],
   "ternjs": {

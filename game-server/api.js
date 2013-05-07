@@ -96,7 +96,7 @@ module.exports = (function () {
       var a = actions[i];
       gameActions[a.action](a.data);
       gameActions.checkWinner();
-      newState.actionList.push({"player": newState.players[newState.currentPlayer].id, "action": a.action});
+      newState.actionList.push({"player": newState.players[newState.currentPlayer].name, "action": a.action});
       newState.actionCount++;
     }
     return newState;
