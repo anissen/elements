@@ -9,8 +9,16 @@ module.exports = (function () {
 
     this.play = function(card) {
       var player = getCurrentPlayer();
-      var cardIndex = player.hand.indexOf(card);
-      player.hand.splice(cardIndex, 1);
+
+      // TODO: Should either:
+      //        - have a map of all cards
+      //        - get the card based on its id
+      console.log('play card', card);
+      console.log('hand before', player.hand);
+      player.hand = _.reject(player.hand, function(cardInHand) {
+        return cardInHand.id === card.id;
+      });
+      console.log('hand after', player.hand);
 
       if (card.type === 'unit' || card.type === 'energy') {
         payCastingCost(card.cost, data.pos);
