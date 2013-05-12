@@ -1,56 +1,65 @@
 var util = require('util'),
     vm = require('vm'),
     fs = require('fs'),
-    _  = require('underscore');
+    _  = require('underscore'),
+    mongoose = require('mongoose'),
+    Card = mongoose.model('Card');
 
 
 module.exports = (function () {
   return function(game) {
 
-    this.play = function(card) {
+    this.play = function(data, callback) {
       var player = getCurrentPlayer();
 
-      // TODO: Should either:
-      //        - have a map of all cards
-      //        - get the card based on its id
-      console.log('play card', card);
-      console.log('hand before', player.hand);
-      player.hand = _.reject(player.hand, function(cardInHand) {
-        return cardInHand.id === card.id;
-      });
-      console.log('hand after', player.hand);
+      Card.loadByCardId(data.cardId, function (err, card) {
+        if (err) {
+          console.log('card load error!', err);
+          callback(err);
+          return;
+        }
 
-      if (card.type === 'unit' || card.type === 'energy') {
-        payCastingCost(card.cost, data.pos);
-        placeNewUnit(card, data.pos);
-      } else if (card.type === 'spell') {
-        payCastingCost(card.cost);
-        executeScript(card.scriptFile, data);
-      }
+        player.hand = _.reject(player.hand, function(cardInHand) {
+          return cardInHand.id === card.id;
+        });
+
+        if (card.type === 'unit' || card.type === 'energy') {
+          payCastingCost(card.cost, data.pos);
+          placeNewUnit(card, data.pos);
+        } else if (card.type === 'spell') {
+          payCastingCost(card.cost);
+          executeScript(card.scriptFile, data);
+        }
+
+        callback();
+      });
     };
 
-    this.move = function(data) {
+    this.move = function(data, callback) {
       var unit = getTile(data.from);
       resetTile(data.from);
       unit.x = data.to.x;
       unit.y = data.to.y;
       unit.movesLeft -= 1;
       setTile(data.to, unit);
+      callback();
     };
 
-    this.attack = function(data) {
+    this.attack = function(data, callback) {
       var attacker = getTile(data.from);
       var defender = getTile(data.to);
       defender.life -= attacker.attack;
       attacker.attacksLeft -= 1;
       if (defender.life <= 0)
         resetTile(data.to);
+      callback();
     };
 
-    this.endTurn = function(data) {
+    this.endTurn = function(data, callback) {
       game.currentPlayer = (game.currentPlayer + 1) % game.players.length;
 
       startTurn();
+      callback();
     };
 
     function startTurn() {

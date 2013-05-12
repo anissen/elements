@@ -29,11 +29,13 @@ block content
           label.control-label(for='desc') Cards
           .controls
             select(multiple, name="cards", style='width: 100%').multi-select
-              option(value="small-unit") Cannon Fodder
-              option(value="big-unit") Big Guy
-              option(value="water") Water
-              option(value="water") Water
-              option(value="regenerator") Regenerator
+              for card in cards
+                option(value="#{card._id}") #{card.name}
+              //option(value="small-unit") Cannon Fodder
+              //option(value="big-unit") Big Guy
+              //option(value="water") Water
+              //option(value="water") Water
+              //option(value="regenerator") Regenerator
 
         .form-actions
           button.btn.btn-primary(type='submit') Save changes

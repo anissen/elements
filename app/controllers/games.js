@@ -32,11 +32,18 @@ exports.new = function(req, res) {
   User
     .find({}, {'name': 1})
     .exec(function (err, users) {
-      res.render('games/new', {
-        title: 'New Game',
-        game: new Game({}),
-        users: users
-      });
+
+      Card.list(function (err, cards) {
+
+        res.render('games/new', {
+          title: 'New Game',
+          game: new Game({}),
+          users: users,
+          cards: cards
+        });
+
+      })
+      
     });
 };
 

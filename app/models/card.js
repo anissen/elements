@@ -22,9 +22,23 @@ CardSchema.statics = {
       .exec(callback);
   },
 
+  loadByCardId: function (cardId, callback) {
+    this
+      .findOne({ id : cardId })
+      .lean()
+      .exec(callback);
+  },
+
   loadList: function (ids, callback) {
     this
-      .find({ id: { $in: ids } })
+      .find({ _id: { $in: ids } })
+      .lean()
+      .exec(callback);
+  },
+
+  list: function (callback) {
+    this
+      .find()
       .lean()
       .exec(callback);
   }
