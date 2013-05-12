@@ -81,21 +81,25 @@ exports.create = function (req, res) {
         type: 'energy',
         name: 'Flame',
         cost: 0,
-        energy: 1,
-        maxEnergy: 1,
-        attack: 0,
-        maxLife: 2,
-        life: 2
+        data: {
+          energy: 1,
+          maxEnergy: 1,
+          attack: 0,
+          maxLife: 2,
+          life: 2
+        }
       },
       'water': {
         type: 'energy',
         name: 'Pond',
         cost: 0,
-        energy: 1,
-        maxEnergy: 3,
-        attack: 0,
-        maxLife: 2,
-        life: 2
+        data: {
+          energy: 1,
+          maxEnergy: 3,
+          attack: 0,
+          maxLife: 2,
+          life: 2
+        }
       }
     };
 

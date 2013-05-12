@@ -40,7 +40,8 @@ module.exports = (function () {
       resetTile(data.from);
       unit.x = data.to.x;
       unit.y = data.to.y;
-      unit.movesLeft -= 1;
+      console.log(game.board);
+      unit.data.movesLeft -= 1;
       setTile(data.to, unit);
       callback();
     };
@@ -48,9 +49,9 @@ module.exports = (function () {
     this.attack = function(data, callback) {
       var attacker = getTile(data.from);
       var defender = getTile(data.to);
-      defender.life -= attacker.attack;
-      attacker.attacksLeft -= 1;
-      if (defender.life <= 0)
+      defender.data.life -= attacker.data.attack;
+      attacker.data.attacksLeft -= 1;
+      if (defender.data.life <= 0)
         resetTile(data.to);
       callback();
     };
@@ -67,16 +68,16 @@ module.exports = (function () {
       _.chain(getTiles())
         .filter(playerEnergyTilesQuery)
         .each(function(source) {
-          if (source.energy < source.maxEnergy)
-            source.energy++;
+          if (source.data.energy < source.data.maxEnergy)
+            source.data.energy++;
         });
 
       // Restore unit attacks and moves
       _.chain(getTiles())
         .filter(playerUnitTilesQuery)
         .each(function(unit) {
-          unit.movesLeft = unit.moves;
-          unit.attacksLeft = unit.attacks;
+          unit.data.movesLeft = unit.data.moves;
+          unit.data.attacksLeft = unit.data.attacks;
         });
 
       // Execute onTurnStart for each unit
@@ -85,7 +86,7 @@ module.exports = (function () {
         .each(function(unit) {
           if (unit.onTurnStart) {
             var data = { pos: unit };
-            executeScript(unit.onTurnStart, data);
+            executeScript(unit.data.onTurnStart, data);
           }
         });
 
@@ -132,7 +133,7 @@ module.exports = (function () {
           return tile.player === playerId && tile.type === 'unit';
         })
         .reduce(function(sum, unit) {
-          return sum + valuePerUnit + unit.attack + unit.life;
+          return sum + valuePerUnit + unit.data.attack + unit.data.life;
         }, 0)
         .value();
 
@@ -145,7 +146,7 @@ module.exports = (function () {
           return tile.player === playerId && tile.type === 'energy';
         })
         .reduce(function(sum, energy) {
-          return sum + energy.life * energyLifeValue + energy.energy;
+          return sum + energy.data.life * energyLifeValue + energy.data.energy;
         }, 0)
         .value();
 
@@ -177,7 +178,7 @@ module.exports = (function () {
 
     function getPossibleMoves() {
       return _.chain(getAllUnits())
-        .filter(function(unit) { return unit.movesLeft > 0; })
+        .filter(function(unit) { return unit.data.movesLeft > 0; })
         .map(getValidMovesForUnit)
         .flatten()
         .value();
@@ -202,7 +203,7 @@ module.exports = (function () {
 
     function getPossibleAttacks() {
       return _.chain(getAllUnits())
-        .filter(function(unit) { return unit.attacksLeft > 0; })
+        .filter(function(unit) { return unit.data.attacksLeft > 0; })
         .map(getValidAttacksForUnit)
         .flatten()
         .value();
@@ -229,7 +230,7 @@ module.exports = (function () {
       var availableEnergy = _.chain(getTiles())
         .filter(playerEnergyTilesQuery)
         .reduce(function(sum, energy) {
-          return sum + energy.energy;
+          return sum + energy.data.energy;
         }, 0)
         .value();
 
@@ -308,13 +309,12 @@ module.exports = (function () {
       // TODO: Select all adjacent energy groups
 
       // TODO: Drain energy from all adjacent energy groups
-
       var newCard = clone(card);
       newCard.player = game.currentPlayer;
       newCard.x = pos.x;
       newCard.y = pos.y;
-      newCard.movesLeft = newCard.moves;
-      newCard.attacksLeft = newCard.attacks;
+      newCard.data.movesLeft = newCard.data.moves;
+      newCard.data.attacksLeft = newCard.data.attacks;
       setTile(pos, newCard);
     }
 
@@ -340,7 +340,7 @@ module.exports = (function () {
     function getAvailableEnergyAtTile(tile) {
       var energySources = getEnergySourcesConnectedToTile(tile);
       var availableEnergy = _.reduce(energySources, function(sum, tile){
-        return sum + tile.energy;
+        return sum + tile.data.energy;
       }, 0);
       return availableEnergy;
     }
@@ -356,8 +356,8 @@ module.exports = (function () {
       _.each(energySources, function(source) {
         if (remaingingCost <= 0)
           return;
-        remaingingCost -= source.energy;
-        source.energy = (remaingingCost < 0 ? -remaingingCost : 0);
+        remaingingCost -= source.data.energy;
+        source.data.energy = (remaingingCost < 0 ? -remaingingCost : 0);
       });
     }
 
@@ -375,19 +375,19 @@ module.exports = (function () {
       return {
         target: getTile(data.pos),
         damageUnit: function(unit, damage) {
-          if (!unit.life)
+          if (!unit.data.life)
             return;
 
-          unit.life -= damage;
-          if (unit.life <= 0)
+          unit.data.life -= damage;
+          if (unit.data.life <= 0)
             resetTile(unit);
         },
         heal: function(unit, amount) {
-          if (!unit.life)
+          if (!unit.data.life)
             return;
 
-          if (unit.life < unit.maxLife)
-            unit.life++;
+          if (unit.data.life < unit.data.maxLife)
+            unit.data.life++;
         },
         getAdjacentTiles: getAdjacentTiles,
         print: function(str) { console.log('SCRIPT: ' + str ); },
