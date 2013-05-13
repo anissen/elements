@@ -25,7 +25,8 @@ var GameSchema = new Schema({
     players: [{
       user: { type: Schema.ObjectId, ref: 'User' },
       library: [{ type: Schema.ObjectId, ref: 'Card' }],
-      hand: [{ type: Schema.ObjectId, ref: 'Card' }]
+      hand: [{ type: Schema.ObjectId, ref: 'Card' }],
+      deck: [{ type: Schema.ObjectId, ref: 'Card' }] // TODO: Ref. deck object
     }],
     currentPlayer: { type: Number, "default": 0 },
     won: [{ type: Number }],
@@ -85,7 +86,9 @@ GameSchema.statics = {
       //.lean()
       .populate('owner', 'name')
       .populate('players.user', 'name')
+      .populate('initialState.players.user', 'name')
       .populate('initialState.players.hand')
+      .populate('initialState.players.deck')
       .exec(cb);
   },
 

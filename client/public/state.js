@@ -7,11 +7,11 @@ function stateCtrl($scope, $http) {
     var nextActionCount = ($scope.state.actionCount || 0) + 1;
     $http.get('' + nextActionCount)
       .success(function(state) {
-        console.log(state);
+        console.log('state', state);
         $scope.state = state;
       })
       .error(function() {
-        alert('get state failed');
+        console.error('Get state failed');
       });
   };
 

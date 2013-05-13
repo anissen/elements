@@ -1,66 +1,54 @@
 var util = require('util'),
     vm = require('vm'),
     fs = require('fs'),
-    _  = require('underscore'),
-    mongoose = require('mongoose'),
-    Card = mongoose.model('Card');
-
+    _  = require('underscore');
 
 module.exports = (function () {
   return function(game) {
 
-    this.play = function(data, callback) {
+    this.play = function(data) {
       var player = getCurrentPlayer();
 
-      Card.loadByCardId(data.cardId, function (err, card) {
-        if (err) {
-          console.log('card load error!', err);
-          callback(err);
-          return;
-        }
+      console.log('data', data);
+      var card = createCardForCurrentPlayer(data.cardId);
+      console.log('card', card);
 
-        player.hand = _.reject(player.hand, function(cardInHand) {
-          return cardInHand.id === card.id;
-        });
-
-        if (card.type === 'unit' || card.type === 'energy') {
-          payCastingCost(card.cost, data.pos);
-          placeNewUnit(card, data.pos);
-        } else if (card.type === 'spell') {
-          payCastingCost(card.cost);
-          executeScript(card.scriptFile, data);
-        }
-
-        callback();
+      player.hand = _.reject(player.hand, function(cardInHand) {
+        return cardInHand.id === data.cardId;
       });
+
+      if (card.type === 'unit' || card.type === 'energy') {
+        payCastingCost(card.cost, data.pos);
+        placeNewUnit(card, data.pos);
+      } else if (card.type === 'spell') {
+        payCastingCost(card.cost);
+        executeScript(card.data.scriptFile, data);
+      }
     };
 
-    this.move = function(data, callback) {
+    this.move = function(data) {
       var unit = getTile(data.from);
       resetTile(data.from);
       unit.x = data.to.x;
       unit.y = data.to.y;
-      console.log(game.board);
+      console.log(game.initialBoard);
       unit.data.movesLeft -= 1;
       setTile(data.to, unit);
-      callback();
     };
 
-    this.attack = function(data, callback) {
+    this.attack = function(data) {
       var attacker = getTile(data.from);
       var defender = getTile(data.to);
       defender.data.life -= attacker.data.attack;
       attacker.data.attacksLeft -= 1;
       if (defender.data.life <= 0)
         resetTile(data.to);
-      callback();
     };
 
-    this.endTurn = function(data, callback) {
+    this.endTurn = function(data) {
       game.currentPlayer = (game.currentPlayer + 1) % game.players.length;
 
       startTurn();
-      callback();
     };
 
     function startTurn() {
@@ -157,13 +145,13 @@ module.exports = (function () {
       var player0Lost = hasPlayerLost(0);
       var player1Lost = hasPlayerLost(1);
       if (!player0Lost && !player1Lost)
-        game.won = null;
+        game.won = [];
       else if (player0Lost && player1Lost)
-        game.won = -1;
+        game.won = [0, 1];
       else if (player0Lost)
-        game.won = 1;
+        game.won = [1];
       else if (player1Lost)
-        game.won = 0;
+        game.won = [0];
     };
 
     function hasPlayerLost(playerId) {
@@ -293,6 +281,17 @@ module.exports = (function () {
 
     function resetTile(pos) {
       game.board[pos.y][pos.x] = {type: 'empty', x: pos.x, y: pos.y};
+    }
+
+    function createCardForCurrentPlayer(cardId) {
+      var player = getCurrentPlayer();
+      console.log('deck', player.deck);
+      var cardTemplate = _.find(player.deck, function (card) {
+        return card.id === cardId;
+      });
+      var newCard = clone(cardTemplate);
+      newCard.player = game.currentPlayer;
+      return newCard;
     }
 
     function clone(obj) {
