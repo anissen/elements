@@ -5,18 +5,28 @@ block main
 
 block content
   .row
+    .col-span-12
+      .well 
+        p.lead Here is some text
+        a.btn.btn-primary.btn-large(href='/games/' + game._id + '/play/') Play
+
+  .row
     for player in game.players
       .col-span-4
-        .well.well-small
-          p.lead 
+        .panel
+          .panel-heading 
             a(href='/users/' + player.user._id)=player.user.name
             case player.readyState
               when 'pending': span.text-error &nbsp;(pending)
               when 'accepted': span.text-warning &nbsp;(accepted)
               when 'ready': span.text-success &nbsp;(ready)
-          //ul
-          //  for card in player.cards
-          //    li #{card}
+          p Some text here
+          .panel.panel-info
+            .panel-heading Deck
+            ul
+              for card in player.deck
+                li 
+                  a(href='/cards/' + card._id)=card.name
 
   p
     br

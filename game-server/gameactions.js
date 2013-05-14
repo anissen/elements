@@ -8,10 +8,7 @@ module.exports = (function () {
 
     this.play = function(data) {
       var player = getCurrentPlayer();
-
-      console.log('data', data);
       var card = createCardForCurrentPlayer(data.cardId);
-      console.log('card', card);
 
       player.hand = _.reject(player.hand, function(cardInHand) {
         return cardInHand.id === data.cardId;

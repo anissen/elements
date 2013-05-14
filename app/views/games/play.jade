@@ -9,7 +9,7 @@ block content
       div(ng-controller='stateCtrl')
         .col-span-10
           .alert.alert-important(ng-show='state.won.indexOf(1) >= 0') {{state.players[1].user.name}} won the game!
-          table(width='100%', style='min-height: 110px;')
+          table(width='100%', style='min-height: 110px; background-color: pink;')
             tr
               td(ng-repeat='card in getCardsInEnemyHand()')
                 .tile(class='player{{(state.currentPlayer+1)%2}}')
@@ -46,7 +46,7 @@ block content
                   span(ng-switch-default) N/A
 
           .alert.alert-success(ng-show='state.won.indexOf(0) >= 0') {{state.players[0].user.name}} won the game!
-          table(width='100%', style='min-height: 110px;')
+          table(width='100%', style='min-height: 110px; background-color: lightblue;')
             tr
               td(ng-repeat='card in getCardsInOwnHand()', ng-switch, on='card.type', ng-click='selectCard(card)')
                 .tile.hand(class='player{{state.currentPlayer}} selected-{{card.selected}}', ng-switch-when='unit')

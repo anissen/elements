@@ -86,6 +86,7 @@ GameSchema.statics = {
       //.lean()
       .populate('owner', 'name')
       .populate('players.user', 'name')
+      .populate('players.deck', 'name')
       .populate('initialState.players.user', 'name')
       .populate('initialState.players.hand')
       .populate('initialState.players.deck')
