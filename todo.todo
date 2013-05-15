@@ -64,6 +64,11 @@ Extremely simple game:
 
 --- ✄ -----------------------
 
+Misc. improvements:
+ ☐ Include an "About"-page that has technologies used, game icons and music credit etc..
+ ☐ Include a "Page guide" functionality menu item that uses Chardin.js to give static page help
+ ☐ Include a game manual page
+
 
 Optimizations:
  ✔ gzip compression @done (02-03-13 15:59)
