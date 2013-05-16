@@ -28,7 +28,7 @@ module.exports = function (app, passport, auth) {
   app.post('/games', auth.requiresLogin, games.create);
   app.get('/games/:id', games.show);
   app.get('/games/:id/edit', auth.requiresLogin, auth.game.hasAuthorization, games.edit);
-  app.get('/games/:id/accept', auth.requiresLogin, auth.game.hasAuthorization, games.acceptInvitation);
+  app.get('/games/:id/accept', auth.requiresLogin, auth.game.isInvited, games.acceptInvitation);
   app.get('/games/:id/play', auth.requiresLogin, auth.game.hasAuthorization, games.play);
   app.post('/games/:id/play', auth.requiresLogin, auth.game.hasAuthorization, games.performAction);
   app.get('/games/:id/play/:actionCount', auth.requiresLogin, auth.game.hasAuthorization, games.getState);

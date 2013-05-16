@@ -1,4 +1,6 @@
 
+var _ = require('underscore');
+
 /*
  *  Generic require login routing middleware
  */
@@ -32,11 +34,15 @@ exports.user = {
 exports.game = {
     hasAuthorization : function (req, res, next) {
       if (req.game.owner._id.toString() !== req.user._id.toString())
-        return res.redirect('/games/' + req.game._id);
+        return res.redirect('/games/' + req.game._id); // User not authorized
       next();
     },
     isInvited : function (req, res, next) {
-      //-- is user invited?
+      if (!_.some(req.game.players, function(player) {
+        return player.user._id.toString() === req.user._id.toString() && player.readyState === 'pending';
+      }))
+        return res.redirect('/games/' + req.game._id); // Could not find invited user in game
+
       next();
     }
 };

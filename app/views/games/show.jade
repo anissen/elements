@@ -6,9 +6,8 @@ block main
 block content
   .row
     .col-span-12
-      .well 
-        p.lead Here is some text
-        a.btn.btn-primary.btn-large(href='/games/' + game._id + '/play/') Play
+      .well.well-large
+        a.btn.btn-primary.btn-large.btn-block(href='/games/' + game._id + '/play/') Take your turn
 
   .row
     for player in game.players
@@ -17,16 +16,17 @@ block content
           .panel-heading 
             a(href='/users/' + player.user._id)=player.user.name
             case player.readyState
-              when 'pending': span.text-error &nbsp;(pending)
+              when 'pending': span.text-danger &nbsp;(pending)
               when 'accepted': span.text-warning &nbsp;(accepted)
               when 'ready': span.text-success &nbsp;(ready)
           p Some text here
-          .panel.panel-info
-            .panel-heading Deck
-            ul
-              for card in player.deck
-                li 
-                  a(href='/cards/' + card._id)=card.name
+          if player.readyState == 'ready'
+            .panel.panel-info
+              .panel-heading Deck
+              ul
+                for card in player.deck
+                  li 
+                    a(href='/cards/' + card._id)=card.name
 
   p
     br

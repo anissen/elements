@@ -6,7 +6,8 @@ var mongoose = require('mongoose'),
     GitHubStrategy = require('passport-github').Strategy,
     GoogleStrategy = require('passport-google-oauth').Strategy,
     User = mongoose.model('User'),
-    Game = mongoose.model('Game');
+    Game = mongoose.model('Game'),
+    _ = require('underscore');
 
 
 module.exports = function (passport, config) {
@@ -25,12 +26,17 @@ module.exports = function (passport, config) {
 
         Game
           .find({ 'players.user': id })
-          .where('players.readyState').equals('pending')
+          //.where('players.readyState').equals('pending')
           .lean()
           .select('owner players')
           .populate('owner', 'name')
           .exec(function (err, games) {
-            user.invites = games;
+            // HACK: filter away games where the user has status different from 'pending'
+            user.invites = _.filter(games, function (game) {
+              return _.find(game.players, function (player) {
+                return player.user.toString() === id && player.readyState === 'pending';
+              });
+            });
             done(err, user);
           });
 
