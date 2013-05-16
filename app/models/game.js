@@ -63,10 +63,6 @@ GameSchema.pre('remove', function (next) {
 
 GameSchema.methods = {
 
-  uploadAndSave: function (images, cb) {
-    this.save(cb);
-  },
-
   persistAction: function (action, callback) {
     this.actions.push(action);
     this.save(callback);

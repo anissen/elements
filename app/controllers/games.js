@@ -141,7 +141,7 @@ exports.create = function (req, res) {
       //board: initialBoard
     });
 
-    game.uploadAndSave(null, function (err) {
+    game.save(function (err) {
       if (err) {
         console.log('error!', err);
         res.render('games/new', {
@@ -186,7 +186,7 @@ exports.edit = function (req, res) {
 exports.update = function(req, res){
   var game = req.game;
   game = _.extend(game, req.body);
-  game.uploadAndSave(null, function(err) {
+  game.save(function(err) {
     if (err) {
       res.render('games/edit', {
         title: 'Edit Game',

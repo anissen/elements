@@ -28,7 +28,6 @@ module.exports = (function () {
       resetTile(data.from);
       unit.x = data.to.x;
       unit.y = data.to.y;
-      console.log(game.initialBoard);
       unit.data.movesLeft -= 1;
       setTile(data.to, unit);
     };
