@@ -57,6 +57,7 @@ Extremely simple game:
  ✔ Page to view games @done (29-04-13 22:04)
  ☐ Load initial state from database
  ☐ Notify players when it's their turn
+ ☐ Clean up old code and files
 
  Improved persistent games:
  ☐ Store all cards in database
@@ -69,6 +70,9 @@ Misc. improvements:
  ☐ Include a "Page guide" functionality menu item that uses Chardin.js to give static page help
  ☐ Include a game manual page
 
+ Hexagonal grid:
+ ☐ Make hex-map class
+ ☐ Make basic KineticJS implementation of map rendering
 
 Optimizations:
  ✔ gzip compression @done (02-03-13 15:59)
