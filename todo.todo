@@ -55,12 +55,12 @@ Extremely simple game:
  ✔ Games in database @done (29-04-13 22:04)
  ✔ Game actions in database @done (29-04-13 22:04)
  ✔ Page to view games @done (29-04-13 22:04)
- ☐ Load initial state from database
+ ✔ Load initial state from database @done (16-05-13 22:39)
  ☐ Notify players when it's their turn
- ☐ Clean up old code and files
+ ✔ Clean up old code and files @done (16-05-13 22:39)
 
  Improved persistent games:
- ☐ Store all cards in database
+ ✔ Store all cards in database @done (16-05-13 22:39)
  ☐ Handle decks of cards in database
 
 --- ✄ -----------------------
