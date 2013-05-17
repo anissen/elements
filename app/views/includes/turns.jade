@@ -1,0 +1,12 @@
+
+if (req.isAuthenticated())
+  each game in req.user.turns
+    .alert.alert-info
+      a(href="#", class="close", data-dismiss="alert") &times;
+      strong Your turn! 
+      | It's your turn to play against 
+      for player in game.players
+        a(href="/users/" + player.user._id) #{player.user.name}
+        | ,  
+      b 
+        a.btn.btn-small.btn-primary(href="/games/" + game._id + "/play/") Take turn

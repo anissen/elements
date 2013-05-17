@@ -1,11 +1,11 @@
 if (req.isAuthenticated())
   each invite in req.user.invites
-    .alert.alert-info
+    .alert.alert-success
       a(href="#", class="close", data-dismiss="alert") &times;
-      p.lead 
-        a(href="/users/" + invite.owner._id) #{invite.owner.name}
-        | &nbsp;invited you to play a game. 
-        b 
-          a.btn.btn-success(href="/games/" + invite._id + "/accept") Accept
-          | &nbsp;
-          a.btn.btn-danger(href="/games/" + invite._id + "/decline") Decline
+      strong Game invite! 
+      a(href="/users/" + invite.owner._id) #{invite.owner.name}
+      | &nbsp;invited you to play a game. 
+      b 
+        a.btn.btn-small.btn-success(href="/games/" + invite._id + "/accept") Accept
+        | &nbsp;
+        a.btn.btn-small.btn-danger(href="/games/" + invite._id + "/decline") Decline

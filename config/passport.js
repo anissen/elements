@@ -28,15 +28,22 @@ module.exports = function (passport, config) {
           .find({ 'players.user': id })
           //.where('players.readyState').equals('pending')
           .lean()
-          .select('owner players')
+          .select('owner players initialState')
           .populate('owner', 'name')
+          .populate('players.user', 'name')
           .exec(function (err, games) {
             // HACK: filter away games where the user has status different from 'pending'
             user.invites = _.filter(games, function (game) {
               return _.find(game.players, function (player) {
-                return player.user.toString() === id && player.readyState === 'pending';
+                return player.user._id.toString() === id && player.readyState === 'pending';
               });
             });
+            
+            // HACK: find games where it is the users turn (TODO: Only works on initialState!!)
+            user.turns = _.filter(games, function (game) {
+              return game.players[game.initialState.currentPlayer].user._id.toString() === id;
+            });
+
             done(err, user);
           });
 
