@@ -11,36 +11,38 @@ header#header
         | Elements
       .nav-collapse.collapse
         ul.nav
-          li(class=(req.path === '/games') ? 'active' : '')
+          li(class=(req.path === '/games') ? 'active' : '', data-intro="List of all games")
             a(href='/games', title="games").active 
               span.glyphicon.glyphicon-th 
               | Games
-          li(class=(req.path === '/games/new') ? 'active' : '')
+          li(class=(req.path === '/games/new') ? 'active' : '', data-intro="Create a new game")
             a(href="/games/new", title="new game") 
               span.glyphicon.glyphicon-plus 
               | New game
-          li(class=(req.path === '/users') ? 'active' : '')
+          li(class=(req.path === '/users') ? 'active' : '', data-intro="List of all users")
             a(href="/users", title="users")
               span.glyphicon.glyphicon-user 
               | Users
-          li 
+          li(data-intro="Deck stuff")
             a Deck
-          li 
-            a Page guide
+          li(data-intro="You pressed this button")
+            a(id="page-guide", href="") 
+              span.glyphicon.glyphicon-exclamation-sign 
+              | Page guide
           li 
             a About
         ul.nav.pull-right
           if (req.isAuthenticated())
-            li(class=(req.path === '/users/' + req.user._id) ? 'active' : '')
+            li(class=(req.path === '/users/' + req.user._id) ? 'active' : '', data-intro="This is you")
               a(href="/users/" + req.user._id, title="Profile") 
                 span.glyphicon.glyphicon-home 
                 | Profile (#{req.user.name})
-            li
+            li(data-intro="For saying farewell :(")
               a(href="/logout", title="logout") 
                 span.glyphicon.glyphicon-off 
                 | Logout
           else
-            li
+            li(data-intro="Just sign here... in blood!")
               a(href="/login", title="Login") 
                 span.glyphicon.glyphicon-lock 
                 | Login

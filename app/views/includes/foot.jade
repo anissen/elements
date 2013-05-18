@@ -1,8 +1,27 @@
   
 script(src='/vendor/select2/select2.js')
+script(type='text/javascript', src='/vendor/chardin/chardinjs.min.js')
+
 script
   $(document).ready(function() { 
     $("select.multi-select").select2(); 
+    $("#page-guide").on('click', function(e) {
+      e.preventDefault();
+      //- if ($('.header-seperator').is(':visible')) {
+      //-   $('body').chardinJs('toggle');
+      //- } else {
+        $('.header-seperator').animate({
+          height: 150
+        }, 600, function() {
+          $('body').chardinJs('start');
+        });
+      //- }
+    });
+    $('body').on('chardinJs:stop', function() {
+      $('.header-seperator').animate({
+          height: 0
+        }, 600);
+    });
   });
 
 script(type='text/javascript', src='/vendor/bootstrap/js/bootstrap.min.js')

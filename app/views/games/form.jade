@@ -18,14 +18,14 @@ block content
         if (!game.isNew)
           input(type="hidden", name="_method", value="PUT")
 
-        .control-group
+        .control-group(data-intro="Chose who you would like to play against", data-position="right")
           label.control-label(for='title') Opponent
           .controls
             select(name="invites", style='width: 100%').multi-select
               each user in users
                 option(value=user._id)=user.name
 
-        .control-group
+        .control-group(data-intro="Chose which deck you would like to play with", data-position="right")
           label.control-label(for='desc') Cards
           .controls
             select(multiple, name="cards", style='width: 100%').multi-select

@@ -1,6 +1,8 @@
 if (req.isAuthenticated())
+  if (req.user.invites.length > 0)
+    .header-seperator
   each invite in req.user.invites
-    .alert.alert-success
+    .alert.alert-success(data-intro="Game invite, yeah!", data-position="top")
       a(href="#", class="close", data-dismiss="alert") &times;
       strong Game invite! 
       a(href="/users/" + invite.owner._id) #{invite.owner.name}

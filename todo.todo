@@ -67,7 +67,8 @@ Extremely simple game:
 
 Misc. improvements:
  ☐ Include an "About"-page that has technologies used, game icons and music credit etc..
- ☐ Include a "Page guide" functionality menu item that uses Chardin.js to give static page help
+ ✔ Include a "Page guide" functionality menu item that uses Chardin.js to give static page help @done (18-05-13 23:49)
+ ☐ Improve page guide descriptions
  ☐ Include a game manual page
 
  Hexagonal grid:
