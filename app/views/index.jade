@@ -4,7 +4,7 @@ block content
   .jumbotron(data-intro="Here is some promotional mumbo-jumbo, please ignore :)")
     h1 Welcome to 
       strong Elements of War 
-      sup
+      sup(data-intro="We're serious!", data-position="top")
         small
           span.label.label-danger
             abbr(title='Very early in development, unstable') Über alpha
@@ -12,7 +12,7 @@ block content
     p Elements of War is a game that combines card collection, deck building, tactical gameplay and social aspects.
     
     blockquote.pull-right
-      .well
+      .well(data-intro="We're not serious...", data-position="right")
         p “Best game evar”
         small Your mom
 
