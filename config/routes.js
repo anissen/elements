@@ -26,16 +26,27 @@ module.exports = function (app, passport, auth) {
   app.get('/games', games.index);
   app.get('/games/new', auth.requiresLogin, games.new);
   app.post('/games', auth.requiresLogin, games.create);
-  app.get('/games/:id', games.show);
-  app.get('/games/:id/edit', auth.requiresLogin, auth.game.hasAuthorization, games.edit);
-  app.get('/games/:id/accept', auth.requiresLogin, auth.game.isInvited, games.acceptInvitation);
-  app.get('/games/:id/play', auth.requiresLogin, auth.game.hasAuthorization, games.play);
-  app.post('/games/:id/play', auth.requiresLogin, auth.game.hasAuthorization, games.performAction);
-  app.get('/games/:id/play/:actionCount', auth.requiresLogin, auth.game.hasAuthorization, games.getState);
-  app.put('/games/:id', auth.requiresLogin, auth.game.hasAuthorization, games.update);
-  app.del('/games/:id', auth.requiresLogin, auth.game.hasAuthorization, games.destroy);
+  app.get('/games/:gameId', games.show);
+  app.get('/games/:gameId/edit', auth.requiresLogin, auth.game.hasAuthorization, games.edit);
+  app.get('/games/:gameId/accept', auth.requiresLogin, auth.game.isInvited, games.acceptInvitation);
+  app.get('/games/:gameId/play', auth.requiresLogin, auth.game.hasAuthorization, games.play);
+  app.post('/games/:gameId/play', auth.requiresLogin, auth.game.hasAuthorization, games.performAction);
+  app.get('/games/:gameId/play/:actionCount', auth.requiresLogin, auth.game.hasAuthorization, games.getState);
+  app.put('/games/:gameId', auth.requiresLogin, auth.game.hasAuthorization, games.update);
+  app.del('/games/:gameId', auth.requiresLogin, auth.game.hasAuthorization, games.destroy);
 
-  app.param('id', games.game);
+  app.param('gameId', games.game);
+
+  var decks = require('../app/controllers/decks');
+  app.get('/decks', decks.index);
+  app.get('/decks/new', auth.requiresLogin, decks.new);
+  app.post('/decks', auth.requiresLogin, decks.create);
+  app.get('/decks/:deckId', decks.show);
+  app.get('/decks/:deckId/edit', auth.requiresLogin, auth.user.hasAuthorization, decks.edit); // error
+  app.put('/decks/:deckId', auth.requiresLogin, auth.user.hasAuthorization, decks.update);
+  app.del('/decks/:deckId', auth.requiresLogin, auth.user.hasAuthorization, decks.destroy);
+
+  app.param('deckId', decks.deck);
 
   // home route
   app.get('/', function (req, res) { res.render('index'); });

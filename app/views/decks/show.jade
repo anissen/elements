@@ -1,0 +1,10 @@
+extends ../layouts/default
+
+block content
+  p Deck should be shown here
+  .panel.panel-info
+    .panel-heading Deck
+    ul
+      for card in deck
+        li 
+          a(href='/cards/' + card._id)=card.name
