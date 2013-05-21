@@ -1,10 +1,14 @@
 extends ../layouts/default
 
+block main
+  h1= game.title
+
 block content
   .row
     .col-span-12
-      .well.well-large
-        a.btn.btn-primary.btn-large.btn-block(href='/games/' + game._id + '/play/') Take your turn
+      .panel
+        .panel-heading Available actions
+        a.btn.btn-primary.btn-large(href='/games/' + game._id + '/play/') Take your turn 
 
   .row
     for player in game.players
@@ -18,12 +22,9 @@ block content
               when 'ready': span.text-success &nbsp;(ready)
           p Some text here
           if player.readyState == 'ready'
-            .panel.panel-info
-              .panel-heading Deck
-              ul
-                for card in player.deck
-                  li 
-                    a(href='/cards/' + card._id)=card.name
+            p Deck: 
+              b 
+                a(href='/decks/' + player.deck[0]._id) My awesome #{player.deck[0].name} deck
 
   p
     br
