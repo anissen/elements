@@ -11,26 +11,67 @@ header#header
         | Elements
       .nav-collapse.collapse
         ul.nav
-          li(class=(req.path === '/games') ? 'active' : '', data-intro="List of all games")
-            a(href='/games', title="games").active 
-              span.glyphicon.glyphicon-th 
-              | Games
-          li(class=(req.path === '/games/new') ? 'active' : '', data-intro="Create a new game")
-            a(href="/games/new", title="new game") 
-              span.glyphicon.glyphicon-plus 
-              | New game
+          li.divider
+
+          li.dropdown(class=(req.path.substring(0,6) === '/games' ? 'active' : ''), data-intro="Game stuff")
+            a.dropdown-toggle(href='#', data-toggle='dropdown')
+              span.glyphicon.glyphicon-play-circle 
+              | Games 
+              b.caret
+            ul.dropdown-menu
+              li
+                a(href='/games', title="games").active 
+                  span.glyphicon.glyphicon-th 
+                  | All games
+              li.divider
+              li
+                a(href="/games/new", title="new game") 
+                  span.glyphicon.glyphicon-plus 
+                  | New game
+
+          li(data-intro="Deck stuff")
+            a 
+              span.glyphicon.glyphicon-list-alt 
+              | Decks
+
           li(class=(req.path === '/users') ? 'active' : '', data-intro="List of all users")
             a(href="/users", title="users")
               span.glyphicon.glyphicon-user 
               | Users
-          li(data-intro="Deck stuff")
-            a Deck
-          li(data-intro="You pressed this button")
-            a(id="page-guide", href="") 
-              span.glyphicon.glyphicon-exclamation-sign 
-              | Page guide
-          li 
-            a About
+
+          li.divider
+
+          li.dropdown(class=(req.path.substring(0,6) === '/xxx' ? 'active' : ''), data-intro="xxx")
+            a.dropdown-toggle(href='#', data-toggle='dropdown')
+              span.glyphicon.glyphicon-bell 
+              | Notifications 
+              span.badge #{req.user.invites.length + req.user.turns.length} 
+              b.caret
+            ul.dropdown-menu
+              li
+                a Invites 
+                  span.badge=req.user.invites.length
+              li
+                a Your turn 
+                  span.badge=req.user.turns.length
+
+          li.divider
+
+          li.dropdown(class=(req.path.substring(0,4) === '/xxx' ? 'active' : ''), data-intro="xxx")
+            a.dropdown-toggle(href='#', data-toggle='dropdown')
+              span.glyphicon.glyphicon-question-sign 
+              | Help 
+              b.caret
+            ul.dropdown-menu
+              li 
+                a Manual
+              li(data-intro="You pressed this button")
+                a(id="page-guide", href="") 
+                  span.glyphicon.glyphicon-info-sign 
+                  | Page guide
+              li 
+                a About
+
         ul.nav.pull-right
           if (req.isAuthenticated())
             li(class=(req.path === '/users/' + req.user._id) ? 'active' : '', data-intro="This is you")
