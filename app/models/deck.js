@@ -5,11 +5,12 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var DeckSchema = new Schema({
-  versions: [{
+  owner: { type: Schema.ObjectId, ref: 'User' },
+  //versions: [{
     name: { type: String },
     cards: [{ type: Schema.ObjectId, ref: 'Card' }],
     createdAt: { type: Date, "default": Date.now }
-  }]
+  //}]
 });
 
 DeckSchema.statics = {
@@ -19,6 +20,15 @@ DeckSchema.statics = {
       .findOne({ _id : id })
       .lean()
       .exec(callback);
+  },
+
+  listAll: function (options, cb) {
+    var criteria = options.criteria || {};
+
+    this
+      .find(criteria)
+      .lean()
+      .exec(cb);
   },
 
   list: function (options, cb) {

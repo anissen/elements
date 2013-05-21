@@ -16,7 +16,7 @@ var GameActionSchema = new Schema({
 var GameSchema = new Schema({
   players: [{
     user: { type: Schema.ObjectId, ref: 'User' },
-    deck: [{ type: Schema.ObjectId, ref: 'Card' }], // TODO: Ref. deck object
+    deck: { type: Schema.ObjectId, ref: 'Deck' },
     readyState: String
   }],
   owner: { type: Schema.ObjectId, ref: 'User' },
@@ -26,7 +26,7 @@ var GameSchema = new Schema({
       user: { type: Schema.ObjectId, ref: 'User' },
       library: [{ type: Schema.ObjectId, ref: 'Card' }],
       hand: [{ type: Schema.ObjectId, ref: 'Card' }],
-      deck: [{ type: Schema.ObjectId, ref: 'Card' }] // TODO: Ref. deck object
+      deck: { type: Schema.ObjectId, ref: 'Deck' }
     }],
     currentPlayer: { type: Number, "default": 0 },
     won: [{ type: Number }],

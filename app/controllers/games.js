@@ -8,6 +8,7 @@ var mongoose = require('mongoose'),
     Game = mongoose.model('Game'),
     User = mongoose.model('User'),
     Card = mongoose.model('Card'),
+    Deck = mongoose.model('Deck'),
     _ = require('underscore'),
     api = require('../../game-server/api');
 
@@ -33,13 +34,17 @@ exports.new = function(req, res) {
     .find({}, {'name': 1})
     .exec(function (err, users) {
 
-      Card.list(function (err, cards) {
+      var options = {
+        criteria: { owner: req.user._id }
+      };
+
+      Deck.listAll(options, function (err, decks) {
 
         res.render('games/new', {
           title: 'New Game',
           game: new Game({}),
           users: users,
-          cards: cards
+          decks: decks
         });
 
       })
@@ -52,107 +57,97 @@ exports.new = function(req, res) {
  */
 
 exports.create = function (req, res) {
-  var cardArray = [].concat(req.body.cards);
+  var player = {
+    user: req.user._id,
+    deck: req.body.deck,
+    readyState: 'ready'
+  };
+  var invitedPlayers = _.map([].concat(req.body.invites), function (playerId) {
+    return {
+      user: playerId,
+      deck: null,
+      readyState: 'pending'
+    };
+  });
 
-  Card.loadList(cardArray, function (err, cards) {
+  var cardTemplates = {
+    'empty': {
+      type: 'empty'
+    },
+    'fire': {
+      type: 'energy',
+      name: 'Flame',
+      cost: 0,
+      data: {
+        energy: 1,
+        maxEnergy: 1,
+        attack: 0,
+        maxLife: 2,
+        life: 2
+      }
+    },
+    'water': {
+      type: 'energy',
+      name: 'Pond',
+      cost: 0,
+      data: {
+        energy: 1,
+        maxEnergy: 3,
+        attack: 0,
+        maxLife: 2,
+        life: 2
+      }
+    }
+  };
+
+  var initialBoard = [
+    [{card: 'empty'}, {card: 'empty'}, {card: 'fire', player: 1}, {card: 'empty'}, {card: 'empty'}],
+    [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
+    [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
+    [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
+    [{card: 'empty'}, {card: 'empty'}, {card: 'water', player: 0}, {card: 'empty'}, {card: 'empty'}]
+  ];
+
+  for (var y = 0; y < initialBoard.length; y++) {
+    var row = initialBoard[y];
+    for (var x = 0; x < row.length; x++) {
+      var tile = row[x];
+      var card = clone(cardTemplates[tile.card]);
+
+      if (tile.player !== undefined)
+        card.player = tile.player;
+      card.x = x;
+      card.y = y;
+      row[x] = card;
+    }
+  }
+
+  var getPlayerData = function() {
+    return _.map([player].concat(invitedPlayers), function (p) {
+      return { user: p.user, library: p.deck, hand: p.deck, deck: p.deck };
+    });
+  };
+
+  var game = new Game({
+    players: [player].concat(invitedPlayers),
+    owner: req.user._id,
+    initialState: {
+      players: getPlayerData(),
+      board: initialBoard
+    }
+  });
+
+  game.save(function (err) {
     if (err) {
-      console.log('error loading card list');
-      return;
-    }
-
-    var player = {
-      user: req.user._id,
-      deck: cards,
-      readyState: 'ready'
-    };
-    var invitedPlayers = _.map([].concat(req.body.invites), function (playerId) {
-      return {
-        user: playerId,
-        deck: [],
-        readyState: 'pending'
-      };
-    });
-
-    var cardTemplates = {
-      'empty': {
-        type: 'empty'
-      },
-      'fire': {
-        type: 'energy',
-        name: 'Flame',
-        cost: 0,
-        data: {
-          energy: 1,
-          maxEnergy: 1,
-          attack: 0,
-          maxLife: 2,
-          life: 2
-        }
-      },
-      'water': {
-        type: 'energy',
-        name: 'Pond',
-        cost: 0,
-        data: {
-          energy: 1,
-          maxEnergy: 3,
-          attack: 0,
-          maxLife: 2,
-          life: 2
-        }
-      }
-    };
-
-    var initialBoard = [
-      [{card: 'empty'}, {card: 'empty'}, {card: 'fire', player: 1}, {card: 'empty'}, {card: 'empty'}],
-      [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
-      [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
-      [{card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}, {card: 'empty'}],
-      [{card: 'empty'}, {card: 'empty'}, {card: 'water', player: 0}, {card: 'empty'}, {card: 'empty'}]
-    ];
-
-    for (var y = 0; y < initialBoard.length; y++) {
-      var row = initialBoard[y];
-      for (var x = 0; x < row.length; x++) {
-        var tile = row[x];
-        var card = clone(cardTemplates[tile.card]);
-
-        if (tile.player !== undefined)
-          card.player = tile.player;
-        card.x = x;
-        card.y = y;
-        row[x] = card;
-      }
-    }
-
-    var getPlayerData = function() {
-      return _.map([player].concat(invitedPlayers), function (p) {
-        return { user: p.user, library: p.deck, hand: p.deck, deck: p.deck };
+      console.log('error!', err);
+      res.render('games/new', {
+        title: 'New Game',
+        game: game,
+        errors: err.errors
       });
-    };
+    }
 
-    var game = new Game({
-      players: [player].concat(invitedPlayers),
-      owner: req.user._id,
-      initialState: {
-        players: getPlayerData(),
-        board: initialBoard
-      }
-      //board: initialBoard
-    });
-
-    game.save(function (err) {
-      if (err) {
-        console.log('error!', err);
-        res.render('games/new', {
-          title: 'New Game',
-          game: game,
-          errors: err.errors
-        });
-      }
-
-      res.redirect('/games/' + game._id);
-    });
+    res.redirect('/games/' + game._id);
   });
 };
 

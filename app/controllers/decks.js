@@ -55,10 +55,9 @@ exports.create = function (req, res) {
     }
 
     var deck = new Deck({
-      versions: [{
-        name: 'Deck of the Dummies',
-        cards: cards
-      }]
+      owner: req.user._id,
+      name: 'Deck of the Dummies',
+      cards: cards
     });
 
     deck.save(function (err) {
@@ -115,10 +114,17 @@ exports.update = function(req, res){
  */
 
 exports.show = function(req, res){
-  res.render('decks/show', {
-    // title: req.deck.title,
-    deck: req.deck
-  });
+  Deck
+    .findOne({ _id: req.deck })
+    .lean()
+    .populate('cards', 'name')
+    .exec(function (err, deck) {
+
+      res.render('decks/show', {
+        deck: deck
+      });
+
+    });
 };
 
 /**

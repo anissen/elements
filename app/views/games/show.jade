@@ -1,8 +1,5 @@
 extends ../layouts/default
 
-block main
-  h1= game.title
-
 block content
   .row
     .col-span-12
@@ -21,10 +18,10 @@ block content
               when 'accepted': span.text-warning &nbsp;(accepted)
               when 'ready': span.text-success &nbsp;(ready)
           p Some text here
-          if player.readyState == 'ready'
+          if player.readyState === 'ready'
             p Deck: 
               b 
-                a(href='/decks/' + player.deck[0]._id) My awesome #{player.deck[0].name} deck
+                a(href='/decks/' + player.deck._id) My awesome #{player.deck.name} deck
 
   p
     br

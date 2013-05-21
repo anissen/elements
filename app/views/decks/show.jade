@@ -5,6 +5,6 @@ block content
   .panel.panel-info
     .panel-heading Deck
     ul
-      for card in deck
+      for card in deck.cards
         li 
           a(href='/cards/' + card._id)=card.name

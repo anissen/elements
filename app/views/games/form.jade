@@ -26,16 +26,14 @@ block content
                 option(value=user._id)=user.name
 
         .control-group(data-intro="Chose which deck you would like to play with", data-position="right")
-          label.control-label(for='desc') Cards
+          label.control-label(for='desc') Deck
           .controls
-            select(multiple, name="cards", style='width: 100%').multi-select
-              for card in cards
-                option(value="#{card._id}") #{card.name}
-              //option(value="small-unit") Cannon Fodder
-              //option(value="big-unit") Big Guy
-              //option(value="water") Water
-              //option(value="water") Water
-              //option(value="regenerator") Regenerator
+            select(name="deck", style='width: 100%').multi-select
+              for deck in decks
+                option(value=deck._id) #{deck.name || 'Unnamed Deck'}
+                //option(value="#{deck.versions[deck.versions.length-1]._id}") #{deck.versions[deck.versions.length-1].name || 'Unnamed Deck'} (version #{deck.versions.length})
+                //for deckVersion, i in deck.versions
+                //  option(value="#{deckVersion._id}") #{deckVersion.name || 'Unnamed Deck'} - version #{i+1}
 
         .form-actions
           button.btn.btn-primary(type='submit') Save changes

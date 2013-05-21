@@ -31,6 +31,7 @@ module.exports = function (passport, config) {
           .select('owner players initialState')
           .populate('owner', 'name')
           .populate('players.user', 'name')
+          .populate('players.deck', 'name')
           .exec(function (err, games) {
             // HACK: filter away games where the user has status different from 'pending'
             user.invites = _.filter(games, function (game) {
