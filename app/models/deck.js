@@ -22,6 +22,14 @@ DeckSchema.statics = {
       .exec(callback);
   },
 
+  loadWithCards: function (id, callback) {
+    this
+      .findOne({ _id : id })
+      .lean()
+      .populate('cards')
+      .exec(callback);
+  },
+
   listAll: function (options, cb) {
     var criteria = options.criteria || {};
 

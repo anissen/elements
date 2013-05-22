@@ -57,16 +57,58 @@ exports.new = function(req, res) {
  */
 
 exports.create = function (req, res) {
-  var player = {
-    user: req.user._id,
-    deck: req.body.deck,
-    readyState: 'ready'
-  };
-  var invitedPlayers = _.map([].concat(req.body.invites), function (playerId) {
+
+  Deck.loadWithCards(req.body.deck, function(err, deck) {
+    if (err) {
+      console.log("error!", err);
+      return;
+    }
+
+    createNewGame(req, function (err, game) {
+
+      if (err) {
+        console.log('error!', err);
+        res.render('games/new', {
+          title: 'New Game',
+          game: game,
+          errors: err.errors
+        });
+      }
+
+      chooseDeck(game, req.user, deck, function (err, game) {
+        if (err) {
+          console.log('error!', err);
+          res.render('games/new', {
+            title: 'New Game',
+            game: game,
+            errors: err.errors
+          });
+        }
+
+        res.redirect('/games/' + game._id);
+      });
+
+    });
+  });
+  
+};
+
+function createNewGame(req, callback) {
+  var playerIds = [req.user._id].concat(req.body.invites);
+  var players = _.map(playerIds, function (playerId) {
     return {
       user: playerId,
       deck: null,
       readyState: 'pending'
+    };
+  });
+
+  var playerStates = _.map(playerIds, function (playerId) {
+    return {
+      user: playerId,
+      library: [],
+      hand: [],
+      deck: null
     };
   });
 
@@ -122,34 +164,49 @@ exports.create = function (req, res) {
     }
   }
 
-  var getPlayerData = function() {
-    return _.map([player].concat(invitedPlayers), function (p) {
-      return { user: p.user, library: p.deck, hand: p.deck, deck: p.deck };
-    });
-  };
-
   var game = new Game({
-    players: [player].concat(invitedPlayers),
+    players: players,
     owner: req.user._id,
     initialState: {
-      players: getPlayerData(),
+      players: playerStates,
       board: initialBoard
     }
   });
 
   game.save(function (err) {
-    if (err) {
-      console.log('error!', err);
-      res.render('games/new', {
-        title: 'New Game',
-        game: game,
-        errors: err.errors
-      });
-    }
-
-    res.redirect('/games/' + game._id);
+    callback(err, game);
   });
-};
+}
+
+function chooseDeck(game, user, deck, callback) {
+  var player = _.find(game.players, function (player) {
+    return player.user.toString() === user._id.toString();
+  });
+
+  player = _.extend(player, { 
+    deck: deck,
+    readyState: 'ready'
+  });
+
+  var initialPlayerState = _.find(game.initialState.players, function (player) {
+    return player.user.toString() === user._id.toString();
+  });
+
+  var cards = _.shuffle(deck.cards);
+  var handSize = 5; // HACK: Hardcoded!
+  var hand = cards.splice(0, handSize);
+  var library = cards; // cards array without hand 
+
+  initialPlayerState = _.extend(initialPlayerState, { 
+    library: library, 
+    hand: hand, 
+    deck: deck
+  });
+
+  game.save(function (err) {
+    callback(err, game);
+  });
+}
 
 
 function clone(obj) {
