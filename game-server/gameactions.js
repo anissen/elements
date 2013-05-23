@@ -1,10 +1,13 @@
 var util = require('util'),
     vm = require('vm'),
     fs = require('fs'),
-    _  = require('underscore');
+    _  = require('underscore'),
+    events = require('events');
 
 module.exports = (function () {
-  return function(game) {
+  var GameActions = function(game) {
+
+    events.EventEmitter.call(this);
 
     this.play = function(data) {
       var player = getCurrentPlayer();
@@ -21,6 +24,8 @@ module.exports = (function () {
         payCastingCost(card.cost);
         executeScript(card.data.scriptFile, data);
       }
+
+      this.emit('playedCard', card);
     };
 
     this.move = function(data) {
@@ -390,4 +395,9 @@ module.exports = (function () {
     }
 
   };
+
+  GameActions.prototype.__proto__ = events.EventEmitter.prototype;
+
+  return GameActions;
+
 }());
