@@ -2,7 +2,8 @@
 var mongoose = require('mongoose'),
     env = process.env.NODE_ENV || 'development',
     config = require('../../config/config')[env],
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    Card = mongoose.model('Card');
 
 /**
  * Game Schema
@@ -86,7 +87,11 @@ GameSchema.statics = {
       .populate('initialState.players.user', 'name')
       .populate('initialState.players.hand')
       .populate('initialState.players.deck')
-      .exec(cb);
+      .exec(function (err, game) {
+        Card.populate(game, {path: 'initialState.players.deck.cards'}, function (err, gameWithDeckCards) {
+          cb(err, gameWithDeckCards);
+        })
+      });
   },
 
   list: function (options, cb) {

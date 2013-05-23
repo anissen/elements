@@ -281,7 +281,7 @@ module.exports = (function () {
 
     function createCardForCurrentPlayer(cardId) {
       var player = getCurrentPlayer();
-      var cardTemplate = _.find(player.deck, function (card) {
+      var cardTemplate = _.find(player.deck.cards, function (card) {
         return card.id === cardId;
       });
       var newCard = clone(cardTemplate);
