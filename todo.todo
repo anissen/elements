@@ -44,7 +44,7 @@ Extremely simple game:
      ☐ Move calculation of possible actions into its own module
      ✔ Remove redundant guards @done (11-03-13 21:35)
  ✔ Shuffle libraries at game start @done (28-03-13 23:16)
- ☐ Handle two human players
+ ✔ Handle two human players @done (22-05-13 15:45)
  ☐ Trim the data that is sent to the player (e.g. remove library, enemy hand etc.)
  ✔ Naive greedy AI: Improve AI by selecting the best possible action amount the available @done (13-03-13 18:20)
  ☐ Unit tests
@@ -56,12 +56,13 @@ Extremely simple game:
  ✔ Game actions in database @done (29-04-13 22:04)
  ✔ Page to view games @done (29-04-13 22:04)
  ✔ Load initial state from database @done (16-05-13 22:39)
- ☐ Notify players when it's their turn
+ ✔ Notify players when it's their turn @done (22-05-13 15:45)
  ✔ Clean up old code and files @done (16-05-13 22:39)
 
  Improved persistent games:
  ✔ Store all cards in database @done (16-05-13 22:39)
- ☐ Handle decks of cards in database
+ ✔ Handle decks of cards in database @done (22-05-13 15:46)
+ ☐ Improve game system to allow more complex cards (e.g. react to stage changes)
 
 --- ✄ -----------------------
 
@@ -72,8 +73,8 @@ Misc. improvements:
  ☐ Include a game manual page
 
  Hexagonal grid:
- ☐ Make hex-map class
  ☐ Make basic KineticJS implementation of map rendering
+ ☐ Make hex-map class
 
 Optimizations:
  ✔ gzip compression @done (02-03-13 15:59)
@@ -82,3 +83,16 @@ Optimizations:
  ☐ Maybe a bad idea: Share gameactions.js between both client and server and allow the client to do all actions (note: what about spells?) offline until EndTurn(). Persist the actions and send them when ending the turn.
  ☐ Get list of all players units and use that for the current state instead of querying it each time
  ☐ Get list of all players energy sources and use that for the current state instead of querying it each time
+
+Very high-level long-term additions:
+ ☐ Adventure mode
+ ☐ Leaderboards
+ ☐ Achievements
+ ☐ Different maps
+ ☐ Different game types (capture the flag, tower defence, etc.)
+ ☐ Game/board/card/player statistics
+ ☐ Ability to edit/create cards
+ ☐ Ability to edit/create maps
+ ☐ Ability to edit/create AI
+ ☐ Player progress (improve stats over time and level)
+
