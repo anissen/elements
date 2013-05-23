@@ -9,7 +9,7 @@ Extremely simple game:
      ✔ End turn @done (22-02-13 17:40)
  ✔ Plain page to trigger actions and observe result @done (25-02-13 22:10)
 
- Slightly less simple game:
+Slightly less simple game:
  ✔ Attack unit with unit via GUI @done (25-02-13 22:38)
  ✔ Draw a card at the beginning of the players turn @done (26-02-13 17:29)
  ✔ Refactor code (especially modules into classes) @done (26-02-13 22:09)
@@ -18,7 +18,7 @@ Extremely simple game:
  ✔ Consider expanding spells with precondition information about targets, e.g. { targets: ["unit"] } or { targets: ["unit", "energy-source", "player"]} @done (27-02-13 22:19)
  ✔ Implement basic spell script system @done (27-02-13 22:18)
 
- Somewhat simple game:
+Somewhat simple game:
  ✔ Fix introduced bug: Playing spells on units does not work @done (28-02-13 23:06)
  ✔ Split into /client and /server and let server.js require('./server/api') instead @done (28-02-13 23:06)
  ✔ Implement card cost @done (02-03-13 17:51)
@@ -34,22 +34,15 @@ Extremely simple game:
  ✔ Replenish unit attack and move counts @done (10-03-13 00:02)
  ✔ Replenish energy @done (10-03-13 00:02)
 
- Simple game:
+Simple game:
  ✔ Defender does not attack @done (11-03-13 21:35)
  ✔ Create a unit with an ability @done (13-03-13 18:20)
  ✔ Handle paying for spells when generating list of possible actions @done (13-03-13 23:19)
- ☐ Clean up gameactions.js
-     ☐ Move the non-specific functions into prototype objects
-     ☐ Create a utilities-decorator can takes state as an argument OR add utilities functions directly to state
-     ☐ Move calculation of possible actions into its own module
-     ✔ Remove redundant guards @done (11-03-13 21:35)
  ✔ Shuffle libraries at game start @done (28-03-13 23:16)
  ✔ Handle two human players @done (22-05-13 15:45)
- ☐ Trim the data that is sent to the player (e.g. remove library, enemy hand etc.)
  ✔ Naive greedy AI: Improve AI by selecting the best possible action amount the available @done (13-03-13 18:20)
- ☐ Unit tests
 
- Persistent games:
+Persistent games:
  ✔ Multiple games in progress at once @done (29-04-13 22:04)
  ✔ Users in database @done (29-04-13 22:04)
  ✔ Games in database @done (29-04-13 22:04)
@@ -59,10 +52,18 @@ Extremely simple game:
  ✔ Notify players when it's their turn @done (22-05-13 15:45)
  ✔ Clean up old code and files @done (16-05-13 22:39)
 
- Improved persistent games:
+Improved persistent games:
  ✔ Store all cards in database @done (16-05-13 22:39)
  ✔ Handle decks of cards in database @done (22-05-13 15:46)
+ ☐ Implement event system for relevant classes
  ☐ Improve game system to allow more complex cards (e.g. react to stage changes)
+ ☐ Clean up gameactions.js
+     ☐ Move the non-specific functions into prototype objects
+     ☐ Create a utilities-decorator can takes state as an argument OR add utilities functions directly to state
+     ☐ Move calculation of possible actions into its own module
+     ✔ Remove redundant guards @done (11-03-13 21:35)
+ ☐ Trim the data that is sent to the player (e.g. remove library, enemy hand etc.)
+ ☐ Unit tests
 
 --- ✄ -----------------------
 
@@ -71,8 +72,10 @@ Misc. improvements:
  ✔ Include a "Page guide" functionality menu item that uses Chardin.js to give static page help @done (18-05-13 23:49)
  ☐ Improve page guide descriptions
  ☐ Include a game manual page
+ ☐ Make an API that takes/returns only JSON data
+ ☐ Make the client-side completely AngularJS-based
 
- Hexagonal grid:
+Hexagonal grid:
  ☐ Make basic KineticJS implementation of map rendering
  ☐ Make hex-map class
 
