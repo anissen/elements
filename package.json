@@ -28,6 +28,7 @@
     "async": "latest",
     "nodemon": "latest",
     "forever": "latest",
-    "view-helpers": "latest"
+    "view-helpers": "latest",
+    "socket.io": "latest"
   }
 }
