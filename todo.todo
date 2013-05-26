@@ -57,6 +57,11 @@ Improved persistent games:
  ✔ Handle decks of cards in database @done (22-05-13 15:46)
  ☐ Implement event system for relevant classes
  ☐ Improve game system to allow more complex cards (e.g. react to stage changes)
+     ☐ Test case: Unit that has "~ has +2 to attack when it is your turn and +2 to life when it is other players turns"
+     ☐ Test case: Unit that has "Draw a card when ~ damages an energy source"
+     ☐ Test case: Unit that has "Attacks the first enemy unit within range in other players turns"
+     ☐ Test case: Spell that has "Gain control of target unit"
+     ☐ Test case: Unit that has "Allies spawned within [range 1] of ~ gain +1 to attack"
  ☐ Clean up gameactions.js
      ☐ Move the non-specific functions into prototype objects
      ☐ Create a utilities-decorator can takes state as an argument OR add utilities functions directly to state
@@ -82,10 +87,11 @@ Hexagonal grid:
 Optimizations:
  ✔ gzip compression @done (02-03-13 15:59)
  ☐ Add socket.io for web network communication
- ☐ Persist the content of spell script files instead of reading them up on each execution
+ ☐ Compile and persist the content of spell script files instead of reading them up on each execution
  ☐ Maybe a bad idea: Share gameactions.js between both client and server and allow the client to do all actions (note: what about spells?) offline until EndTurn(). Persist the actions and send them when ending the turn.
  ☐ Get list of all players units and use that for the current state instead of querying it each time
  ☐ Get list of all players energy sources and use that for the current state instead of querying it each time
+ ☐ Make a socket only API that simply returns actions for the client to use, instead of returning all states (bad idea - too much client-side logic?)
 
 Very high-level long-term additions:
  ☐ Adventure mode

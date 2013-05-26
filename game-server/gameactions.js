@@ -20,6 +20,8 @@ module.exports = (function () {
       if (card.type === 'unit' || card.type === 'energy') {
         payCastingCost(card.cost, data.pos);
         placeNewUnit(card, data.pos);
+        if (card.data.scriptFile)
+          executeScript(card.data.scriptFile, data);
       } else if (card.type === 'spell') {
         payCastingCost(card.cost);
         executeScript(card.data.scriptFile, data);
@@ -44,6 +46,9 @@ module.exports = (function () {
       attacker.data.attacksLeft -= 1;
       if (defender.data.life <= 0)
         resetTile(data.to);
+
+      //this.emit('attacks', { attacker: attacker, defender: defender });
+      this.emit('attacks', attacker, defender);
     };
 
     this.endTurn = function(data) {
@@ -370,8 +375,11 @@ module.exports = (function () {
       });
     }
 
+    var me = this;
+
     function getScriptContext(data) {
       return {
+        game: me,
         target: getTile(data.pos),
         damageUnit: function(unit, damage) {
           if (!unit.data.life)
@@ -388,15 +396,17 @@ module.exports = (function () {
           if (unit.data.life < unit.data.maxLife)
             unit.data.life++;
         },
+        drawCards: drawCards,
         getAdjacentTiles: getAdjacentTiles,
-        print: function(str) { console.log('SCRIPT: ' + str ); },
+        print: console.log, //function(str) { console.log('SCRIPT: ' + str ); },
         util: _
       };
     }
 
   };
 
-  GameActions.prototype.__proto__ = events.EventEmitter.prototype;
+  util.inherits(GameActions, events.EventEmitter);
+
 
   return GameActions;
 
