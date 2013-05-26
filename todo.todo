@@ -59,10 +59,13 @@ Improved persistent games:
  ☐ Improve game system to allow more complex cards (e.g. react to stage changes)
      ☐ Test case: Unit that has "~ has +2 to attack when it is your turn and +2 to life when it is other players turns"
      ☐ Test case: Unit that has "Draw a card when ~ damages an energy source"
-     ☐ Test case: Unit that has "Attacks the first enemy unit within range in other players turns"
-     ☐ Test case: Spell that has "Gain control of target unit"
-     ☐ Test case: Unit that has "Allies spawned within [range 1] of ~ gain +1 to attack"
+     ☐ Additional optional test cases:
+         ☐ Test case: Unit that has "Attacks the first enemy unit within range in other players turns"
+         ☐ Test case: Spell that has "Gain control of target unit"
+         ☐ Test case: Unit that has "Allies spawned within [range 1] of ~ gain +1 to attack"
  ☐ Clean up gameactions.js
+     ☐ Make a pure Map class
+     ☐ Make a Unit/Entity class to represent a unit/tower/energy object on the map. Should inherit from eventEmitter
      ☐ Move the non-specific functions into prototype objects
      ☐ Create a utilities-decorator can takes state as an argument OR add utilities functions directly to state
      ☐ Move calculation of possible actions into its own module
