@@ -24,7 +24,7 @@ module.exports = (function () {
     }
 
     this.getAdjacentTiles = function (pos) {
-      return getTilesWithinRange(pos, 1);
+      return this.getTilesWithinRange(pos, 1);
     }
 
     this.getTilesWithinRange = function (pos, range) {

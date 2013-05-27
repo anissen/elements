@@ -263,7 +263,7 @@ module.exports = (function () {
       return _.filter(map.getTiles(), function(tile) {
         // TODO: Need check for placement near energy source and sufficiant energy
         return tile.type === 'empty' &&
-          _.some(getAdjacentTiles(tile), playerEnergyTilesQuery) &&
+          _.some(map.getAdjacentTiles(tile), playerEnergyTilesQuery) &&
           getAvailableEnergyAtTile(tile) >= card.cost;
       });
     }
