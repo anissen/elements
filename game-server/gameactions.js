@@ -9,6 +9,9 @@ module.exports = (function () {
   var GameActions = function(game) {
 
     var map = new Map(game.board);
+    // map.on('tileSet', function (data, pos) {
+    //   console.log('New tile set: ' + data.type, pos);
+    // });
 
     events.EventEmitter.call(this);
 

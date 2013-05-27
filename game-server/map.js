@@ -17,10 +17,11 @@ module.exports = (function () {
 
     this.setTile = function (pos, data) {
       mapData[pos.y][pos.x] = data;
+      // this.emit('tileSet', data, pos);
     }
 
     this.resetTile = function (pos) {
-      mapData[pos.y][pos.x] = {type: 'empty', x: pos.x, y: pos.y};
+      this.setTile(pos, {type: 'empty', x: pos.x, y: pos.y});
     }
 
     this.getAdjacentTiles = function (pos) {
