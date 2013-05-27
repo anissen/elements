@@ -2,10 +2,13 @@ var util = require('util'),
     vm = require('vm'),
     fs = require('fs'),
     _  = require('underscore'),
-    events = require('events');
+    events = require('events'),
+    Map = require('./map');
 
 module.exports = (function () {
   var GameActions = function(game) {
+
+    var map = new Map(game.board);
 
     events.EventEmitter.call(this);
 
@@ -31,21 +34,21 @@ module.exports = (function () {
     };
 
     this.move = function(data) {
-      var unit = getTile(data.from);
-      resetTile(data.from);
+      var unit = map.getTile(data.from);
+      map.resetTile(data.from);
       unit.x = data.to.x;
       unit.y = data.to.y;
       unit.data.movesLeft -= 1;
-      setTile(data.to, unit);
+      map.setTile(data.to, unit);
     };
 
     this.attack = function(data) {
-      var attacker = getTile(data.from);
-      var defender = getTile(data.to);
+      var attacker = map.getTile(data.from);
+      var defender = map.getTile(data.to);
       defender.data.life -= attacker.data.attack;
       attacker.data.attacksLeft -= 1;
       if (defender.data.life <= 0)
-        resetTile(data.to);
+        map.resetTile(data.to);
 
       //this.emit('attacks', { attacker: attacker, defender: defender });
       this.emit('attacks', attacker, defender);
@@ -59,7 +62,7 @@ module.exports = (function () {
 
     function startTurn() {
       // Replenish 1 energy for all energy sources
-      _.chain(getTiles())
+      _.chain(map.getTiles())
         .filter(playerEnergyTilesQuery)
         .each(function(source) {
           if (source.data.energy < source.data.maxEnergy)
@@ -67,7 +70,7 @@ module.exports = (function () {
         });
 
       // Restore unit attacks and moves
-      _.chain(getTiles())
+      _.chain(map.getTiles())
         .filter(playerUnitTilesQuery)
         .each(function(unit) {
           unit.data.movesLeft = unit.data.moves;
@@ -75,7 +78,7 @@ module.exports = (function () {
         });
 
       // Execute onTurnStart for each unit
-      _.chain(getTiles())
+      _.chain(map.getTiles())
         .filter(playerUnitTilesQuery)
         .each(function(unit) {
           if (unit.onTurnStart) {
@@ -91,10 +94,6 @@ module.exports = (function () {
     function executeScript(scriptFile, data) {
       var script = fs.readFileSync('./game-server/scripts/' + scriptFile);
       vm.runInNewContext(script, getScriptContext(data), scriptFile);
-    }
-
-    function getTiles() {
-      return _.flatten(game.board);
     }
 
     //
@@ -122,7 +121,7 @@ module.exports = (function () {
 
     function getValueOfPlayersThings(playerId) {
       var valuePerUnit = 2;
-      var unitValue = _.chain(getTiles())
+      var unitValue = _.chain(map.getTiles())
         .filter(function(tile) {
           return tile.player === playerId && tile.type === 'unit';
         })
@@ -135,7 +134,7 @@ module.exports = (function () {
       var cardsOnHandValue = game.players[playerId].hand.length * valuePerCard;
 
       var energyLifeValue = 3;
-      var energyValue = _.chain(getTiles())
+      var energyValue = _.chain(map.getTiles())
         .filter(function(tile) {
           return tile.player === playerId && tile.type === 'energy';
         })
@@ -161,7 +160,7 @@ module.exports = (function () {
     };
 
     function hasPlayerLost(playerId) {
-      return !_.some(getTiles(), function(tile) {
+      return !_.some(map.getTiles(), function(tile) {
         return tile.player === playerId && tile.type === 'energy';
       });
     }
@@ -179,7 +178,7 @@ module.exports = (function () {
     }
 
     function getValidMovesForUnit(unit) {
-      return _.chain(getAdjacentTiles(unit))
+      return _.chain(map.getAdjacentTiles(unit))
         .filter(function(tile) {
           return tile.type === 'empty';
         })
@@ -204,7 +203,7 @@ module.exports = (function () {
     }
 
     function getValidAttacksForUnit(unit) {
-      return _.chain(getAdjacentTiles(unit))
+      return _.chain(map.getAdjacentTiles(unit))
         .filter(function(tile) {
           return tile.type !== 'empty' && tile.player !== game.currentPlayer;
         })
@@ -221,7 +220,7 @@ module.exports = (function () {
     }
 
     function getPossiblePlays() {
-      var availableEnergy = _.chain(getTiles())
+      var availableEnergy = _.chain(map.getTiles())
         .filter(playerEnergyTilesQuery)
         .reduce(function(sum, energy) {
           return sum + energy.data.energy;
@@ -259,9 +258,9 @@ module.exports = (function () {
 
     function getValidTargetsForCard(card) {
       if (card.type === 'spell')
-        return getTiles(); // TODO: Need more precise specification and handling of targets
+        return map.getTiles(); // TODO: Need more precise specification and handling of targets
 
-      return _.filter(getTiles(), function(tile) {
+      return _.filter(map.getTiles(), function(tile) {
         // TODO: Need check for placement near energy source and sufficiant energy
         return tile.type === 'empty' &&
           _.some(getAdjacentTiles(tile), playerEnergyTilesQuery) &&
@@ -274,19 +273,7 @@ module.exports = (function () {
     //
 
     function getAllUnits() {
-      return _.filter(getTiles(), playerUnitTilesQuery);
-    }
-
-    function getTile(pos) {
-      return game.board[pos.y][pos.x];
-    }
-
-    function setTile(pos, data) {
-      game.board[pos.y][pos.x] = data;
-    }
-
-    function resetTile(pos) {
-      game.board[pos.y][pos.x] = {type: 'empty', x: pos.x, y: pos.y};
+      return _.filter(map.getTiles(), playerUnitTilesQuery);
     }
 
     function createCardForCurrentPlayer(cardId) {
@@ -319,7 +306,7 @@ module.exports = (function () {
       newCard.y = pos.y;
       newCard.data.movesLeft = newCard.data.moves;
       newCard.data.attacksLeft = newCard.data.attacks;
-      setTile(pos, newCard);
+      map.setTile(pos, newCard);
     }
 
     function playerEnergyTilesQuery(tile) {
@@ -335,7 +322,7 @@ module.exports = (function () {
         return Math.abs(tile.x - source.x) + Math.abs(tile.y - source.y);
       };
 
-      return _.chain(getTiles())
+      return _.chain(map.getTiles())
         .filter(playerEnergyTilesQuery)
         .sortBy(closestSourcesFirstQuery)
         .value();
@@ -354,7 +341,7 @@ module.exports = (function () {
       if (pos)
         energySources = getEnergySourcesConnectedToTile(pos);
       else
-        energySources = _.filter(getTiles(), playerEnergyTilesQuery);
+        energySources = _.filter(map.getTiles(), playerEnergyTilesQuery);
 
       var remaingingCost = cost;
       _.each(energySources, function(source) {
@@ -365,29 +352,19 @@ module.exports = (function () {
       });
     }
 
-    function getAdjacentTiles(pos) {
-      return getTilesWithinRange(pos, 1);
-    }
-
-    function getTilesWithinRange(pos, range) {
-      return _.filter(getTiles(), function(tile) {
-        return (Math.abs(tile.x - pos.x) <= range) && (Math.abs(tile.y - pos.y) <= range);
-      });
-    }
-
     var me = this;
 
     function getScriptContext(data) {
       return {
         game: me,
-        target: getTile(data.pos),
+        target: map.getTile(data.pos),
         damageUnit: function(unit, damage) {
           if (!unit.data.life)
             return;
 
           unit.data.life -= damage;
           if (unit.data.life <= 0)
-            resetTile(unit);
+            map.resetTile(unit);
         },
         heal: function(unit, amount) {
           if (!unit.data.life)
@@ -397,7 +374,7 @@ module.exports = (function () {
             unit.data.life++;
         },
         drawCards: drawCards,
-        getAdjacentTiles: getAdjacentTiles,
+        getAdjacentTiles: map.getAdjacentTiles,
         print: console.log, //function(str) { console.log('SCRIPT: ' + str ); },
         util: _
       };
@@ -406,7 +383,6 @@ module.exports = (function () {
   };
 
   util.inherits(GameActions, events.EventEmitter);
-
 
   return GameActions;
 
