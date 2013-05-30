@@ -8,6 +8,8 @@ var util = require('util'),
 module.exports = (function () {
   var GameActions = function(game) {
 
+    var me = this;
+
     var map = new Map(game.board);
     // map.on('tileSet', function (data, pos) {
     //   console.log('New tile set: ' + data.type, pos);
@@ -27,10 +29,10 @@ module.exports = (function () {
         payCastingCost(card.cost, data.pos);
         placeNewUnit(card, data.pos);
         if (card.data.scriptFile)
-          executeScript(card.data.scriptFile, data);
+          executeScript(card.data.scriptFile, card, data);
       } else if (card.type === 'spell') {
         payCastingCost(card.cost);
-        executeScript(card.data.scriptFile, data);
+        executeScript(card.data.scriptFile, card, data);
       }
 
       this.emit('playedCard', card);
@@ -54,10 +56,12 @@ module.exports = (function () {
         map.resetTile(data.to);
 
       //this.emit('attacks', { attacker: attacker, defender: defender });
-      this.emit('attacks', attacker, defender);
+      this.emit('attack', attacker, defender);
     };
 
     this.endTurn = function(data) {
+      this.emit('turn ended');
+
       game.currentPlayer = (game.currentPlayer + 1) % game.players.length;
 
       startTurn();
@@ -90,13 +94,15 @@ module.exports = (function () {
           }
         });
 
+      me.emit('turn started');
+
       // draw a card for the next player
       drawCards(1);
     }
 
-    function executeScript(scriptFile, data) {
+    function executeScript(scriptFile, card, data) {
       var script = fs.readFileSync('./game-server/scripts/' + scriptFile);
-      vm.runInNewContext(script, getScriptContext(data), scriptFile);
+      vm.runInNewContext(script, getScriptContext(card, data), scriptFile);
     }
 
     //
@@ -297,6 +303,8 @@ module.exports = (function () {
       var player = getCurrentPlayer();
       var cards = player.library.splice(0, numberOfCards);
       player.hand = player.hand.concat(cards);
+
+      me.emit('drew cards', cards);
     }
 
     function placeNewUnit(card, pos) {
@@ -355,10 +363,9 @@ module.exports = (function () {
       });
     }
 
-    var me = this;
-
-    function getScriptContext(data) {
+    function getScriptContext(card, data) {
       return {
+        entity: card,
         game: me,
         target: map.getTile(data.pos),
         damageUnit: function(unit, damage) {
@@ -378,7 +385,17 @@ module.exports = (function () {
         },
         drawCards: drawCards,
         getAdjacentTiles: map.getAdjacentTiles,
-        print: console.log, //function(str) { console.log('SCRIPT: ' + str ); },
+        print: console.log,
+        getCurrentPlayerIndex: function() { 
+          return me.currentPlayer;
+        },
+        updateEntity: function(entity) {
+          map.setTile({x: 2, y: 2}, entity); // HACK HACK HACK HACK
+        },
+        getCurrentPlayer: getCurrentPlayer,
+        // notify: function (data) { 
+        //   me.emit('notify', data); 
+        // },
         util: _
       };
     }

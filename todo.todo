@@ -70,6 +70,7 @@ Improved persistent games:
      ☐ Create a utilities-decorator can takes state as an argument OR add utilities functions directly to state
      ☐ Move calculation of possible actions into its own module
      ✔ Remove redundant guards @done (11-03-13 21:35)
+ ☐ Improve the way game states are requested (i.e. should never request same action index twice)
  ☐ Trim the data that is sent to the player (e.g. remove library, enemy hand etc.)
  ☐ Unit tests
 
@@ -82,6 +83,7 @@ Misc. improvements:
  ☐ Include a game manual page
  ☐ Make an API that takes/returns only JSON data
  ☐ Make the client-side completely AngularJS-based
+ ☐ Deck editor
 
 Hexagonal grid:
  ☐ Make basic KineticJS implementation of map rendering
@@ -98,6 +100,8 @@ Optimizations:
 
 Very high-level long-term additions:
  ☐ Adventure mode
+     ☐ Large, persistant world
+     ☐ x moves per y time unit (e.g. 10 moves per hour)
  ☐ Leaderboards
  ☐ Achievements
  ☐ Different maps
@@ -107,4 +111,9 @@ Very high-level long-term additions:
  ☐ Ability to edit/create maps
  ☐ Ability to edit/create AI
  ☐ Player progress (improve stats over time and level)
+ ☐ User-created content
+     ☐ Cards (moderators only?)
+     ☐ Maps
+     ☐ AI's
+     ☐ Game modes?
 

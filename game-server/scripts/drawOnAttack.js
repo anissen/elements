@@ -1,6 +1,6 @@
 
 //print('game', game);
-game.on('attacks', function (attacker, defender) {
+game.on('attack', function (attacker, defender) {
   print('attacks');
   print('-- attacker', attacker);
   print('-- defender', defender);
