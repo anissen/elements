@@ -387,10 +387,10 @@ module.exports = (function () {
         getAdjacentTiles: map.getAdjacentTiles,
         print: console.log,
         getCurrentPlayerIndex: function() { 
-          return me.currentPlayer;
+          return game.currentPlayer;
         },
         updateEntity: function(entity) {
-          map.setTile({x: 2, y: 2}, entity); // HACK HACK HACK HACK
+          map.setTile(data.pos, entity); // HACK HACK HACK HACK
         },
         getCurrentPlayer: getCurrentPlayer,
         // notify: function (data) { 
