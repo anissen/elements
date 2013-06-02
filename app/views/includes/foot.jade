@@ -32,12 +32,12 @@ script(type='text/javascript', src="/vendor/socket.io/socket.io.js")
 script(type='text/javascript')
   var socket = io.connect('http://localhost');
   socket.on('news', function (data) {
-    console.log(data);
-    socket.emit('ping', { something: 'stuff' });
+    $('.notifications').prepend('<div class="alert alert-info">' + data.text + '</div>');
+    //- socket.emit('ping', { something: 'stuff' });
   });
-  socket.on('pong', function (data) {
-    console.log('recieved pong', data);
-  });
+  //- socket.on('pong', function (data) {
+  //-   console.log('recieved pong', data);
+  //- });
 
 script(type="text/javascript")
   var _gaq = _gaq || [];

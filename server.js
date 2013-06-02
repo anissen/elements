@@ -29,16 +29,14 @@ var app = express(),
     server = http.createServer(app),
     io = require('socket.io').listen(server);
 
-io.sockets.on('connection', function (socket) {
-  socket.emit('news', { text: 'hello world' });
-  socket.on('ping', function (data) {
-    socket.emit('pong', 'in response to ' + data)
-  })
-});
-
 // TODO: Move this to a configuration file (e.g. express.js)
 io.configure('development', function(){
   io.set('log level', 2);
+});
+
+io.sockets.on('connection', function (socket) {
+  socket.emit('news', { text: 'You connected, hurray!' });
+  socket.broadcast.emit('news', { text: 'User connected' });
 });
 
 // express settings

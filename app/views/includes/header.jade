@@ -39,21 +39,22 @@ header#header
               span.glyphicon.glyphicon-user 
               | Users
 
-          li.divider
-
-          li.dropdown(class=(req.path.substring(0,6) === '/xxx' ? 'active' : ''), data-intro="xxx")
-            a.dropdown-toggle(href='#', data-toggle='dropdown')
-              span.glyphicon.glyphicon-bell 
-              | Notifications 
-              span.badge #{req.user.invites.length + req.user.turns.length} 
-              b.caret
-            ul.dropdown-menu
-              li
-                a Invites 
-                  span.badge=req.user.invites.length
-              li
-                a Your turn 
-                  span.badge=req.user.turns.length
+          if (req.user)
+            li.divider
+              
+            li.dropdown(class=(req.path.substring(0,6) === '/xxx' ? 'active' : ''), data-intro="xxx")
+              a.dropdown-toggle(href='#', data-toggle='dropdown')
+                span.glyphicon.glyphicon-bell 
+                | Notifications 
+                span.badge #{req.user.invites.length + req.user.turns.length} 
+                b.caret
+              ul.dropdown-menu
+                li
+                  a Invites 
+                    span.badge=req.user.invites.length
+                li
+                  a Your turn 
+                    span.badge=req.user.turns.length
 
           li.divider
 
