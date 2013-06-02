@@ -5,6 +5,8 @@ if (req.isAuthenticated())
       a(href="/users/" + invite.owner._id) #{invite.owner.name}
       | &nbsp;invited you to play a game. 
       b 
-        a.btn.btn-small.btn-success(href="/games/" + invite._id + "/accept") Accept
+        a.btn.btn-small.btn-success(href="/games/" + invite._id + "/accept") 
+          span.glyphicon.glyphicon-ok &nbsp; Accept
         | &nbsp;
-        a.btn.btn-small.btn-danger(href="/games/" + invite._id + "/decline") Decline
+        a.btn.btn-small.btn-danger(href="/games/" + invite._id + "/decline") 
+          span.glyphicon.glyphicon-remove &nbsp; Decline

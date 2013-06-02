@@ -63,9 +63,9 @@ Improved persistent games:
      ☐ Move calculation of possible actions into its own module
      ✔ Remove redundant guards @done (11-03-13 21:35)
  ✔ Improve the way game states are requested (i.e. should never request same action index twice) @done (02-06-13 21:41)
- ☐ Trim the data that is sent to the player (e.g. remove library, enemy hand etc.)
- ✔ Handle AI players @done (02-06-13 20:44)
- ☐ Create AI players with decks
+ ☐ Possible to play start-to-end against AI
+     ✔ Handle AI players @done (02-06-13 20:44)
+     ☐ Create AI players with decks
  ☐ Make a new deployment to heroku
 
 Improved gameplay:
@@ -81,6 +81,7 @@ Improved gameplay:
          ☐ Test case: Unit that has "Allies spawned within [range 1] of ~ gain +1 to attack"
  ☐ Class for composing a query of the game state
  ☐ Make custom "on"-function takes multiple keys and guards against invalid bindings
+ ☐ Trim the data that is sent to the player (e.g. remove library, enemy hand etc.)
  ☐ Unit tests
 
 --- ✄ -----------------------

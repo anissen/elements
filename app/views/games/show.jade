@@ -5,23 +5,25 @@ block content
     .col-span-12
       .panel
         .panel-heading Available actions
-        a.btn.btn-primary.btn-large(href='/games/' + game._id + '/play/') Take your turn 
+        a.btn.btn-primary.btn-large(href='/games/' + game._id + '/play/') 
+          span.glyphicon.glyphicon-play &nbsp;Take your turn 
 
   .row
     for player in game.players
       .col-span-4
         .panel
           .panel-heading 
-            a(href='/users/' + player.user._id)=player.user.name
+            a(href='/users/' + player.user._id) 
+              span.glyphicon.glyphicon-user &nbsp;#{player.user.name}
             case player.readyState
               when 'pending': span.text-danger &nbsp;(pending)
               when 'accepted': span.text-warning &nbsp;(accepted)
               when 'ready': span.text-success &nbsp;(ready)
           p Some text here
           if player.readyState === 'ready'
-            p Deck: 
-              b 
-                a(href='/decks/' + player.deck._id) My awesome #{player.deck.name} deck
+            p 
+              a(href='/decks/' + player.deck._id) 
+                span.glyphicon.glyphicon-list-alt &nbsp;#{player.deck.name}
 
   p
     br

@@ -29,10 +29,21 @@ header#header
                   span.glyphicon.glyphicon-plus 
                   | New game
 
-          li(data-intro="Deck stuff")
-            a 
+          li.dropdown(class=(req.path.substring(0,6) === '/decks' ? 'active' : ''), data-intro="Deck stuff")
+            a.dropdown-toggle(href='#', data-toggle='dropdown')
               span.glyphicon.glyphicon-list-alt 
-              | Decks
+              | Decks 
+              b.caret
+            ul.dropdown-menu
+              li
+                a(href='/decks', title="decks").active 
+                  span.glyphicon.glyphicon-th 
+                  | All decks
+              li.divider
+              li
+                a(href="/decks/new", title="new deck") 
+                  span.glyphicon.glyphicon-plus 
+                  | New deck
 
           li(class=(req.path === '/users') ? 'active' : '', data-intro="List of all users")
             a(href="/users", title="users")

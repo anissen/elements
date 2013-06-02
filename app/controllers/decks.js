@@ -33,7 +33,8 @@ exports.new = function(req, res) {
           title: 'New deck',
           deck: new Deck({}),
           users: users,
-          cards: cards
+          cards: cards,
+          cardQuantities: _.countBy(cards, function(card) { return card._id; })
         });
 
       })

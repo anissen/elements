@@ -23,7 +23,7 @@ block content
           .controls
             select(multiple, name="cards", style='width: 100%').multi-select
               for card in cards
-                option(value="#{card._id}") #{card.name}
+                option(value="#{card._id}") #{cardQuantities[card._id]}x #{card.name}
 
         .form-actions
           button.btn.btn-primary(type='submit') Save changes
