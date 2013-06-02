@@ -92,9 +92,9 @@ module.exports = (function () {
     newState.actionList = [];
     newState.actionCount = 0;
     var gameActions = new GameActions(newState);
-    gameActions.on('playedCard', function (card) {
+    //gameActions.on('playedCard', function (card) {
       //console.log('EVENT: playedCard', card);
-    });
+    //});
 
     for (var i = 0; i < actions.length; i++) {
       var action = actions[i];

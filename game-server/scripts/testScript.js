@@ -15,5 +15,5 @@ game.on('turn started', function () {
     entity.data.life += 2;
   }
 
-  updateEntity(entity)
+  updateEntity(entity);
 });
