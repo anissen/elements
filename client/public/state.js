@@ -15,14 +15,11 @@ function stateCtrl($scope, $http) {
   };
 
   function playAllActions() {
-    var actionsBefore = $scope.state.actionCount || 0;
     var interval = setInterval(function() {
       $scope.getState();
 
-      if ($scope.state.actionCount === actionsBefore)
+      if ($scope.state.lastAction)
         clearInterval(interval);
-
-      actionsBefore = $scope.state.actionCount;
     }, 500);
   }
 

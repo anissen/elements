@@ -57,14 +57,15 @@ Improved persistent games:
  ✔ Handle decks of cards in database @done (22-05-13 15:46)
  ☐ Clean up gameactions.js
      ✔ Make a pure Map class @done (27-05-13 21:24)
-     ☐ Make an Entity class to represent an unit/tower/energy object on the map. Should inherit from eventEmitter
-     ☐ Move the non-specific functions into prototype objects
-     ☐ Create a utilities-decorator can takes state as an argument OR add utilities functions directly to state
+     ✘ Make an Entity class to represent an unit/tower/energy object on the map. Should inherit from eventEmitter @cancelled (02-06-13 20:53)
+     ✘ Move the non-specific functions into prototype objects @cancelled (02-06-13 20:53)
+     ✘ Create a utilities-decorator can takes state as an argument OR add utilities functions directly to state @cancelled (02-06-13 20:53)
      ☐ Move calculation of possible actions into its own module
      ✔ Remove redundant guards @done (11-03-13 21:35)
- ☐ Improve the way game states are requested (i.e. should never request same action index twice)
+ ✔ Improve the way game states are requested (i.e. should never request same action index twice) @done (02-06-13 21:41)
  ☐ Trim the data that is sent to the player (e.g. remove library, enemy hand etc.)
- ☐ Handle AI players
+ ✔ Handle AI players @done (02-06-13 20:44)
+ ☐ Create AI players with decks
  ☐ Make a new deployment to heroku
 
 Improved gameplay:

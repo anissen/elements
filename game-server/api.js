@@ -29,9 +29,10 @@ module.exports = (function () {
     game.persistAction(eventData);
 
     // HACK:
+    // TODO: This should be handled via an event, e.g. this.emit('next player', nextPlayer)
     if (eventData.action === 'endTurn') {
       var nextPlayer = state.players[(state.currentPlayer+1)%state.players.length];
-      if (nextPlayer.type === 'ai')
+      if (nextPlayer.user.playerType === 'ai')
         takeTurnByAI(game);
     }
 
@@ -116,6 +117,8 @@ module.exports = (function () {
     var actions = _.first(game.actions, actionCount);
 
     var state = playEventsOnState(game.initialState, actions);
+    state.lastAction = (actionCount >= game.actions.length);
+
     var endTime = (new Date()).getTime();
     var timeDiff = endTime - startTime;
     var timePerEvent = (actions.length === 0 ? '0' : (timeDiff / actions.length).toFixed(2));

@@ -23,11 +23,8 @@ var UserSchema = new Schema({
   facebook: {},
   twitter: {},
   github: {},
-  google: {}/*,
-  invites: [{
-    game: { type: Schema.ObjectId, ref: 'Game' },
-    invitedBy: { type: Schema.ObjectId, ref: 'User' }
-  }]*/
+  google: {},
+  playerType: { type: String, default: "human" }
 });
 
 /**

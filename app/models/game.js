@@ -82,9 +82,9 @@ GameSchema.statics = {
       .findOne({ _id : id })
       //.lean()
       .populate('owner', 'name')
-      .populate('players.user', 'name')
+      .populate('players.user', 'name playerType')
       .populate('players.deck', 'name')
-      .populate('initialState.players.user', 'name')
+      .populate('initialState.players.user', 'name playerType')
       .populate('initialState.players.hand')
       .populate('initialState.players.deck')
       .exec(function (err, game) {

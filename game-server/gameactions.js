@@ -15,6 +15,11 @@ module.exports = (function () {
     //   console.log('New tile set: ' + data.type, pos);
     // });
 
+    // entity.on('move', function (from, to, entity) {
+    //   map.resetTile(from);
+    //   map.setTile(to, entity);
+    // });
+
     events.EventEmitter.call(this);
 
     this.play = function(data) {
@@ -55,7 +60,6 @@ module.exports = (function () {
       if (defender.data.life <= 0)
         map.resetTile(data.to);
 
-      //this.emit('attacks', { attacker: attacker, defender: defender });
       this.emit('attack', attacker, defender);
     };
 
