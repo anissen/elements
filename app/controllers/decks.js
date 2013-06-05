@@ -27,17 +27,13 @@ exports.new = function(req, res) {
     .find({}, {'name': 1})
     .exec(function (err, users) {
 
-      Card.list(function (err, cards) {
-
-        res.render('decks/new', {
-          title: 'New deck',
-          deck: new Deck({}),
-          users: users,
-          cards: cards,
-          cardQuantities: _.countBy(cards, function(card) { return card._id; })
-        });
-
-      })
+      res.render('decks/new', {
+        title: 'New deck',
+        deck: new Deck({}),
+        users: users,
+        cards: req.user.cards
+        //cardQuantities: _.countBy(req.user.cards, function(card) { return card._id; })
+      });
       
     });
 };
@@ -47,9 +43,13 @@ exports.new = function(req, res) {
  */
 
 exports.create = function (req, res) {
-  var cardArray = [].concat(req.body.cards);
+  var selectedCards = _.map(req.body.cards, function (card) {
+    return card.split('#')[0]; // Hack to be able to have multiple same values in select box
+  });
 
-  Card.loadList(cardArray, function (err, cards) {
+  var cardArray = [].concat(selectedCards);
+
+  Card.loadListWithDublicates(cardArray, function (err, cards) {
     if (err) {
       console.log('error loading card list');
       return;
@@ -57,7 +57,7 @@ exports.create = function (req, res) {
 
     var deck = new Deck({
       owner: req.user._id,
-      name: 'Deck of the Dummies',
+      name: req.body.deckName,
       cards: cards
     });
 
@@ -122,7 +122,8 @@ exports.show = function(req, res){
     .exec(function (err, deck) {
 
       res.render('decks/show', {
-        deck: deck
+        deck: deck,
+        cardQuantities: _.groupBy(deck.cards, function(card) { return card._id; })
       });
 
     });

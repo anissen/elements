@@ -24,7 +24,8 @@ var UserSchema = new Schema({
   twitter: {},
   github: {},
   google: {},
-  playerType: { type: String, default: "human" }
+  playerType: { type: String, default: "human" },
+  cards: [{ type: Schema.ObjectId, ref: 'Card' }]
 });
 
 /**

@@ -22,6 +22,7 @@ module.exports = function (passport, config) {
     User
       .findById(id)
       .lean()
+      .populate('cards', 'name')
       .exec(function (err, user) {
 
         Game

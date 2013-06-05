@@ -3,8 +3,11 @@ extends ../layouts/default
 block content
   p Deck should be shown here
   .panel.panel-info
-    .panel-heading Deck
+    .panel-heading #{deck.name || 'Untitled deck'}
     ul
-      for card in deck.cards
-        li 
-          a(href='/cards/' + card._id)=card.name
+      //for card in deck.cards
+      //  li 
+      //    a(href='/cards/' + card._id)=card.name
+      for cardGroup in cardQuantities
+        li #{cardGroup.length}x 
+          a(href='/cards/' + cardGroup[0]._id) #{cardGroup[0].name}

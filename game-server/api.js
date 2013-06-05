@@ -2,8 +2,7 @@
 var GameActions = require('./gameactions'),
     _ = require('underscore'),
     util = require('util'),
-    mongoose = require('mongoose'),
-    async = require('async');
+    mongoose = require('mongoose');
 
 module.exports = (function () {
 

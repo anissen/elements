@@ -94,6 +94,8 @@ Misc. improvements:
  ☐ Make an API that takes/returns only JSON data
  ☐ Make the client-side completely AngularJS-based
  ☐ Deck editor
+ ☐ Simplify website UI
+ ☐ A live event-stream (on the front page?)
 
 Hexagonal grid:
  ☐ Make basic KineticJS implementation of map rendering

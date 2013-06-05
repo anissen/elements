@@ -2,7 +2,8 @@
 var mongoose = require('mongoose'),
     env = process.env.NODE_ENV || 'development',
     config = require('../../config/config')[env],
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    async = require('async');
 
 var CardSchema = new Schema({
   type: { type: String },
@@ -27,6 +28,10 @@ CardSchema.statics = {
       .findOne({ id : cardId })
       .lean()
       .exec(callback);
+  },
+
+  loadListWithDublicates: function (ids, callback) {
+    async.map(ids, this.load.bind(this), callback);
   },
 
   loadList: function (ids, callback) {
