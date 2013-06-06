@@ -85,6 +85,7 @@ GameSchema.statics = {
       .populate('players.user', 'name playerType')
       .populate('players.deck', 'name')
       .populate('initialState.players.user', 'name playerType')
+      .populate('initialState.players.library')
       .populate('initialState.players.hand')
       .populate('initialState.players.deck')
       .exec(function (err, game) {
