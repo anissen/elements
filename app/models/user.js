@@ -134,6 +134,13 @@ UserSchema.methods = {
 
 UserSchema.statics = {
 
+  loadList: function(ids, cb) {
+    this
+      .find({ _id: { $in: ids } })
+      .lean()
+      .exec(cb);
+  },
+
   list: function (options, cb) {
     var criteria = options.criteria || {};
 

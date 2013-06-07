@@ -174,8 +174,46 @@ function createNewGame(req, callback) {
   });
 
   game.save(function (err) {
+    if (err) console.log("ERROR", err);
     callback(err, game);
+    
+    chooseDecksForAIPlayers(game, playerIds);
   });
+}
+
+function chooseDecksForAIPlayers(game, playerIds) {
+  //console.log('game', game);
+  User.loadList(playerIds, function (err, players) {
+    // console.log('list players', players);
+    if (err) console.log("ERROR", err);
+
+    var aiPlayers = _.filter(players, function (player) {
+      // console.log('filter player', player);
+      return (player.playerType === 'ai');
+      //console.log("player:", player.name, "type:", player.playerType);
+    });
+
+    _.each(aiPlayers, function (player) {
+      // console.log('each player', player);
+      Deck.listAll({ criteria: { owner: player._id }}, function (err, decks) {
+        console.log('decks', decks);
+        if (err) console.log("ERROR", err);
+
+        if (decks.length === 0) {
+          console.log('Cannot choose a deck for AI player "' + player.name + '" - the player has no decks!');
+          return;
+        }
+
+        var randomDeck = _.first(_.shuffle(decks));
+        chooseDeck(game, player, randomDeck, function (err, game) {
+          if (err) console.log("ERROR", err);
+        });
+      });
+    });
+  });
+
+  // Choose a random deck for each AI opponent
+  // opponent.playerType === 'ai' then chooseDeck()
 }
 
 function chooseDeck(game, user, deck, callback) {
@@ -192,6 +230,8 @@ function chooseDeck(game, user, deck, callback) {
     return player.user.toString() === user._id.toString();
   });
 
+  console.log('before', initialPlayerState);
+
   var cards = _.shuffle(deck.cards);
   var handSize = 5; // HACK: Hardcoded!
   var hand = cards.splice(0, handSize);
@@ -203,7 +243,10 @@ function chooseDeck(game, user, deck, callback) {
     deck: deck
   });
 
+  console.log('after', initialPlayerState);
+
   game.save(function (err) {
+    if (err) console.log("ERROR", err);
     callback(err, game);
   });
 }
