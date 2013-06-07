@@ -66,6 +66,7 @@ Improved persistent games:
  ☐ Possible to play start-to-end against AI
      ✔ Handle AI players @done (02-06-13 20:44)
      ☐ Create AI players with decks
+     ✔ Fix bug: All cards with same ID are removed from hand when one is played @done (07-06-13 23:04)
  ☐ Make a new deployment to heroku
 
 Improved gameplay:

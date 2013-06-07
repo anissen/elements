@@ -26,8 +26,14 @@ module.exports = (function () {
       var player = getCurrentPlayer();
       var card = createCardForCurrentPlayer(data.cardId);
 
+      var foundCard = false; // Hack to avoid removing all cards with matching cardId
       player.hand = _.reject(player.hand, function(cardInHand) {
-        return cardInHand.id === data.cardId;
+        var correctCard = (cardInHand.id === data.cardId);
+        if (correctCard && !foundCard) {
+          foundCard = true;
+          return true;
+        }
+        return false;
       });
 
       if (card.type === 'unit' || card.type === 'energy') {
