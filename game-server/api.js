@@ -62,7 +62,7 @@ module.exports = (function () {
         action.value = getValueForAction(state, action) - initialStateValue;
       });
 
-      var action = _.max(possibleActions, function(action) {
+      var action = _.max(_.shuffle(possibleActions), function(action) {
         return action.value;
       });
 

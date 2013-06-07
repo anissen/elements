@@ -80,4 +80,4 @@ block content
         .col-span-2
           select(multiple='multiple', style='min-height: 600px;')
             option(ng-repeat='action in state.actionList') {{action.player}}: {{action.action}}
-          a.btn.btn-large.btn-block.btn-primary(href='#', ng-click='endTurn()') End turn
+          a.btn.btn-large.btn-block.btn-primary(href='#', ng-disabled='state.won.length > 0', ng-click='endTurn()') End turn

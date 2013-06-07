@@ -20,7 +20,7 @@ function stateCtrl($scope, $http) {
 
       if ($scope.state.lastAction)
         clearInterval(interval);
-    }, 500);
+    }, 300);
   }
 
   $scope.getCardsInOwnHand = function() {
