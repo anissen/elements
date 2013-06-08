@@ -5,7 +5,7 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title> - jsFiddle demo by anissen</title>
     
-    <script type='text/javascript' src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.5.1.js"></script>
+    <script type='text/javascript' src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.5.3.js"></script>
     <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TimelineLite.min.js"></script>
     <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenLite.min.js"></script>
     <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/easing/EasePack.min.js"></script>
@@ -56,7 +56,7 @@
             width: 700,
             height: 700
         });
-        var layer = new Kinetic.Layer();
+        var hexLayer = new Kinetic.Layer();
 
         var hexagons = [];
         var hexsize = 128;
@@ -80,8 +80,10 @@
                 });
                 
                 //do something when mouse enters shape
-                hexagons[index].on('mouseover touchstart', function() {
+                hexagons[index].on('mouseover touchstart', function(evt) {
                     this.setStroke('yellow');
+
+                    redLine.attrs.points[1] = evt.targetNode.getPosition(); // stage.getMousePosition();
                     stage.draw();
                 });
                 //do something when mouse exits shape
@@ -92,35 +94,35 @@
                 
                 //add the shape to the layer
                 if (index !== 0) // HACK: Avoid dublicating the draggable hexagon
-                    layer.add(hexagons[index]);
+                    hexLayer.add(hexagons[index]);
             }
         }
 
         // add the layer to the stage
-        stage.add(layer);
+        stage.add(hexLayer);
 
         var dragLayer = new Kinetic.Layer();
         var group = new Kinetic.Group({
             //draggable: true
         });
-        var hexLabel = new Kinetic.Text({
-            x: hexagons[0].attrs.x,
-            y: hexagons[0].attrs.y - 30,
-            text: 'Awesome Hero\nAttack: 3\nLife: 5',
-            fontSize: 15,
-            fontFamily: 'Calibri',
-            fontStyle: 'bold',
-            fill: 'green',
-            shadowColor: 'white',
-            shadowBlur: 1,
-            shadowOffset: 0,
-            shadowOpacity: 1
-        });
-        hexLabel.setOffset({
-            x: hexLabel.getWidth() / 2
-        });
+        // var hexLabel = new Kinetic.Text({
+        //     x: hexagons[0].attrs.x,
+        //     y: hexagons[0].attrs.y - 30,
+        //     text: 'Awesome Hero\nAttack: 3\nLife: 5',
+        //     fontSize: 15,
+        //     fontFamily: 'Calibri',
+        //     fontStyle: 'bold',
+        //     fill: 'green',
+        //     shadowColor: 'white',
+        //     shadowBlur: 1,
+        //     shadowOffset: 0,
+        //     shadowOpacity: 1
+        // });
+        // hexLabel.setOffset({
+        //     x: hexLabel.getWidth() / 2
+        // });
         group.add(hexagons[0]);
-        group.add(hexLabel);
+        // group.add(hexLabel);
         dragLayer.add(group);
         stage.add(dragLayer);
 
@@ -130,7 +132,7 @@
             strokeWidth: 15,
             lineCap: 'round',
             lineJoin: 'round',
-            opacity: 0.0
+            opacity: 1.0
         });
 
         dragLayer.add(redLine);
@@ -142,22 +144,24 @@
             var mousePos = stage.getMousePosition();
             redLine.setOpacity(1.0);
         });
-        layer.on('mouseup', function() {
+        hexLayer.on('mouseup', function() {
             dragging = false;
             redLine.setOpacity(0.0);
         });
-        layer.on('mousemove', function() {
-            if (dragging) {
-               redLine.attrs.points[1] = stage.getMousePosition();
-               layer.draw();
-            }
+        hexLayer.on('mouseover', function(evt) {
+          //if (dragging) {
+           redLine.attrs.points[1] = evt.targetNode.getPosition(); // stage.getMousePosition();
+           hexLayer.draw();
+          //}
         });
 
+        /*
         var tl = new TimelineLite({paused:false, onUpdate:stage.draw, onUpdateScope:stage});
 
         tl
           .staggerFrom(_.shuffle(hexagons), 1.0, { setY: -100, ease:Bounce.easeOut, setRotation: Math.PI / 2 }, 0.01)
           .staggerTo(hexagons, 0.5, { setScaleX: 1.2, setScaleY: 1.2, ease:Elastic.easeOut }, 0.01);
+        */
       }
 
       var sources = {
