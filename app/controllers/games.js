@@ -182,19 +182,14 @@ function createNewGame(req, callback) {
 }
 
 function chooseDecksForAIPlayers(game, playerIds) {
-  //console.log('game', game);
   User.loadList(playerIds, function (err, players) {
-    // console.log('list players', players);
     if (err) console.log("ERROR", err);
 
     var aiPlayers = _.filter(players, function (player) {
-      // console.log('filter player', player);
       return (player.playerType === 'ai');
-      //console.log("player:", player.name, "type:", player.playerType);
     });
 
     _.each(aiPlayers, function (player) {
-      // console.log('each player', player);
       Deck.listAll({ criteria: { owner: player._id }}, function (err, decks) {
         console.log('decks', decks);
         if (err) console.log("ERROR", err);
@@ -211,9 +206,6 @@ function chooseDecksForAIPlayers(game, playerIds) {
       });
     });
   });
-
-  // Choose a random deck for each AI opponent
-  // opponent.playerType === 'ai' then chooseDeck()
 }
 
 function chooseDeck(game, user, deck, callback) {
@@ -230,8 +222,6 @@ function chooseDeck(game, user, deck, callback) {
     return player.user.toString() === user._id.toString();
   });
 
-  console.log('before', initialPlayerState);
-
   var cards = _.shuffle(deck.cards);
   var handSize = 5; // HACK: Hardcoded!
   var hand = cards.splice(0, handSize);
@@ -242,8 +232,6 @@ function chooseDeck(game, user, deck, callback) {
     hand: hand, 
     deck: deck
   });
-
-  console.log('after', initialPlayerState);
 
   game.save(function (err) {
     if (err) console.log("ERROR", err);
