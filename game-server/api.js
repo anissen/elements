@@ -100,7 +100,10 @@ module.exports = (function () {
       var action = actions[i];
       gameActions[action.action](action.data);
       gameActions.checkWinner();
-      newState.actionList.push({"player": newState.players[newState.currentPlayer].user.name, "action": action.action});
+      newState.actionList.push({
+        player: newState.players[newState.currentPlayer].user.name, 
+        action: action.action
+      });
       newState.actionCount++;
     };
 
