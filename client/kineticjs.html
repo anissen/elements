@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title> - jsFiddle demo by anissen</title>
+    
+    <script type='text/javascript' src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.5.1.js"></script>
+    <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TimelineLite.min.js"></script>
+    <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenLite.min.js"></script>
+    <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/easing/EasePack.min.js"></script>
+    <script type='text/javascript' src="http://underscorejs.org/underscore-min.js"></script>
+    
+    <style type='text/css'>
+    body {
+      background-color: gray;
+    }
+
+    #container {
+      border: 1px solid gray;
+      background-color: black;
+      height: 700px;
+      width: 700px;
+      /*
+      position: relative;
+      left: 25%;
+      */
+    }
+    </style>
+
+    <script type='text/javascript'>//<![CDATA[ 
+
+    window.onload=function(){
+      function loadImages(sources, callback) {
+        var images = {};
+        var loadedImages = 0;
+        var numImages = 0;
+        // get num of sources
+        for(var src in sources) {
+          numImages++;
+        }
+        for(var src in sources) {
+          images[src] = new Image();
+          images[src].onload = function() {
+            if(++loadedImages >= numImages) {
+              callback(images);
+            }
+          };
+          images[src].src = sources[src];
+        }
+      }
+
+      function setup(images) {
+        var stage = new Kinetic.Stage({
+            container: 'container',
+            width: 700,
+            height: 700
+        });
+        var layer = new Kinetic.Layer();
+
+        var hexagons = [];
+        var hexsize = 128;
+        var margin = -1;
+        var backgroundImages = [images.water, images.fire, null];
+        for(var i=0; i<5; i++){
+            for(var j=0; j<6; j++){
+                var index = i * 6 + j;
+                hexagons[index] = new Kinetic.RegularPolygon({
+                  x: 70 + i * (hexsize + margin * 2) + (j % 2) * (hexsize + margin * 2) / 2,
+                  y: 70 + j * (hexsize - hexsize / 7.5 + margin),
+                  sides: 6,
+                  radius: (hexsize / 2 + hexsize / 15) * 0.8,
+                  //fill: 'black',
+                  stroke: 'darkred',
+                  strokeWidth: 2,
+                  opacity: 1.0,
+                  fillPatternImage: backgroundImages[Math.floor(j / 2)], // backgroundImages[Math.floor(Math.random() * (backgroundImages.length+1))],
+                  fillPatternOffset: [55, 45],
+                  fillPatternScale: [1.2, 1.2]
+                });
+                
+                //do something when mouse enters shape
+                hexagons[index].on('mouseover touchstart', function() {
+                    this.setStroke('yellow');
+                    stage.draw();
+                });
+                //do something when mouse exits shape
+                hexagons[index].on('mouseout touchend', function() {
+                    this.setStroke('darkred');
+                    stage.draw();
+                });    
+                
+                //add the shape to the layer
+                if (index !== 0) // HACK: Avoid dublicating the draggable hexagon
+                    layer.add(hexagons[index]);
+            }
+        }
+
+        // add the layer to the stage
+        stage.add(layer);
+
+        var dragLayer = new Kinetic.Layer();
+        var group = new Kinetic.Group({
+            //draggable: true
+        });
+        var hexLabel = new Kinetic.Text({
+            x: hexagons[0].attrs.x,
+            y: hexagons[0].attrs.y - 30,
+            text: 'Awesome Hero\nAttack: 3\nLife: 5',
+            fontSize: 15,
+            fontFamily: 'Calibri',
+            fontStyle: 'bold',
+            fill: 'green',
+            shadowColor: 'white',
+            shadowBlur: 1,
+            shadowOffset: 0,
+            shadowOpacity: 1
+        });
+        hexLabel.setOffset({
+            x: hexLabel.getWidth() / 2
+        });
+        group.add(hexagons[0]);
+        group.add(hexLabel);
+        dragLayer.add(group);
+        stage.add(dragLayer);
+
+        var redLine = new Kinetic.Line({
+            points: [73, 70, 340, 23],
+            stroke: 'blue',
+            strokeWidth: 15,
+            lineCap: 'round',
+            lineJoin: 'round',
+            opacity: 0.0
+        });
+
+        dragLayer.add(redLine);
+
+        var dragging = false;
+        group.on('mousedown', function() {
+            dragging = true;
+            //console.log('drag');
+            var mousePos = stage.getMousePosition();
+            redLine.setOpacity(1.0);
+        });
+        layer.on('mouseup', function() {
+            dragging = false;
+            redLine.setOpacity(0.0);
+        });
+        layer.on('mousemove', function() {
+            if (dragging) {
+               redLine.attrs.points[1] = stage.getMousePosition();
+               layer.draw();
+            }
+        });
+
+        var tl = new TimelineLite({paused:false, onUpdate:stage.draw, onUpdateScope:stage});
+
+        tl
+          .staggerFrom(_.shuffle(hexagons), 1.0, { setY: -100, ease:Bounce.easeOut, setRotation: Math.PI / 2 }, 0.01)
+          .staggerTo(hexagons, 0.5, { setScaleX: 1.2, setScaleY: 1.2, ease:Elastic.easeOut }, 0.01);
+      }
+
+      var sources = {
+        water: 'kineticjs-data/big-wave.png',
+        fire: 'kineticjs-data/fire-wave.png'
+      };
+
+      loadImages(sources, function(images) {
+        setup(images);
+      });
+    }//]]>  
+    </script>
+
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+</html>
