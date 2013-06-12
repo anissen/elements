@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title> - jsFiddle demo by anissen</title>
+    <title>kineticjs hexagon test</title>
     
     <script type='text/javascript' src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.5.3.js"></script>
     <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TimelineLite.min.js"></script>
@@ -13,12 +13,12 @@
     
     <style type='text/css'>
     body {
-      background-color: gray;
+      background-color: white;
     }
 
     #container {
-      border: 1px solid gray;
-      background-color: black;
+      border: 1px solid black;
+      background-color: gray;
       height: 700px;
       width: 700px;
       /*
@@ -50,6 +50,24 @@
         }
       }
 
+      function introAnimation(stage, hexagons) {
+        var tl = new TimelineLite({ paused:false, onUpdate: stage.draw, onUpdateScope:stage });
+        var staggerFromData = { 
+          setY: -80, 
+          ease: Bounce.easeOut, 
+          setRotation: Math.PI / 2 
+        };
+        var staggerToData = { 
+          setScaleX: 1.2, 
+          setScaleY: 1.2, 
+          ease: Elastic.easeOut 
+        };
+
+        tl
+          .staggerFrom(_.shuffle(hexagons), 0.7, staggerFromData, 0.01)
+          .staggerTo(hexagons, 0.5, staggerToData, 0.01);
+      }
+
       function setup(images) {
         var stage = new Kinetic.Stage({
             container: 'container',
@@ -61,6 +79,7 @@
         var hexagons = [];
         var hexsize = 128;
         var margin = -1;
+        var selectedHexagon = null;
         var backgroundImages = [images.water, images.fire, null];
         for(var i=0; i<5; i++){
             for(var j=0; j<6; j++){
@@ -72,96 +91,54 @@
                   radius: (hexsize / 2 + hexsize / 15) * 0.8,
                   //fill: 'black',
                   stroke: 'darkred',
-                  strokeWidth: 2,
+                  strokeWidth: 3,
                   opacity: 1.0,
                   fillPatternImage: backgroundImages[Math.floor(j / 2)], // backgroundImages[Math.floor(Math.random() * (backgroundImages.length+1))],
                   fillPatternOffset: [55, 45],
                   fillPatternScale: [1.2, 1.2]
                 });
                 
-                //do something when mouse enters shape
-                hexagons[index].on('mouseover touchstart', function(evt) {
-                    this.setStroke('yellow');
+                hexagons[index].on('mouseover touchstart', function() {
+                  if (this === selectedHexagon) return;
 
-                    redLine.attrs.points[1] = evt.targetNode.getPosition(); // stage.getMousePosition();
-                    stage.draw();
+                  this.setStroke('yellow');
+                  hexLayer.draw();
                 });
-                //do something when mouse exits shape
+
                 hexagons[index].on('mouseout touchend', function() {
-                    this.setStroke('darkred');
-                    stage.draw();
-                });    
+                  if (this === selectedHexagon) return;
+                  
+                  this.setStroke('darkred');
+                  stage.draw();
+                });
+
+                hexagons[index].on('click', function() {
+                  if (selectedHexagon) {
+                    selectedHexagon.setStrokeWidth(3);
+                    selectedHexagon.setStroke('darkred');
+                  }
+
+                  TweenLite.to(this, 2, {
+                    setRotation: Math.PI * 2,
+                    setStrokeWidth: 8,
+                    //setStroke: 'gold',
+                    onUpdate: stage.draw, 
+                    onUpdateScope:stage
+                  });
+                  //this.setStrokeWidth(8);
+                  this.setStroke('gold');
+
+                  selectedHexagon = this;
+                  hexLayer.draw();
+                });
                 
-                //add the shape to the layer
-                if (index !== 0) // HACK: Avoid dublicating the draggable hexagon
-                    hexLayer.add(hexagons[index]);
+                hexLayer.add(hexagons[index]);
             }
         }
 
-        // add the layer to the stage
         stage.add(hexLayer);
 
-        var dragLayer = new Kinetic.Layer();
-        var group = new Kinetic.Group({
-            //draggable: true
-        });
-        // var hexLabel = new Kinetic.Text({
-        //     x: hexagons[0].attrs.x,
-        //     y: hexagons[0].attrs.y - 30,
-        //     text: 'Awesome Hero\nAttack: 3\nLife: 5',
-        //     fontSize: 15,
-        //     fontFamily: 'Calibri',
-        //     fontStyle: 'bold',
-        //     fill: 'green',
-        //     shadowColor: 'white',
-        //     shadowBlur: 1,
-        //     shadowOffset: 0,
-        //     shadowOpacity: 1
-        // });
-        // hexLabel.setOffset({
-        //     x: hexLabel.getWidth() / 2
-        // });
-        group.add(hexagons[0]);
-        // group.add(hexLabel);
-        dragLayer.add(group);
-        stage.add(dragLayer);
-
-        var redLine = new Kinetic.Line({
-            points: [73, 70, 340, 23],
-            stroke: 'blue',
-            strokeWidth: 15,
-            lineCap: 'round',
-            lineJoin: 'round',
-            opacity: 1.0
-        });
-
-        dragLayer.add(redLine);
-
-        var dragging = false;
-        group.on('mousedown', function() {
-            dragging = true;
-            //console.log('drag');
-            var mousePos = stage.getMousePosition();
-            redLine.setOpacity(1.0);
-        });
-        hexLayer.on('mouseup', function() {
-            dragging = false;
-            redLine.setOpacity(0.0);
-        });
-        hexLayer.on('mouseover', function(evt) {
-          //if (dragging) {
-           redLine.attrs.points[1] = evt.targetNode.getPosition(); // stage.getMousePosition();
-           hexLayer.draw();
-          //}
-        });
-
-        /*
-        var tl = new TimelineLite({paused:false, onUpdate:stage.draw, onUpdateScope:stage});
-
-        tl
-          .staggerFrom(_.shuffle(hexagons), 1.0, { setY: -100, ease:Bounce.easeOut, setRotation: Math.PI / 2 }, 0.01)
-          .staggerTo(hexagons, 0.5, { setScaleX: 1.2, setScaleY: 1.2, ease:Elastic.easeOut }, 0.01);
-        */
+        introAnimation(stage, hexagons);
       }
 
       var sources = {

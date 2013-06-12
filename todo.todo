@@ -101,6 +101,8 @@ Misc. improvements:
 
 Hexagonal grid:
  ☐ Make basic KineticJS implementation of map rendering
+     ☐ Render hexagons
+     ☐ Being able to click hexagon
  ☐ Make hex-map class
 
 Optimizations:
