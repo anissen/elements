@@ -57,66 +57,71 @@ window.onload=function(){
               y: 70 + j * (hexsize - hexsize / 7.5 + margin),
               sides: 6,
               radius: (hexsize / 2 + hexsize / 15) * 0.8,
-              //fill: 'black',
-              stroke: 'darkred',
+              fill: ((i+j) % 2 === 0 ? '#FF8000' : 'rgb(0, 200, 255)'),
+              stroke: ((i+j) % 2 === 0 ? 'orangered' : '1C75BC'),
               strokeWidth: 3,
-              opacity: 1.0,
-              fillPatternImage: backgroundImages[Math.floor(j / 2)], // backgroundImages[Math.floor(Math.random() * (backgroundImages.length+1))],
+              opacity: 1.0
+              /*
+              fillPatternImage: backgroundImages[Math.floor(j / 2)],
               fillPatternOffset: [55, 45],
               fillPatternScale: [1.2, 1.2]
+              */
             });
             
             hexagons[index].on('mouseover touchstart', function() {
               if (this === selectedHexagon) return;
 
-              this.setStroke('yellow');
+              this.setStroke('darkred');
               hexLayer.draw();
             });
 
             hexagons[index].on('mouseout touchend', function() {
               if (this === selectedHexagon) return;
               
-              this.setStroke('darkred');
-              stage.draw();
+              this.setStroke('orangered');
+              hexLayer.draw();
             });
 
             hexagons[index].on('click', function() {
               if (selectedHexagon) {
                 selectedHexagon.setStrokeWidth(3);
                 selectedHexagon.setStroke('darkred');
-                if (selectedHexagon !== this) {
-                  TweenLite.to(selectedHexagon, 0.4, {
-                    //setRotation: 0,
-                    setStrokeWidth: 3,
-                    setSides: 6,
-                    setRadius: 60,
-                    setFillPatternScaleX: 1.2,
-                    setFillPatternScaleY: 1.2,
-                    ease: Elastic.easeOut,
-                    //setStroke: 'gold',
-                    onUpdate: stage.draw, 
-                    onUpdateScope:stage
-                  });
-                }
+                
+                TweenLite.to(selectedHexagon, 0.4, {
+                  //setRotation: 0,
+                  setStrokeWidth: 3,
+                  setSides: 6,
+                  setRadius: (hexsize / 2 + hexsize / 15) * 0.8,
+                  setFillPatternScaleX: 1.2,
+                  setFillPatternScaleY: 1.2,
+                  ease: Elastic.easeOut,
+                  //setStroke: 'gold',
+                  onUpdate: stage.draw, 
+                  onUpdateScope:stage
+                });
               }
 
-              TweenLite.to(this, 1.0, {
-                //setRotation: Math.PI / 4,
-                setStrokeWidth: 8,
-                //setSides: 4,
-                setRadius: 70,
-                setFillPatternScaleX: 1.4,
-                setFillPatternScaleY: 1.4,
-                ease: Elastic.easeOut,
-                //setStroke: 'gold',
-                onUpdate: stage.draw, 
-                onUpdateScope:stage
-              });
-              //this.setStrokeWidth(8);
-              this.setStroke('gold');
-              this.moveToTop();
+              if (selectedHexagon === this) {
+                selectedHexagon = null;
+              } else {
+                TweenLite.to(this, 1.0, {
+                  //setRotation: Math.PI / 4,
+                  setStrokeWidth: 8,
+                  //setSides: 4,
+                  setRadius: 70,
+                  setFillPatternScaleX: 1.4,
+                  setFillPatternScaleY: 1.4,
+                  ease: Elastic.easeOut,
+                  //setStroke: 'gold',
+                  onUpdate: stage.draw, 
+                  onUpdateScope:stage
+                });
+                //this.setStrokeWidth(8);
+                this.setStroke('gold');
+                this.moveToTop();
+                selectedHexagon = this;
+              }
 
-              selectedHexagon = this;
               hexLayer.draw();
             });
             
