@@ -92,15 +92,15 @@ window.onload=function(){
             });
 
             hexagons[index].on('click', function() {
-              var tiles = hexData.getRingData(this.attrs.hex);
+              var tiles = hexData.getRingsData(this.attrs.hex);
               _.each(tiles, function(tile) {
                 tile.setScaleX(1);
                 tile.moveToTop();
               })
               var timeline = new TimelineLite({ paused:false, onUpdate: stage.draw, onUpdateScope:stage });
               timeline
-                .staggerTo(neighborHexagons, 0.25, { setScaleX: 1, setFillG: 200, setFillR: 0, ease: Bounce.easeOut }, 0.025)
-                .staggerTo(tiles, 0.5, { setScaleX: -1, setFillG: 100, setFillR: 200, ease: Bounce.easeOut }, 0.05);
+                .staggerTo(neighborHexagons, 0.2, { setScaleX: 1, setFillG: 200, setFillR: 0, ease: Bounce.easeOut }, 0.02)
+                .staggerTo(tiles, 0.4, { setScaleX: -1, setFillG: 100, setFillR: 200, ease: Bounce.easeOut }, 0.04);
               neighborHexagons = tiles;
 
               if (selectedHexagon) {

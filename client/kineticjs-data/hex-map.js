@@ -5,7 +5,13 @@ var Hex = function(q, r) {
   hex.r = r;
   hex.toString = function() {
     return '(q: ' + q + ', r: ' + r + ')';
-  }
+  };
+  hex.scale = function(s) {
+    return Hex(q * s, r * s);
+  };
+  hex.add = function(h) {
+    return Hex(q + h.q, r + h.r);
+  };
   return hex;
 };
 
@@ -40,18 +46,23 @@ function createHexMapData(height, width) {
     return me.hexData[hex.r][correctedQ];
   };
 
-  this.getNeighbor = function(hex, direction) {
+  this.getDirection = function(direction) {
     var neighbors =  [
         [+1,  0],  [+1, -1],  [ 0, -1],
         [-1,  0],  [-1, +1],  [ 0, +1] 
     ];
     var d = neighbors[direction];
-    return Hex(hex.q + d[0], hex.r + d[1]);
+    return Hex(d[0], d[1]);
+  }
+
+  this.getNeighbor = function(hex, direction) {
+    var direction = getDirection(direction);
+    return hex.add(direction);
   };
 
-  this.getRing = function(hex) {
-    var R = 1;
-    var H = getNeighbor(hex, 4); //direction(4).scale(R);
+  this.getRing = function(hex, R) {
+    R = R || 1;
+    var H = hex.add(getDirection(4).scale(R));
     var results = [];
     for (var i = 0; i < 6; i++) {
       for (var j = 0; j < R; j++) {
@@ -62,8 +73,24 @@ function createHexMapData(height, width) {
     return results;
   };
 
+  this.getRings = function(hex, rStart, rEnd) {
+    var results = [];
+    for (var R = rStart; R <= rEnd; R++) {
+      results.push(getRing(hex, R));
+    }
+    return _.flatten(results);
+  };
+
   this.getRingData = function(hex) {
     var ringHexes = getRing(hex);
+    var tileData = _.map(ringHexes, function(hex) {
+      return me.getTile(hex);
+    });
+    return _.compact(tileData);
+  };
+
+  this.getRingsData = function(hex) {
+    var ringHexes = getRings(hex, 1, 2);
     var tileData = _.map(ringHexes, function(hex) {
       return me.getTile(hex);
     });
