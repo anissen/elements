@@ -28,37 +28,14 @@ window.onload=function(){
       setRotation: Math.PI / 2 
     };
     var staggerToData = { 
-      setScaleX: 1.2, 
-      setScaleY: 1.2, 
+      setScaleX: 1.0, 
+      setScaleY: 1.0, 
       ease: Elastic.easeOut 
     };
 
     tl
       .staggerFrom(_.shuffle(hexagons), 0.7, staggerFromData, 0.01)
       .staggerTo(hexagons, 0.5, staggerToData, 0.01);
-  }
-
-
-  function createHexMapData(height, width) {
-    var me = this;
-    this.hexData = new Array(height);
-
-    this.setMapData = function(q, r, data) {
-      me.hexData[r][Math.floor(r / 2) + q] = data;
-    }
-
-    this.getMapData = function(q, r) {
-      return me.hexData[r][Math.floor(r / 2) + q];
-    }
-
-    for(var r = 0; r < height; r++) {
-      this.hexData[r] = new Array(width);
-      for(var q = 0; q < width; q++) {
-        this.setMapData(q, r, { player: (r < height / 2 ? 1 : 0) });
-      }
-    }
-
-    return this;
   }
 
   function setup(images) {
@@ -72,12 +49,12 @@ window.onload=function(){
     var hexData = createHexMapData(6, 5);
 
     var hexagons = [];
-    var hexHeight = 96;
+    var hexHeight = 128;
     var hexRadius = hexHeight / 2;
     var hexWidth = (Math.sqrt(3) / 2) * hexHeight;
     var marginLeft = 70;
     var marginTop = 70;
-    var hexMargin = 10;
+    var hexMargin = -10;
     var selectedHexagon = null;
     var backgroundImages = [images.water, images.fire, null];
     for(var i = 0; i < 5; i++){
@@ -88,11 +65,16 @@ window.onload=function(){
               y: marginTop + j * (hexWidth + hexMargin),
               sides: 6,
               radius: hexRadius, //(hexsize / 2 + hexsize / 15) * 0.8,
-              fill: (hexData.getMapData(i,j).player === 0 ? '#FF8000' : 'rgb(0, 200, 255)'),
-              stroke: (hexData.getMapData(i,j).player === 0 ? 'orangered' : '1C75BC'),
+              fill: (hexData.getMapData(Hex(i,j)).player === 0 ? '#FF8000' : 'rgb(0, 200, 255)'),
+              stroke: (hexData.getMapData(Hex(i,j)).player === 0 ? 'orangered' : '1C75BC'),
               strokeWidth: 3,
-              opacity: 1.0
+              opacity: 1.0,
+              scaleX: 0.8,
+              scaleY: 0.8,
+              hex: Hex(-Math.floor(j/2) + i, j)
             });
+
+            hexData.setMapData(hexagons[index].attrs.hex, hexagons[index]);
             
             hexagons[index].on('mouseover touchstart', function() {
               if (this === selectedHexagon) return;
@@ -109,6 +91,15 @@ window.onload=function(){
             });
 
             hexagons[index].on('click', function() {
+              var tiles = hexData.getRingData(this.attrs.hex);
+              _.each(tiles, function(tile) {
+                console.log(tile);
+                tile.setScaleX(1);
+                tile.moveToTop();
+              })
+              var timeline = new TimelineLite({ paused:false, onUpdate: stage.draw, onUpdateScope:stage });
+              timeline.staggerTo(tiles, 0.5, { setScaleX: -1, ease: Bounce.easeOut }, 0.05);
+
               if (selectedHexagon) {
                 selectedHexagon.setStrokeWidth(3);
                 selectedHexagon.setStroke('darkred');
@@ -154,6 +145,16 @@ window.onload=function(){
     stage.add(hexLayer);
 
     introAnimation(stage, hexagons);
+
+    // for (var i = 0; i < 5; i++) {
+    //   (function(i) {
+    //     setTimeout(function() {
+    //       //console.log(neighbor.q, neighbor.r);
+    //       hexData.getMapData(Hex(0, i)).setFill('blue');
+    //       hexLayer.draw();
+    //     }, i * 1000);
+    //   })(i);
+    // };
   }
 
   var sources = {
