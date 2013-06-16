@@ -1,4 +1,6 @@
+
 window.onload=function(){
+
   function loadImages(sources, callback) {
     var images = {};
     var loadedImages = 0;
@@ -36,6 +38,29 @@ window.onload=function(){
       .staggerTo(hexagons, 0.5, staggerToData, 0.01);
   }
 
+
+  function createHexMapData(height, width) {
+    var me = this;
+    this.hexData = new Array(height);
+
+    this.setMapData = function(q, r, data) {
+      me.hexData[r][Math.floor(r / 2) + q] = data;
+    }
+
+    this.getMapData = function(q, r) {
+      return me.hexData[r][Math.floor(r / 2) + q];
+    }
+
+    for(var r = 0; r < height; r++) {
+      this.hexData[r] = new Array(width);
+      for(var q = 0; q < width; q++) {
+        this.setMapData(q, r, { player: (r < height / 2 ? 1 : 0) });
+      }
+    }
+
+    return this;
+  }
+
   function setup(images) {
     var stage = new Kinetic.Stage({
         container: 'container',
@@ -44,28 +69,29 @@ window.onload=function(){
     });
     var hexLayer = new Kinetic.Layer();
 
+    var hexData = createHexMapData(6, 5);
+
     var hexagons = [];
-    var hexsize = 128;
-    var margin = -1;
+    var hexHeight = 96;
+    var hexRadius = hexHeight / 2;
+    var hexWidth = (Math.sqrt(3) / 2) * hexHeight;
+    var marginLeft = 70;
+    var marginTop = 70;
+    var hexMargin = 10;
     var selectedHexagon = null;
     var backgroundImages = [images.water, images.fire, null];
-    for(var i=0; i<5; i++){
-        for(var j=0; j<6; j++){
+    for(var i = 0; i < 5; i++){
+        for(var j = 0; j < 6; j++){
             var index = i * 6 + j;
             hexagons[index] = new Kinetic.RegularPolygon({
-              x: 70 + i * (hexsize + margin * 2) + (j % 2) * (hexsize + margin * 2) / 2,
-              y: 70 + j * (hexsize - hexsize / 7.5 + margin),
+              x: marginLeft + i * (hexHeight + hexMargin) + (j % 2) * (hexHeight + hexMargin) / 2,
+              y: marginTop + j * (hexWidth + hexMargin),
               sides: 6,
-              radius: (hexsize / 2 + hexsize / 15) * 0.8,
-              fill: ((i+j) % 2 === 0 ? '#FF8000' : 'rgb(0, 200, 255)'),
-              stroke: ((i+j) % 2 === 0 ? 'orangered' : '1C75BC'),
+              radius: hexRadius, //(hexsize / 2 + hexsize / 15) * 0.8,
+              fill: (hexData.getMapData(i,j).player === 0 ? '#FF8000' : 'rgb(0, 200, 255)'),
+              stroke: (hexData.getMapData(i,j).player === 0 ? 'orangered' : '1C75BC'),
               strokeWidth: 3,
               opacity: 1.0
-              /*
-              fillPatternImage: backgroundImages[Math.floor(j / 2)],
-              fillPatternOffset: [55, 45],
-              fillPatternScale: [1.2, 1.2]
-              */
             });
             
             hexagons[index].on('mouseover touchstart', function() {
@@ -88,14 +114,13 @@ window.onload=function(){
                 selectedHexagon.setStroke('darkred');
                 
                 TweenLite.to(selectedHexagon, 0.4, {
-                  //setRotation: 0,
                   setStrokeWidth: 3,
-                  setSides: 6,
-                  setRadius: (hexsize / 2 + hexsize / 15) * 0.8,
+                  // setRotation: 0,
+                  // setSides: 6,
+                  setRadius: hexRadius, //(hexsize / 2 + hexsize / 15) * 0.8,
                   setFillPatternScaleX: 1.2,
                   setFillPatternScaleY: 1.2,
                   ease: Elastic.easeOut,
-                  //setStroke: 'gold',
                   onUpdate: stage.draw, 
                   onUpdateScope:stage
                 });
@@ -105,14 +130,13 @@ window.onload=function(){
                 selectedHexagon = null;
               } else {
                 TweenLite.to(this, 1.0, {
-                  //setRotation: Math.PI / 4,
+                  // setRotation: Math.PI / 4,
                   setStrokeWidth: 8,
-                  //setSides: 4,
+                  // setSides: 4,
                   setRadius: 70,
                   setFillPatternScaleX: 1.4,
                   setFillPatternScaleY: 1.4,
                   ease: Elastic.easeOut,
-                  //setStroke: 'gold',
                   onUpdate: stage.draw, 
                   onUpdateScope:stage
                 });
@@ -121,8 +145,6 @@ window.onload=function(){
                 this.moveToTop();
                 selectedHexagon = this;
               }
-
-              hexLayer.draw();
             });
             
             hexLayer.add(hexagons[index]);
