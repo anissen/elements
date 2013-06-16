@@ -14,12 +14,24 @@ function createHexMapData(height, width) {
   this.hexData = new Array(height);
 
   this.setMapData = function(hex, data) {
-    //me.hexData[hex.toString()] = data;
     me.hexData[hex.r][Math.floor(hex.r / 2) + hex.q] = data;
   };
 
+  this.setTile = function(hex, tile) {
+    var mapData = getMapData(hex);
+    if (!mapData)
+      return;
+    mapData.tile = tile;
+  };
+
+  this.getTile = function(hex) {
+    var mapData = getMapData(hex);
+    if (!mapData)
+      return null;
+    return mapData.tile;
+  };
+
   this.getMapData = function(hex) {
-    //return me.hexData[hex.toString()];
     if (hex.r < 0 || hex.r >= me.hexData.length)
       return null;
     var correctedQ = Math.floor(hex.r / 2) + hex.q;
@@ -54,7 +66,7 @@ function createHexMapData(height, width) {
   this.getRingData = function(hex) {
     var ringHexes = getRing(hex);
     var tileData = _.map(ringHexes, function(hex) {
-      return me.getMapData(hex);
+      return me.getTile(hex);
     });
     return _.compact(tileData);
   };
@@ -63,7 +75,7 @@ function createHexMapData(height, width) {
   for(var r = 0; r < height; r++) {
     this.hexData[r] = new Array(arrayWidth);
     for(var q = 0; q < arrayWidth; q++) {
-      this.setMapData(Hex(q, r), { player: (r < height / 2 ? 1 : 0) });
+      this.setMapData(Hex(q, r), { player: (r < height / 2 ? 1 : 0), tile: null });
     }
   }
 

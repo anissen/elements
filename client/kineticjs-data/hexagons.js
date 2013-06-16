@@ -74,8 +74,8 @@ window.onload=function(){
               hex: Hex(-Math.floor(j/2) + i, j)
             });
 
-            hexData.setMapData(hexagons[index].attrs.hex, hexagons[index]);
-            
+            hexData.setTile(hexagons[index].attrs.hex, hexagons[index]);
+
             hexagons[index].on('mouseover touchstart', function() {
               if (this === selectedHexagon) return;
 
