@@ -37,7 +37,6 @@ function createHexMapData(height, width) {
     var correctedQ = Math.floor(hex.r / 2) + hex.q;
     if (correctedQ < 0 || correctedQ >= me.hexData[hex.r].length)
       return null;
-    console.log(hex.toString());
     return me.hexData[hex.r][correctedQ];
   };
 
@@ -71,10 +70,12 @@ function createHexMapData(height, width) {
     return _.compact(tileData);
   };
 
-  var arrayWidth = width * 1;
+  // In the worst case, the array is twice as wide as neccessary
+  var qStart = -Math.floor(width / 2);
+  var qEnd = Math.floor(width * 1.5);
   for(var r = 0; r < height; r++) {
-    this.hexData[r] = new Array(arrayWidth);
-    for(var q = 0; q < arrayWidth; q++) {
+    this.hexData[r] = new Array(width * 2);
+    for(var q = qStart; q < qEnd; q++) {
       this.setMapData(Hex(q, r), { player: (r < height / 2 ? 1 : 0), tile: null });
     }
   }
