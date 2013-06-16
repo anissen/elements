@@ -76,7 +76,7 @@ function createHexMapData(height, width) {
   for(var r = 0; r < height; r++) {
     this.hexData[r] = new Array(width * 2);
     for(var q = qStart; q < qEnd; q++) {
-      this.setMapData(Hex(q, r), { player: (r < height / 2 ? 1 : 0), tile: null });
+      this.setMapData(Hex(q, r), { player: 0 /*(r < height / 2 ? 1 : 0)*/, tile: null });
     }
   }
 

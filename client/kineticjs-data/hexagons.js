@@ -56,6 +56,7 @@ window.onload=function(){
     var marginTop = 70;
     var hexMargin = -10;
     var selectedHexagon = null;
+    var neighborHexagons = [];
     var backgroundImages = [images.water, images.fire, null];
     for(var i = 0; i < 5; i++){
         for(var j = 0; j < 6; j++){
@@ -65,8 +66,8 @@ window.onload=function(){
               y: marginTop + j * (hexWidth + hexMargin),
               sides: 6,
               radius: hexRadius, //(hexsize / 2 + hexsize / 15) * 0.8,
-              fill: (hexData.getMapData(Hex(i,j)).player === 0 ? '#FF8000' : 'rgb(0, 200, 255)'),
-              stroke: (hexData.getMapData(Hex(i,j)).player === 0 ? 'orangered' : '1C75BC'),
+              fill: (hexData.getMapData(Hex(i,j)).player === 0 ? 'rgb(0, 200, 255)' : '#FF8000'),
+              stroke: (hexData.getMapData(Hex(i,j)).player === 0 ? '1C75BC' : 'orangered'),
               strokeWidth: 3,
               opacity: 1.0,
               scaleX: 0.8,
@@ -79,30 +80,32 @@ window.onload=function(){
             hexagons[index].on('mouseover touchstart', function() {
               if (this === selectedHexagon) return;
 
-              this.setStroke('darkred');
+              this.setStroke('blue');
               hexLayer.draw();
             });
 
             hexagons[index].on('mouseout touchend', function() {
               if (this === selectedHexagon) return;
               
-              this.setStroke('orangered');
+              this.setStroke('1C75BC');
               hexLayer.draw();
             });
 
             hexagons[index].on('click', function() {
               var tiles = hexData.getRingData(this.attrs.hex);
               _.each(tiles, function(tile) {
-                console.log(tile);
                 tile.setScaleX(1);
                 tile.moveToTop();
               })
               var timeline = new TimelineLite({ paused:false, onUpdate: stage.draw, onUpdateScope:stage });
-              timeline.staggerTo(tiles, 0.5, { setScaleX: -1, ease: Bounce.easeOut }, 0.05);
+              timeline
+                .staggerTo(neighborHexagons, 0.25, { setScaleX: 1, setFillG: 200, setFillR: 0, ease: Bounce.easeOut }, 0.025)
+                .staggerTo(tiles, 0.5, { setScaleX: -1, setFillG: 100, setFillR: 200, ease: Bounce.easeOut }, 0.05);
+              neighborHexagons = tiles;
 
               if (selectedHexagon) {
                 selectedHexagon.setStrokeWidth(3);
-                selectedHexagon.setStroke('darkred');
+                selectedHexagon.setStroke('blue');
                 
                 TweenLite.to(selectedHexagon, 0.4, {
                   setStrokeWidth: 3,
