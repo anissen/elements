@@ -61,18 +61,20 @@ window.onload=function(){
     for(var i = 0; i < 5; i++){
         for(var j = 0; j < 6; j++){
             var index = i * 6 + j;
+            var hex = Hex(-Math.floor(j/2) + i, j);
+            var tileData = (hexData.getMapData(hex));
             hexagons[index] = new Kinetic.RegularPolygon({
               x: marginLeft + i * (hexHeight + hexMargin) + (j % 2) * (hexHeight + hexMargin) / 2,
               y: marginTop + j * (hexWidth + hexMargin),
               sides: 6,
               radius: hexRadius, //(hexsize / 2 + hexsize / 15) * 0.8,
-              fill: (hexData.getMapData(Hex(i,j)).player === 0 ? 'rgb(0, 200, 255)' : '#FF8000'),
-              stroke: (hexData.getMapData(Hex(i,j)).player === 0 ? '1C75BC' : 'orangered'),
+              fill: (tileData.player === 0 ? 'rgb(0, 200, 255)' : '#FF8000'),
+              stroke: (tileData.player === 0 ? '1C75BC' : 'orangered'),
               strokeWidth: 3,
-              opacity: 1.0,
+              opacity: (tileData.passable ? 1.0 : 0.15),
               scaleX: 0.8,
               scaleY: 0.8,
-              hex: Hex(-Math.floor(j/2) + i, j)
+              hex: hex
             });
 
             hexData.setTile(hexagons[index].attrs.hex, hexagons[index]);
@@ -92,7 +94,9 @@ window.onload=function(){
             });
 
             hexagons[index].on('click', function() {
-              var tiles = hexData.getRingsData(this.attrs.hex);
+              // var tiles = hexData.getRingData(this.attrs.hex);
+              // var tiles = hexData.getRangeData(this.attrs.hex);
+              var tiles = hexData.getReachableTilesData(this.attrs.hex);
               _.each(tiles, function(tile) {
                 tile.setScaleX(1);
                 tile.moveToTop();

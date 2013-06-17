@@ -73,7 +73,7 @@ function createHexMapData(height, width) {
     return results;
   };
 
-  this.getRings = function(hex, rStart, rEnd) {
+  this.getRange = function(hex, rStart, rEnd) {
     var results = [];
     for (var R = rStart; R <= rEnd; R++) {
       results.push(getRing(hex, R));
@@ -89,9 +89,40 @@ function createHexMapData(height, width) {
     return _.compact(tileData);
   };
 
-  this.getRingsData = function(hex) {
-    var ringHexes = getRings(hex, 1, 2);
+  this.getRangeData = function(hex) {
+    var ringHexes = getRange(hex, 1, 2);
     var tileData = _.map(ringHexes, function(hex) {
+      return me.getTile(hex);
+    });
+    return _.compact(tileData);
+  };
+
+  this.getReachableTiles = function(hex, movement) {
+    var visited = {}; 
+    visited[hex.toString()] = hex;
+    var fringes = [[hex]];
+    for (var k = 0; k < movement; k++) {
+      fringes[k + 1] = [];
+      fringes[k].forEach(function(H) {
+        for (var dir = 0; dir < 6; dir++) {
+          var neighbor = H.add(getDirection(dir));
+          var neighborData = getMapData(neighbor);
+          if (!neighborData) {
+            // Ensure that tiles outside the view are not considered again
+            visited[neighbor.toString()] = neighbor;
+          } else if (!visited[neighbor.toString()] && neighborData.passable) {
+            visited[neighbor.toString()] = neighbor;
+            fringes[k + 1].push(neighbor);
+          }
+        }
+      });
+    }
+    return _.values(visited);
+  };
+
+  this.getReachableTilesData = function(hex) {
+    var reachableHexes = getReachableTiles(hex, 2);
+    var tileData = _.map(reachableHexes, function(hex) {
       return me.getTile(hex);
     });
     return _.compact(tileData);
@@ -103,7 +134,11 @@ function createHexMapData(height, width) {
   for(var r = 0; r < height; r++) {
     this.hexData[r] = new Array(width * 2);
     for(var q = qStart; q < qEnd; q++) {
-      this.setMapData(Hex(q, r), { player: 0 /*(r < height / 2 ? 1 : 0)*/, tile: null });
+      this.setMapData(Hex(q, r), { 
+        player: 0 /*(r < height / 2 ? 1 : 0)*/, 
+        passable: (Math.random() < 0.9), 
+        tile: null
+      });
     }
   }
 
