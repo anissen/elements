@@ -15,7 +15,7 @@ var Hex = function(q, r) {
   return hex;
 };
 
-function createHexMapData(height, width) {
+function createHexMapData(width, height) {
   var me = this;
   this.hexData = new Array(height);
 
