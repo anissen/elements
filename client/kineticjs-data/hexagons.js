@@ -27,7 +27,10 @@ window.onload=function(){
 
   var hexLayer = new Kinetic.Layer();
 
-  var hexData = createHexMapData(5, 6);
+  var hexData = HexMap().initializeMap(5, 6);
+  // hexData.on('setTile', function(hex) {
+  //   console.log(hex);
+  // });
 
   var hexagons = [];
   var hexHeight = 128;
