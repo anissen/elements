@@ -27,7 +27,7 @@ window.onload=function(){
 
   var hexLayer = new Kinetic.Layer();
 
-  var hexData = HexMap().initializeMap(5, 6);
+  var hexData = new HexMap().initializeMap(5, 6);
   // hexData.on('setTile', function(hex) {
   //   console.log(hex);
   // });
