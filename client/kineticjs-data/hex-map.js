@@ -15,49 +15,50 @@ var Hex = function(q, r) {
   return hex;
 };
 
-var HexMap = Model({
-  setMapData: function(hex, data) {
-    this.hexData[hex.r][Math.floor(hex.r / 2) + hex.q] = data;
-  },
+function HexMap() {
+  var me = this;
 
-  setTile: function(hex, tile) {
+  this.setMapData = function(hex, data) {
+    this.hexData[hex.r][Math.floor(hex.r / 2) + hex.q] = data;
+  };
+
+  this.setTile = function(hex, tile) {
     var mapData = this.getMapData(hex);
     if (!mapData)
       return;
     mapData.tile = tile;
-    // this.trigger('setTile', hex);
-  },
+  };
 
-  getTile: function(hex) {
+  this.getTile = function(hex) {
     var mapData = this.getMapData(hex);
     if (!mapData)
       return null;
     return mapData.tile;
-  },
+  };
 
-  getMapData: function(hex) {
+  this.getMapData = function(hex) {
     if (hex.r < 0 || hex.r >= this.hexData.length)
       return null;
     var correctedQ = Math.floor(hex.r / 2) + hex.q;
     if (correctedQ < 0 || correctedQ >= this.hexData[hex.r].length)
       return null;
     return this.hexData[hex.r][correctedQ];
-  },
+  };
 
-  getDirection: function(direction) {
+  this.getDirection = function(direction) {
     var neighbors = [
         Hex(+1,  0), Hex(+1, -1), Hex( 0, -1),
         Hex(-1,  0), Hex(-1, +1), Hex( 0, +1)
     ];
     return neighbors[direction];
-  },
+  };
 
-  getNeighbor: function(hex, direction) {
+  this.getNeighbor = function(hex, direction) {
     var directionHex = this.getDirection(direction);
     return hex.add(directionHex);
-  },
+  };
 
-  getRing: function(hex, R) {
+  this.getRing = function(hex, R) {
     R = R || 1;
     var H = hex.add(this.getDirection(4).scale(R));
     var results = [];
@@ -68,34 +69,33 @@ var HexMap = Model({
       }
     }
     return results;
-  },
+  };
 
-  getRange: function(hex, rStart, rEnd) {
+  this.getRange = function(hex, rStart, rEnd) {
     var results = [];
     for (var R = rStart; R <= rEnd; R++) {
       results.push(getRing(hex, R));
     }
     return _.flatten(results);
-  },
+  };
 
-  getRingData: function(hex) {
+  this.getRingData = function(hex) {
     var ringHexes = getRing(hex);
     var tileData = _.map(ringHexes, function(hex) {
       return me.getTile(hex);
     });
     return _.compact(tileData);
-  },
+  };
 
-  getRangeData: function(hex) {
+  this.getRangeData = function(hex) {
     var ringHexes = getRange(hex, 1, 2);
     var tileData = _.map(ringHexes, function(hex) {
       return me.getTile(hex);
     });
     return _.compact(tileData);
-  },
+  };
 
-  getReachableTiles: function(hex, movement, passableFunc) {
-    var me = this;
+  this.getReachableTiles = function(hex, movement, passableFunc) {
     var visited = {};
     visited[hex.toString()] = hex;
     var fringes = [[hex]];
@@ -116,20 +116,19 @@ var HexMap = Model({
       });
     }
     return _.values(visited);
-  },
+  };
 
-  getReachableTilesData: function(hex) {
+  this.getReachableTilesData = function(hex) {
     var reachableHexes = this.getReachableTiles(hex, 2, function(tile) {
       return tile.passable;
     });
-    var me = this;
     var tileData = _.map(reachableHexes, function(hex) {
       return me.getTile(hex);
     });
     return _.compact(tileData);
-  },
+  };
 
-  initializeMap: function(width, height) {
+  this.initializeMap = function(width, height) {
     this.hexData = new Array(height);
 
     // In the worst case, the array is twice as wide as neccessary
@@ -145,5 +144,7 @@ var HexMap = Model({
         });
       }
     }
+
+    return this;
   }
-});
+}
