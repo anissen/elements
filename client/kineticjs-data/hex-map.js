@@ -64,7 +64,6 @@ function HexMap() {
   };
 
   this.getRing = function(hex, R) {
-    R = R || 1;
     var H = hex.add(this.getDirection(4).scale(R));
     var results = [];
     for (var i = 0; i < 6; i++) {

@@ -6,7 +6,7 @@ var KineticHexMap = Model({
     this.map.initializeMap(width, height);
 
     var s = _.defaults(settings || {}, {
-      hexHeight: 128,
+      hexRadius: 64,
       hexMargin: 5,
       marginLeft: 30,
       marginTop: 20,
@@ -15,25 +15,22 @@ var KineticHexMap = Model({
     });
 
     var me = this;
-    var hexagons = [];
-    //var hexHeight = 128;
-    var hexRadius = s.hexHeight / 2;
-    var hexWidth = (Math.sqrt(3) / 2) * s.hexHeight;
-    //var hexMargin = 5;
+    var hexagons = new Array(width * height);
+    var hexHeight = s.hexRadius * 2;
+    var hexWidth = (Math.sqrt(3) / 2) * hexHeight;
     var marginLeft = ((hexWidth + s.hexMargin) / 2) + s.marginLeft;
-    var marginTop  = ((s.hexHeight + s.hexMargin) / 2) + s.marginTop;
-    var selectedHexagon = null;
-    var neighborHexagons = [];
-    for(var i = 0; i < width; i++){
-      for(var j = 0; j < height; j++){
+    var marginTop  = ((hexHeight + s.hexMargin) / 2) + s.marginTop;
+
+    for(var i = 0; i < width; i++) {
+      for(var j = 0; j < height; j++) {
         var index = i * height + j;
         var hex = Hex(-Math.floor(j/2) + i, j);
         var tileData = (this.map.getMapData(hex));
         hexagons[index] = new Kinetic.RegularPolygon({
           x: marginLeft + i * (hexWidth + s.hexMargin) + (j % 2) * (hexWidth + s.hexMargin) / 2,
-          y: marginTop + j * (s.hexHeight - (s.hexHeight / 4) + s.hexMargin),
+          y: marginTop + j * (hexHeight - (hexHeight / 4) + s.hexMargin),
           sides: 6,
-          radius: hexRadius,
+          radius: s.hexRadius,
           fill: s.fill, //(tileData.player === 0 ? 'rgb(0, 200, 255)' : '#FF8000'),
           stroke: s.stroke, //(tileData.player === 0 ? '1C75BC' : 'orangered'),
           strokeWidth: 3,
@@ -43,7 +40,7 @@ var KineticHexMap = Model({
           hex: hex
         });
 
-        this.map.setTile(hexagons[index].attrs.hex, hexagons[index]);
+        this.map.setTile(hex, hexagons[index]);
 
         hexagons[index].on('mouseover touchstart', function() {
           me.trigger('enter', this);
@@ -65,17 +62,17 @@ var KineticHexMap = Model({
   },
 
   getRingData: function(hex, R) {
-    var ringHexes = this.map.getRing(hex, R);
+    var ringHexes = this.map.getRing(hex, R || 2);
     return this.getTileData(ringHexes);
   },
 
-  getRangeData: function(hex) {
-    var ringHexes = this.map.getRange(hex, 1, 2);
+  getRangeData: function(hex, rangeStart, rangeEnd) {
+    var ringHexes = this.map.getRange(hex, rangeStart || 1, rangeEnd || 2);
     return this.getTileData(ringHexes);
   },
 
-  getReachableTilesData: function(hex) {
-    var reachableHexes = this.map.getReachableTiles(hex, 2, function(tile) {
+  getReachableTilesData: function(hex, movement) {
+    var reachableHexes = this.map.getReachableTiles(hex, movement || 2, function(tile) {
       return tile.passable;
     });
     return this.getTileData(reachableHexes);
