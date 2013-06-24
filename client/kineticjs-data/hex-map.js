@@ -117,7 +117,7 @@ function HexMap() {
       for(var q = qStart; q < qEnd; q++) {
         this.setMapData(Hex(q, r), { 
           player: 0, 
-          passable: (Math.random() < 0.9), 
+          passable: (Math.random() < 0.8), 
           tile: null
         });
       }

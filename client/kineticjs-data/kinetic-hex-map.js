@@ -2,6 +2,8 @@
 var KineticHexMap = Model({
   map: new HexMap(),
 
+  selectedTile: null,
+
   initialize: function(width, height, layer, settings) {
     this.map.initializeMap(width, height);
 
@@ -51,7 +53,20 @@ var KineticHexMap = Model({
         });
 
         hexagons[index].on('click', function() {
-          me.trigger('click', this);
+
+          if (!me.selectedTile) {
+            me.trigger('selected', this)
+            me.selectedTile = this;
+          } else {
+            // deselect selected tile
+            if (this === me.selectedTile) {
+              me.trigger('deselected', this);
+              me.selectedTile = null;
+            } else {
+              me.trigger('perform-action', { selected: me.selectedTile, target: this } );
+            }
+          }
+
         });
         
         layer.add(hexagons[index]);
@@ -62,20 +77,23 @@ var KineticHexMap = Model({
   },
 
   getRingData: function(hex, R) {
-    var ringHexes = this.map.getRing(hex, R || 2);
-    return this.getTileData(ringHexes);
+    var hexes = this.map.getRing(hex, R || 2);
+    return this.getTileData(hexes);
   },
 
   getRangeData: function(hex, rangeStart, rangeEnd) {
-    var ringHexes = this.map.getRange(hex, rangeStart || 1, rangeEnd || 2);
-    return this.getTileData(ringHexes);
+    var hexes = this.map.getRange(hex, rangeStart || 1, rangeEnd || 2);
+    return this.getTileData(hexes);
   },
 
   getReachableTilesData: function(hex, movement) {
-    var reachableHexes = this.map.getReachableTiles(hex, movement || 2, function(tile) {
+    var hexes = this.map.getReachableTiles(hex, movement || 2, function(tile) {
       return tile.passable;
     });
-    return this.getTileData(reachableHexes);
+    var hexesWithoutStart = _.reject(hexes, function(H) {
+      return H === hex;
+    });
+    return this.getTileData(hexesWithoutStart);
   },
 
   getTileData: function(hexes) {
