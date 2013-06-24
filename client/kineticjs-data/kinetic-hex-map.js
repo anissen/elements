@@ -33,10 +33,11 @@ var KineticHexMap = Model({
           y: marginTop + j * (hexHeight - (hexHeight / 4) + s.hexMargin),
           sides: 6,
           radius: s.hexRadius,
-          fill: s.fill, //(tileData.player === 0 ? 'rgb(0, 200, 255)' : '#FF8000'),
-          stroke: s.stroke, //(tileData.player === 0 ? '1C75BC' : 'orangered'),
+          fill: (!tileData.passable ? 'gray' : (tileData.player === 0 ? s.fill : '#FF8000')),
+          originalStroke: (!tileData.passable ? 'black' : (tileData.player === 0 ? s.stroke : 'orangered')),
+          stroke: (!tileData.passable ? 'black' : (tileData.player === 0 ? s.stroke : 'orangered')),
           strokeWidth: 3,
-          opacity: (tileData.passable ? 1.0 : 0.15),
+          opacity: 1.0, //(tileData.passable ? 1.0 : 0.15),
           scaleX: 0.8,
           scaleY: 0.8,
           hex: hex
@@ -64,6 +65,9 @@ var KineticHexMap = Model({
               me.selectedTile = null;
             } else {
               me.trigger('perform-action', { selected: me.selectedTile, target: this } );
+              // Hack to deselect the tile after the action
+              me.trigger('deselected', me.selectedTile);
+              me.selectedTile = null;
             }
           }
 
@@ -88,7 +92,7 @@ var KineticHexMap = Model({
 
   getReachableTilesData: function(hex, movement) {
     var hexes = this.map.getReachableTiles(hex, movement || 2, function(tile) {
-      return tile.passable;
+      return tile.passable && tile.player === 0;
     });
     var hexesWithoutStart = _.reject(hexes, function(H) {
       return H === hex;

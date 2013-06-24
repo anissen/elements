@@ -16,31 +16,32 @@ var hexRadius = 70;
 var timeline = new TimelineLite({ paused: false, onUpdate: hexLayer.draw, onUpdateScope: hexLayer });
 
 map.on('enter', function(tile) {
-  tile.setStroke('blue');
+  tile.setStroke('darkred');
+  tile.setStrokeWidth(5);
   hexLayer.draw();
 });
 
 map.on('leave', function(tile) {
-  tile.setStroke('1C75BC');
+  tile.setStroke(tile.attrs.originalStroke);
+  tile.setStrokeWidth(3);
   hexLayer.draw();
 });
 
 map.on('selected', function(tile) {
   tile.moveToTop();
 
-  var tiles = map.getReachableTilesData(tile.attrs.hex, 2);
+  var tiles = map.getReachableTilesData(tile.attrs.hex, 1);
   timeline
-    .to(tile, 0.5, { setStrokeWidth: 5, setScaleX: 1.2, setScaleY: 1.2, ease: Elastic.easeOut })
-    .staggerTo(tiles, 0.4, { setScaleX: -1.0, setFillG: 100, setFillR: 200, ease: Bounce.easeOut }, 0.03, "-=0.4");
-  console.log('selected', tile.getScale());
+    .to(tile, 0.5, { setStrokeWidth: 8, setScaleX: 1.2, setScaleY: 1.2, setFillB: 75, ease: Bounce.easeOut })
+    .staggerTo(tiles, 0.4, { setScaleX: -1.0, setFillR: 255, setFillG: 180, setFillB: 75, ease: Bounce.easeOut }, 0.03, "-=0.4");
 
   neighborHexagons = tiles;
 });
 
 map.on('deselected', function(tile) {
   timeline
-    .to(tile, 0.5, { setStrokeWidth: 2, setScaleX: 1.0, setScaleY: 1.0, ease: Elastic.easeOut })
-    .staggerTo(neighborHexagons, 0.2, { setScaleX: 1.0, setScaleY: 1.0, setFillG: 200, setFillR: 0, ease: Bounce.easeOut }, 0.02, "-=0.4");
+    .to(tile, 0.5, { setStrokeWidth: 2, setScaleX: 1.0, setScaleY: 1.0, setFillB: 255, ease: Bounce.easeOut })
+    .staggerTo(neighborHexagons, 0.2, { setScaleX: 1.0, setScaleY: 1.0, setFillG: 200, setFillR: 0, setFillB: 255, ease: Bounce.easeOut }, 0.02, "-=0.4");
 });
 
 map.on('perform-action', function(data) {
@@ -76,7 +77,7 @@ map.on('initialized', function(hexagons) {
       setScaleX: 1.0, 
       setScaleY: 1.0, 
       ease: Elastic.easeInOut 
-    }, 0.01);
+    }, 0.01, "-=0.4");
 });
 
 map.initialize(5, 6, hexLayer, {});
