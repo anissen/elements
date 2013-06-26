@@ -22,33 +22,48 @@ map.on('enter', function(tile) {
 });
 
 map.on('leave', function(tile) {
+  //tile.setFill(tile.attrs.originalFill);
   tile.setStroke(tile.attrs.originalStroke);
-  tile.setStrokeWidth(3);
+  tile.setStrokeWidth(tile.attrs.originalStrokeWidth);
   hexLayer.draw();
 });
 
 map.on('selected', function(tile) {
   tile.moveToTop();
 
-  var tiles = map.getReachableTilesData(tile.attrs.hex, 1);
+  var tiles = map.getReachableTilesData(tile.attrs.hex, 2);
   timeline
-    .to(tile, 0.5, { setStrokeWidth: 8, setScaleX: 1.2, setScaleY: 1.2, setFillB: 75, ease: Bounce.easeOut })
-    .staggerTo(tiles, 0.4, { setScaleX: -1.0, setFillR: 255, setFillG: 180, setFillB: 75, ease: Bounce.easeOut }, 0.03, "-=0.4");
+    .to(tile, 0.5, { setStrokeWidth: 8, setScaleX: 1.2, setScaleY: 1.2, /* setFillB: 75, */ ease: Bounce.easeOut })
+    .staggerTo(tiles, 0.4, { setScaleX: -1.0, /* setFillR: 255, setFillG: 180, setFillB: 75, */ ease: Bounce.easeOut }, 0.03, "-=0.4");
 
   neighborHexagons = tiles;
 });
 
 map.on('deselected', function(tile) {
   timeline
-    .to(tile, 0.5, { setStrokeWidth: 2, setScaleX: 1.0, setScaleY: 1.0, setFillB: 255, ease: Bounce.easeOut })
-    .staggerTo(neighborHexagons, 0.2, { setScaleX: 1.0, setScaleY: 1.0, setFillG: 200, setFillR: 0, setFillB: 255, ease: Bounce.easeOut }, 0.02, "-=0.4");
+    .to(tile, 0.5, { setStrokeWidth: 2, setScaleX: 1.0, setScaleY: 1.0, /* setFillB: 255, */ ease: Bounce.easeOut })
+    .staggerTo(neighborHexagons, 0.2, { setScaleX: 1.0, setScaleY: 1.0, /* setFillG: 200, setFillR: 0, setFillB: 255, */ ease: Bounce.easeOut }, 0.02, "-=0.4");
 });
 
-map.on('perform-action', function(data) {
-  var oldData = {x: data.selected.getX(), y: data.selected.getY()}
+map.on('attack', function(data) {
+  var fromTile = data.fromData.tile;
+  var toTile = data.toData.tile;
+
+  var oldData = {x: fromTile.getX(), y: fromTile.getY()}
   timeline
-    .to(data.selected, 0.3, { setX: data.target.getX(), setY: data.target.getY(), ease: Bounce.easeOut })
-    .to(data.selected, 0.6, { setX: oldData.x, setY: oldData.y, ease: Elastic.easeOut });
+    .to(fromTile, 0.3, { setX: toTile.getX(), setY: toTile.getY(), ease: Bounce.easeOut })
+    .to(fromTile, 0.6, { setX: oldData.x, setY: oldData.y, ease: Elastic.easeOut });
+});
+
+map.on('move', function(data) {
+  var fromTile = data.fromData.tile;
+  var toTile = data.toData.tile;
+
+  if (!data.toData.passable)
+    return;
+
+  timeline
+    .to(fromTile, 0.5, { setX: toTile.getX(), setY: toTile.getY(), ease: Bounce.easeOut });
 });
 
 // var image = new Image();
