@@ -5,7 +5,7 @@ var KineticHexMap = Model({
   selectedTile: null,
 
   initialize: function(width, height, layer, settings) {
-    this.map.initializeMap(width, height);
+    //this.map.initializeMap(width, height);
 
     var s = _.defaults(settings || {}, {
       hexRadius: 64,
@@ -28,16 +28,18 @@ var KineticHexMap = Model({
       for(var j = 0; j < height; j++) {
         var index = i * height + j;
         var hex = Hex(-Math.floor(j/2) + i, j);
-        var tileData = (this.map.getMapData(hex));
+        var type = (Math.random() < 0.3 ? 'unit' : 'empty');
+        var passable = true;
+        var player = (Math.random() < 0.7 ? 0 : 1);
         tiles[index] = new Kinetic.RegularPolygon({
           x: marginLeft + i * (hexWidth + s.hexMargin) + (j % 2) * (hexWidth + s.hexMargin) / 2,
           y: marginTop + j * (hexHeight - (hexHeight / 4) + s.hexMargin),
           sides: 6,
           radius: s.hexRadius,
-          fill: (tileData.passable ? 'ivory' : 'gray'),
-          originalFill: (tileData.passable ? 'ivory' : 'gray'),
-          stroke: (tileData.passable ? 'gray' : 'black'),
-          originalStroke: (tileData.passable ? 'gray' : 'black'),
+          fill: (passable ? 'ivory' : 'gray'),
+          originalFill: (passable ? 'ivory' : 'gray'),
+          stroke: (passable ? 'gray' : 'black'),
+          originalStroke: (passable ? 'gray' : 'black'),
           strokeWidth: 2,
           originalStrokeWidth: 2,
           opacity: 1.0,
@@ -59,24 +61,27 @@ var KineticHexMap = Model({
             return;
 
           me.trigger('move', { 
-            fromData: me.map.getMapData(me.selectedTile.attrs.hex), 
-            toData: me.map.getMapData(this.attrs.hex) 
+            fromData: me.map.get(me.selectedTile.attrs.hex), 
+            toData: me.map.get(this.attrs.hex) 
           });
+
+          me.map.swap(me.selectedTile.attrs.hex, this.attrs.hex);
+
           // Hack to deselect the tile after the action
           me.trigger('deselected', me.selectedTile);
         });
         
         layer.add(tiles[index]);
 
-        if (Math.random() < 0.3) {
+        if (type === 'unit') {
           board[index] = new Kinetic.RegularPolygon({
             x: marginLeft + i * (hexWidth + s.hexMargin) + (j % 2) * (hexWidth + s.hexMargin) / 2,
             y: marginTop + j * (hexHeight - (hexHeight / 4) + s.hexMargin),
             sides: 6,
             radius: s.hexRadius,
-            fill: (tileData.player === 0 ? s.fill : '#FF8000'),
-            originalStroke: (tileData.player === 0 ? s.stroke : 'orangered'),
-            stroke: (tileData.player === 0 ? s.stroke : 'orangered'),
+            fill: (player === 0 ? s.fill : '#FF8000'),
+            originalStroke: (player === 0 ? s.stroke : 'orangered'),
+            stroke: (player === 0 ? s.stroke : 'orangered'),
             strokeWidth: 3,
             originalStrokeWidth: 3,
             opacity: 1.0,
@@ -104,8 +109,8 @@ var KineticHexMap = Model({
                 me.selectedTile = null;
               } else {
                 me.trigger('attack', { 
-                  fromData: me.map.getMapData(me.selectedTile.attrs.hex), 
-                  toData: me.map.getMapData(this.attrs.hex) 
+                  fromData: me.map.get(me.selectedTile.attrs.hex), 
+                  toData: me.map.get(this.attrs.hex) 
                 });
                 // Hack to deselect the tile after the action
                 me.trigger('deselected', me.selectedTile);
@@ -117,8 +122,12 @@ var KineticHexMap = Model({
           layer.add(board[index]);
         }
 
-        this.map.setTile(hex, board[index] || tiles[index]);
-
+        this.map.set(hex, { 
+            player: player, 
+            type: type,
+            passable: passable, 
+            tile: board[index] || tiles[index]
+        });
       }
     }
 
@@ -138,7 +147,7 @@ var KineticHexMap = Model({
 
   getReachableTilesData: function(hex, movement) {
     var hexes = this.map.getReachableTiles(hex, movement || 2, function(tile) {
-      return tile.passable && tile.player === 0;
+      return /* true */ tile.type === 'empty';
     });
     var hexesWithoutStart = _.reject(hexes, function(H) {
       return H === hex;
@@ -154,6 +163,9 @@ var KineticHexMap = Model({
   },
 
   getTile: function(hex) {
-    return this.map.getTile(hex);
+    var data = this.map.get(hex);
+    if (!data)
+      return null;
+    return data.tile;
   }
 });
