@@ -65,10 +65,7 @@ map.on('move', function(data) {
   timeline
     .to(fromTile, 0.5, { setX: toTile.getX(), setY: toTile.getY(), ease: Bounce.easeOut });
 
-  var fromHex = fromTile.attrs.hex;
-  var toHex = toTile.attrs.hex;
-  fromTile.attrs.hex = toHex;
-  toTile.attrs.hex = fromHex;
+  fromTile.attrs.hex = toTile.attrs.hex;
 });
 
 // var image = new Image();

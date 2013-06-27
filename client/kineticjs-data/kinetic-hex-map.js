@@ -69,6 +69,7 @@ var KineticHexMap = Model({
 
           // Hack to deselect the tile after the action
           me.trigger('deselected', me.selectedTile);
+          me.selectedTile = null;
         });
         
         layer.add(tile);
