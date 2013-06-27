@@ -1,14 +1,9 @@
 
 function Hex(q, r) {
   var hex = {};
-
   hex.q = q;
   hex.r = r;
   hex.id = q + ',' + r;
-
-  hex.toString = function() {
-    return '(q: ' + q + ', r: ' + r + ')';
-  };
   
   hex.scale = function(s) {
     return Hex(q * s, r * s);
@@ -29,22 +24,6 @@ function HexMap() {
     this.map[hex.id] = data;
   };
 
-  /*
-  this.setTile = function(hex, tile) {
-    var mapData = this.get(hex);
-    if (!mapData)
-      return;
-    mapData.tile = tile;
-  };
-
-  this.getTile = function(hex) {
-    var mapData = this.get(hex);
-    if (!mapData)
-      return null;
-    return mapData.tile;
-  };
-  */
-  
   this.get = function(hex) {
     return this.map[hex.id];
   };
@@ -102,7 +81,7 @@ function HexMap() {
           if (!neighborData) {
             // Ensure that tiles outside the view are not considered again
             visited[neighbor.id] = neighbor;
-          } else if (!visited[neighbor.id] && passableFunc(neighborData)) {
+          } else if (!visited[neighbor.id] && (passableFunc && passableFunc(neighborData))) {
             visited[neighbor.id] = neighbor;
             fringes[k + 1].push(neighbor);
           }
@@ -111,27 +90,4 @@ function HexMap() {
     }
     return _.values(visited);
   };
-  /*
-  this.initializeMap = function(width, height) {
-    this.hexData = new Array(height);
-
-    // In the worst case, the array is twice as wide as neccessary
-    var qStart = -Math.floor(width / 2);
-    var qEnd = Math.floor(width * 1.5);
-    for(var r = 0; r < height; r++) {
-      this.hexData[r] = new Array(width * 2);
-      for(var q = qStart; q < qEnd; q++) {
-        //if (Math.random() < 0.3) {
-          this.set(Hex(q, r), { 
-            player: (Math.random() < 0.8 ? 0 : 1), 
-            passable: (Math.random() < 0.9), 
-            tile: null
-          });
-        //}
-      }
-    }
-
-    return this;
-  }
-  */
 }

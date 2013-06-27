@@ -17,8 +17,8 @@ var KineticHexMap = Model({
     });
 
     var me = this;
-    var tiles = new Array(width * height);
-    var board = new Array(width * height);
+    var tiles = [];
+    var board = [];
     var hexHeight = s.hexRadius * 2;
     var hexWidth = (Math.sqrt(3) / 2) * hexHeight;
     var marginLeft = ((hexWidth + s.hexMargin) / 2) + s.marginLeft;
@@ -31,7 +31,7 @@ var KineticHexMap = Model({
         var type = (Math.random() < 0.3 ? 'unit' : 'empty');
         var passable = true;
         var player = (Math.random() < 0.7 ? 0 : 1);
-        tiles[index] = new Kinetic.RegularPolygon({
+        var tile = new Kinetic.RegularPolygon({
           x: marginLeft + i * (hexWidth + s.hexMargin) + (j % 2) * (hexWidth + s.hexMargin) / 2,
           y: marginTop + j * (hexHeight - (hexHeight / 4) + s.hexMargin),
           sides: 6,
@@ -48,15 +48,15 @@ var KineticHexMap = Model({
           hex: hex
         });
 
-        tiles[index].on('mouseover touchstart', function() {
+        tile.on('mouseover touchstart', function() {
           me.trigger('enter', this);
         });
 
-        tiles[index].on('mouseout touchend', function() {
+        tile.on('mouseout touchend', function() {
           me.trigger('leave', this);
         });
 
-        tiles[index].on('click', function() {
+        tile.on('click', function() {
           if (!me.selectedTile)
             return;
 
@@ -71,10 +71,12 @@ var KineticHexMap = Model({
           me.trigger('deselected', me.selectedTile);
         });
         
-        layer.add(tiles[index]);
+        layer.add(tile);
+        tiles.push(tile);
 
+        var unit = null;
         if (type === 'unit') {
-          board[index] = new Kinetic.RegularPolygon({
+          unit = new Kinetic.RegularPolygon({
             x: marginLeft + i * (hexWidth + s.hexMargin) + (j % 2) * (hexWidth + s.hexMargin) / 2,
             y: marginTop + j * (hexHeight - (hexHeight / 4) + s.hexMargin),
             sides: 6,
@@ -90,15 +92,15 @@ var KineticHexMap = Model({
             hex: hex
           });
 
-          board[index].on('mouseover touchstart', function() {
+          unit.on('mouseover touchstart', function() {
             me.trigger('enter', this);
           });
 
-          board[index].on('mouseout touchend', function() {
+          unit.on('mouseout touchend', function() {
             me.trigger('leave', this);
           });
 
-          board[index].on('click', function() {
+          unit.on('click', function() {
             if (!me.selectedTile) {
               me.trigger('selected', this)
               me.selectedTile = this;
@@ -119,20 +121,21 @@ var KineticHexMap = Model({
             }
           });
 
-          layer.add(board[index]);
+          layer.add(unit);
+          board.push(unit);
         }
 
         this.map.set(hex, { 
             player: player, 
             type: type,
             passable: passable, 
-            tile: board[index] || tiles[index]
+            tile: unit || tile
         });
       }
     }
 
     me.trigger('initialized', tiles);
-    me.trigger('initialized', _.compact(board));
+    me.trigger('initialized', board);
   },
 
   getRingData: function(hex, R) {
@@ -147,7 +150,7 @@ var KineticHexMap = Model({
 
   getReachableTilesData: function(hex, movement) {
     var hexes = this.map.getReachableTiles(hex, movement || 2, function(tile) {
-      return /* true */ tile.type === 'empty';
+      return tile.type === 'empty';
     });
     var hexesWithoutStart = _.reject(hexes, function(H) {
       return H === hex;
