@@ -22,7 +22,6 @@ map.on('enter', function(tile) {
 });
 
 map.on('leave', function(tile) {
-  //tile.setFill(tile.attrs.originalFill);
   tile.setStroke(tile.attrs.originalStroke);
   tile.setStrokeWidth(tile.attrs.originalStrokeWidth);
   hexLayer.draw();
@@ -60,23 +59,8 @@ map.on('move', function(data) {
   var toTile = data.toData.tile;
 
   timeline
-    .to(fromTile, 0.5, { setX: toTile.getX(), setY: toTile.getY(), ease: Cubic.easeOut });
+    .to(fromTile, 0.3, { setX: toTile.getX(), setY: toTile.getY(), ease: Cubic.easeOut });
 });
-
-// var image = new Image();
-// image.src = 'kineticjs-data/big-wave.png';
-// var rectSize = 65;
-// var rect = new Kinetic.Rect({
-//   x: tile.getX() - tile.getRadius() - rectSize + 10,
-//   y: tile.getY() - rectSize / 2,
-//   height: rectSize,
-//   width: rectSize,
-//   fillPatternImage: image,
-//   fillPatternOffset: [4, 4],
-//   fillPatternScale: 0.7
-// });
-
-// hexLayer.add(rect);
 
 map.on('initialized', function(hexagons) {
   timeline

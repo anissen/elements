@@ -104,8 +104,9 @@ Hexagonal grid:
      ✔ Render hexagons @done (23-06-13 11:39)
      ✔ Being able to click hexagon @done (23-06-13 11:39)
      ✔ Select/deselect tile @done (24-06-13 22:35)
-     ☐ Make an underlaying hex grid with hex pieces on top
-     ☐ Move tile
+     ✔ Make an underlaying hex grid with hex pieces on top @done (28-06-13 23:03)
+     ✔ Move unit @done (28-06-13 23:03)
+     ✔ Attack unit @done (28-06-13 23:03)
  ✔ Make hex-map class @done (23-06-13 11:39)
 
 Optimizations:

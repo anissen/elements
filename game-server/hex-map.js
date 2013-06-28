@@ -1,7 +1,9 @@
 
+var _  = require('underscore');
+
 // TODO: Implement a clone constructor
 
-function Hex(q, r) {
+module.exports.Hex = function(q, r) {
   var hex = {};
   hex.q = q;
   hex.r = r;
@@ -22,7 +24,7 @@ function Hex(q, r) {
   return hex;
 };
 
-function HexMap() {
+module.exports.HexMap = function() {
   var me = this;
   this.map = {};
 
@@ -34,11 +36,8 @@ function HexMap() {
     return this.map[hex.id];
   };
 
-  this.swap = function(hex1, hex2) {
-    var hex1Data = this.get(hex1);
-    var hex2Data = this.get(hex2);
-    this.set(hex1, hex2Data);
-    this.set(hex2, hex1Data);
+  this.getValues = function() {
+    return _.values(this.map);
   };
 
   this.getDirection = function(direction) {

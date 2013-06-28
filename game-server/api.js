@@ -107,6 +107,8 @@ module.exports = (function () {
       newState.actionCount++;
     };
 
+    gameActions.updateBoard(); // TODO: This is ugly, fix it (gameActions.getBoard() from map)
+
     return newState;
   }
 
@@ -125,6 +127,7 @@ module.exports = (function () {
     var timeDiff = endTime - startTime;
     var timePerEvent = (actions.length === 0 ? '0' : (timeDiff / actions.length).toFixed(2));
     console.log('[getGameState] Elapsed time: ' + timeDiff + ' ms. for ' + actions.length + ' actions (' + timePerEvent + ' ms./event)');
+    //console.log(state.board);
     callback(state);
   };
 

@@ -3,24 +3,57 @@ var util = require('util'),
     fs = require('fs'),
     _  = require('underscore'),
     events = require('events'),
-    Map = require('./map');
+    Map = require('./hex-map');
 
 module.exports = (function () {
   var GameActions = function(game) {
 
     var me = this;
 
-    var map = new Map(game.board);
+    var map = new Map.HexMap();
+
+    for (var y = 0; y < game.board.length; y++) {
+      var row = game.board[y];
+      for (var x = 0; x < row.length; x++) {
+        map.set(Map.Hex(x, y), row[x]);
+      }
+    }
+
     // map.on('tileSet', function (data, pos) {
     //   console.log('New tile set: ' + data.type, pos);
     // });
 
-    // entity.on('move', function (from, to, entity) {
-    //   map.resetTile(from);
-    //   map.setTile(to, entity);
+    // map.entity.on('move', function (from, to, entity) {
+    //   resetTile(from);
+    //   setTile(to, entity);
     // });
 
     events.EventEmitter.call(this);
+
+    function getTile(pos) {
+      return map.get(Map.Hex(pos.x, pos.y));
+    };
+
+    function setTile(pos, data) {
+      map.set(Map.Hex(pos.x, pos.y), data);
+    };
+
+    function resetTile(pos) {
+      setTile(pos, {type: 'empty', x: pos.x, y: pos.y});
+    };
+
+    function getTiles() {
+      return map.getValues();
+    };
+
+    this.updateBoard = function() {
+      var board = [];
+      for (var y = 0; y < game.board.length; y++) {
+        for (var x = 0; x < row.length; x++) {
+          game.board[y][x] = map.get(Map.Hex(x, y));
+        }
+      }
+    }
 
     this.play = function(data) {
       var player = getCurrentPlayer();
@@ -50,21 +83,21 @@ module.exports = (function () {
     };
 
     this.move = function(data) {
-      var unit = map.getTile(data.from);
-      map.resetTile(data.from);
+      var unit = getTile(data.from);
+      resetTile(data.from);
       unit.x = data.to.x;
       unit.y = data.to.y;
       unit.data.movesLeft -= 1;
-      map.setTile(data.to, unit);
+      setTile(data.to, unit);
     };
 
     this.attack = function(data) {
-      var attacker = map.getTile(data.from);
-      var defender = map.getTile(data.to);
+      var attacker = getTile(data.from);
+      var defender = getTile(data.to);
       defender.data.life -= attacker.data.attack;
       attacker.data.attacksLeft -= 1;
       if (defender.data.life <= 0)
-        map.resetTile(data.to);
+        resetTile(data.to);
 
       this.emit('attack', attacker, defender);
     };
@@ -79,7 +112,7 @@ module.exports = (function () {
 
     function startTurn() {
       // Replenish 1 energy for all energy sources
-      _.chain(map.getTiles())
+      _.chain(getTiles())
         .filter(playerEnergyTilesQuery)
         .each(function(source) {
           if (source.data.energy < source.data.maxEnergy)
@@ -87,7 +120,7 @@ module.exports = (function () {
         });
 
       // Restore unit attacks and moves
-      _.chain(map.getTiles())
+      _.chain(getTiles())
         .filter(playerUnitTilesQuery)
         .each(function(unit) {
           unit.data.movesLeft = unit.data.moves;
@@ -95,7 +128,7 @@ module.exports = (function () {
         });
 
       // Execute onTurnStart for each unit
-      _.chain(map.getTiles())
+      _.chain(getTiles())
         .filter(playerUnitTilesQuery)
         .each(function(unit) {
           if (unit.onTurnStart) {
@@ -140,7 +173,7 @@ module.exports = (function () {
 
     function getValueOfPlayersThings(playerId) {
       var valuePerUnit = 2;
-      var unitValue = _.chain(map.getTiles())
+      var unitValue = _.chain(getTiles())
         .filter(function(tile) {
           return tile.player === playerId && tile.type === 'unit';
         })
@@ -153,7 +186,7 @@ module.exports = (function () {
       var cardsOnHandValue = game.players[playerId].hand.length * valuePerCard;
 
       var energyLifeValue = 3;
-      var energyValue = _.chain(map.getTiles())
+      var energyValue = _.chain(getTiles())
         .filter(function(tile) {
           return tile.player === playerId && tile.type === 'energy';
         })
@@ -179,7 +212,7 @@ module.exports = (function () {
     };
 
     function hasPlayerLost(playerId) {
-      return !_.some(map.getTiles(), function(tile) {
+      return !_.some(getTiles(), function(tile) {
         return tile.player === playerId && tile.type === 'energy';
       });
     }
@@ -197,7 +230,7 @@ module.exports = (function () {
     }
 
     function getValidMovesForUnit(unit) {
-      return _.chain(map.getAdjacentTiles(unit))
+      return _.chain(getAdjacentTiles(unit))
         .filter(function(tile) {
           return tile.type === 'empty';
         })
@@ -222,7 +255,7 @@ module.exports = (function () {
     }
 
     function getValidAttacksForUnit(unit) {
-      return _.chain(map.getAdjacentTiles(unit))
+      return _.chain(getAdjacentTiles(unit))
         .filter(function(tile) {
           return tile.type !== 'empty' && tile.player !== game.currentPlayer;
         })
@@ -239,7 +272,7 @@ module.exports = (function () {
     }
 
     function getPossiblePlays() {
-      var availableEnergy = _.chain(map.getTiles())
+      var availableEnergy = _.chain(getTiles())
         .filter(playerEnergyTilesQuery)
         .reduce(function(sum, energy) {
           return sum + energy.data.energy;
@@ -277,12 +310,12 @@ module.exports = (function () {
 
     function getValidTargetsForCard(card) {
       if (card.type === 'spell')
-        return map.getTiles(); // TODO: Need more precise specification and handling of targets
+        return getTiles(); // TODO: Need more precise specification and handling of targets
 
-      return _.filter(map.getTiles(), function(tile) {
+      return _.filter(getTiles(), function(tile) {
         // TODO: Need check for placement near energy source and sufficiant energy
         return tile.type === 'empty' &&
-          _.some(map.getAdjacentTiles(tile), playerEnergyTilesQuery) &&
+          _.some(getAdjacentTiles(tile), playerEnergyTilesQuery) &&
           getAvailableEnergyAtTile(tile) >= card.cost;
       });
     }
@@ -292,7 +325,7 @@ module.exports = (function () {
     //
 
     function getAllUnits() {
-      return _.filter(map.getTiles(), playerUnitTilesQuery);
+      return _.filter(getTiles(), playerUnitTilesQuery);
     }
 
     function createCardForCurrentPlayer(cardId) {
@@ -327,7 +360,7 @@ module.exports = (function () {
       newCard.y = pos.y;
       newCard.data.movesLeft = newCard.data.moves;
       newCard.data.attacksLeft = newCard.data.attacks;
-      map.setTile(pos, newCard);
+      setTile(pos, newCard);
     }
 
     function playerEnergyTilesQuery(tile) {
@@ -343,7 +376,7 @@ module.exports = (function () {
         return Math.abs(tile.x - source.x) + Math.abs(tile.y - source.y);
       };
 
-      return _.chain(map.getTiles())
+      return _.chain(getTiles())
         .filter(playerEnergyTilesQuery)
         .sortBy(closestSourcesFirstQuery)
         .value();
@@ -362,7 +395,7 @@ module.exports = (function () {
       if (pos)
         energySources = getEnergySourcesConnectedToTile(pos);
       else
-        energySources = _.filter(map.getTiles(), playerEnergyTilesQuery);
+        energySources = _.filter(getTiles(), playerEnergyTilesQuery);
 
       var remaingingCost = cost;
       _.each(energySources, function(source) {
@@ -377,14 +410,14 @@ module.exports = (function () {
       return {
         entity: card,
         game: me,
-        target: map.getTile(data.pos),
+        target: getTile(data.pos),
         damageUnit: function(unit, damage) {
           if (!unit.data.life)
             return;
 
           unit.data.life -= damage;
           if (unit.data.life <= 0)
-            map.resetTile(unit);
+            resetTile(unit);
         },
         heal: function(unit, amount) {
           if (!unit.data.life)
@@ -394,13 +427,13 @@ module.exports = (function () {
             unit.data.life++;
         },
         drawCards: drawCards,
-        getAdjacentTiles: map.getAdjacentTiles,
+        getAdjacentTiles: getAdjacentTiles,
         print: console.log,
         getCurrentPlayerIndex: function() { 
           return game.currentPlayer;
         },
         updateEntity: function(entity) {
-          map.setTile(data.pos, entity); // HACK HACK HACK HACK
+          setTile(data.pos, entity); // HACK HACK HACK HACK
         },
         getCurrentPlayer: getCurrentPlayer,
         // notify: function (data) { 
