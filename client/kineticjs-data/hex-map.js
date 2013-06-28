@@ -1,4 +1,6 @@
 
+// TODO: Implement a clone constructor
+
 function Hex(q, r) {
   var hex = {};
   hex.q = q;
@@ -12,6 +14,10 @@ function Hex(q, r) {
   hex.add = function(h) {
     return Hex(q + h.q, r + h.r);
   };
+
+  hex.clone = function() {
+    return Hex(q, r);
+  }
 
   return hex;
 };

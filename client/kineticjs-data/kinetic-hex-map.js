@@ -65,9 +65,22 @@ var KineticHexMap = Model({
             toData: me.map.get(this.attrs.hex) 
           });
 
-          me.map.swap(me.selectedTile.attrs.hex, this.attrs.hex);
+          // TODO: Clean up this function!
 
-          // Hack to deselect the tile after the action
+          var fromHex = Hex(me.selectedTile.attrs.hex.q, me.selectedTile.attrs.hex.r);
+          me.selectedTile.attrs.hex = this.attrs.hex;
+
+          var toData = me.map.get(this.attrs.hex);
+          toData.unit = me.selectedTile;
+          toData.type = 'unit';
+          me.map.set(this.attrs.hex, toData);
+          
+          var fromData = me.map.get(fromHex);
+          fromData.unit = null;
+          fromData.type = 'empty';
+          me.map.set(fromHex, fromData);
+
+          // Deselect the tile after the action
           me.trigger('deselected', me.selectedTile);
           me.selectedTile = null;
         });
@@ -115,7 +128,7 @@ var KineticHexMap = Model({
                   fromData: me.map.get(me.selectedTile.attrs.hex), 
                   toData: me.map.get(this.attrs.hex) 
                 });
-                // Hack to deselect the tile after the action
+                // Deselect the tile after the action
                 me.trigger('deselected', me.selectedTile);
                 me.selectedTile = null;
               }
@@ -129,8 +142,9 @@ var KineticHexMap = Model({
         this.map.set(hex, { 
             player: player, 
             type: type,
-            passable: passable, 
-            tile: unit || tile
+            passable: passable,
+            tile: tile,
+            unit: unit
         });
       }
     }
