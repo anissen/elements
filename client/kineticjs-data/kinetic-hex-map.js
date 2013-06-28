@@ -67,18 +67,18 @@ var KineticHexMap = Model({
 
           // TODO: Clean up this function!
 
-          var fromHex = Hex(me.selectedTile.attrs.hex.q, me.selectedTile.attrs.hex.r);
+          var fromHex = me.selectedTile.attrs.hex.clone();
           me.selectedTile.attrs.hex = this.attrs.hex;
 
           var toData = me.map.get(this.attrs.hex);
           toData.unit = me.selectedTile;
           toData.type = 'unit';
-          me.map.set(this.attrs.hex, toData);
+          //me.map.set(this.attrs.hex, toData);
           
           var fromData = me.map.get(fromHex);
           fromData.unit = null;
           fromData.type = 'empty';
-          me.map.set(fromHex, fromData);
+          //me.map.set(fromHex, fromData);
 
           // Deselect the tile after the action
           me.trigger('deselected', me.selectedTile);
