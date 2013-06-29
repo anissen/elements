@@ -46,6 +46,10 @@ module.exports = (function () {
       return map.getValues();
     };
 
+    function getAdjacentTiles(pos) {
+      return map.getRing(Map.Hex(pos.x, pos.y));
+    };
+
     this.updateBoard = function() {
       var board = [];
       for (var y = 0; y < game.board.length; y++) {

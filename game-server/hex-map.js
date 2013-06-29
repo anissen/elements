@@ -1,4 +1,7 @@
-(function(exports){
+
+var _ = _ || require('underscore');
+
+(function(exports, _){
 
 // TODO: Implement a clone constructor
 
@@ -99,5 +102,7 @@ function HexMap() {
 exports.Hex = Hex;
 exports.HexMap = HexMap;
 
-})(typeof exports === 'undefined' ? (this['HexMap'] = {}) : exports);
-//var _  = require('underscore');
+})(
+  (typeof exports === 'undefined' ? (this['HexMap'] = {}) : exports), 
+  _
+);

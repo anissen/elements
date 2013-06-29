@@ -107,6 +107,7 @@ Hexagonal grid:
      ✔ Make an underlaying hex grid with hex pieces on top @done (28-06-13 23:03)
      ✔ Move unit @done (28-06-13 23:03)
      ✔ Attack unit @done (28-06-13 23:03)
+     ☐ Make a custom hex kineticjs class
  ✔ Make hex-map class @done (23-06-13 11:39)
 
 Optimizations:
@@ -117,6 +118,7 @@ Optimizations:
  ☐ Get list of all players units and use that for the current state instead of querying it each time
  ☐ Get list of all players energy sources and use that for the current state instead of querying it each time
  ☐ Make a socket only API that simply returns actions for the client to use, instead of returning all states (bad idea - too much client-side logic?)
+ ☐ Switch from underscore to lo-dash
 
 Very high-level long-term additions:
  ☐ Adventure mode

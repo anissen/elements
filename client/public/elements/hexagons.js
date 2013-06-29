@@ -8,7 +8,7 @@ var stage = new Kinetic.Stage({
 var hexLayer = new Kinetic.Layer();
 stage.add(hexLayer);
 
-var map = new KineticHexMap();
+var map = new KineticHexMap(); // TODO: Rename to 'game'
 var selectedTile = null;
 var neighborHexagons = [];
 var hexRadius = 70;
@@ -77,3 +77,5 @@ map.on('initialized', function(hexagons) {
 });
 
 map.initialize(5, 6, hexLayer, {});
+
+window.game = map;

@@ -315,6 +315,9 @@ exports.show = function(req, res){
 };
 
 exports.play = function(req, res){
+  res.sendfile('client/kineticjs.html');
+  return;
+  
   res.render('games/play', {
     title: 'playing!',
     game: req.game

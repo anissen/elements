@@ -19,6 +19,7 @@ module.exports = function (app, config, passport) {
     level: 9
   }));
   app.use(express.static(config.root + '/client/public'));
+  app.use(express.static(config.root + '/game-server')); // HACK for using /game-server/hex-map.js in kineticjs.html
   app.use(express.logger('dev'));
 
   // set views path, template engine and default layout

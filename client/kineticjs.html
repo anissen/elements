@@ -1,18 +1,20 @@
 
 <!DOCTYPE html>
-<html>
+<html ng-app="" ng-csp>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title>kineticjs hexagon test</title>
     
-    <script type='text/javascript' src="public/vendor/kineticjs/kinetic.min.js"></script>
-    <script type='text/javascript' src="public/vendor/underscore/underscore.min.js"></script>
-    <script type="text/javascript" src="public/vendor/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="public/vendor/greensock/plugins/CSSPlugin.min.js"></script>
-    <script type="text/javascript" src="public/vendor/greensock/easing/EasePack.min.js"></script>
-    <script type="text/javascript" src="public/vendor/greensock/TweenLite.min.js"></script>
-    <script type="text/javascript" src="public/vendor/greensock/TimelineLite.min.js"></script>
-    <script type="text/javascript" src="public/vendor/greensock/jquery.gsap.min.js"></script>
+    <script type='text/javascript' src="/vendor/kineticjs/kinetic.min.js"></script>
+    <script type='text/javascript' src="/vendor/underscore/underscore.min.js"></script>
+    <script type="text/javascript" src="/vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/vendor/greensock/plugins/CSSPlugin.min.js"></script>
+    <script type="text/javascript" src="/vendor/greensock/easing/EasePack.min.js"></script>
+    <script type="text/javascript" src="/vendor/greensock/TweenLite.min.js"></script>
+    <script type="text/javascript" src="/vendor/greensock/TimelineLite.min.js"></script>
+    <script type="text/javascript" src="/vendor/greensock/jquery.gsap.min.js"></script>
+
+    <script src="/vendor/angularjs/angular.min.js"></script>
     
     <style type='text/css'>
     html, body { 
@@ -34,11 +36,13 @@
     </style>
 
   </head>
-  <body>
+  <body ng-controller="gameCtrl">
     <div id="container"></div>
-    <script type='text/javascript' src="kineticjs-data/fishbone.js"></script>
-    <script type='text/javascript' src="../game-server/hex-map.js"></script>
-    <script type='text/javascript' src="kineticjs-data/kinetic-hex-map.js"></script>
-    <script type='text/javascript' src="kineticjs-data/hexagons.js"></script>
+
+    <script type='text/javascript' src="/elements/fishbone.js"></script>
+    <script type='text/javascript' src="/hex-map.js"></script>
+    <script type='text/javascript' src="/elements/kinetic-hex-map.js"></script>
+    <script type='text/javascript' src="/elements/hexagons.js"></script>
+    <script src="/elements/client-logic.js"></script>
   </body>
 </html>

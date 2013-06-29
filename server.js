@@ -46,13 +46,13 @@ require('./config/express')(app, config, passport);
 require('./config/routes')(app, passport, auth);
 
 
-
+/*
 var winston = require('winston');
 require('winston-growl');
 
 winston.loggers.add('logger', {
   growl: {
-    /* specify transport options*/
+    // specify transport options
   },
   // other transports
 });
@@ -60,7 +60,7 @@ winston.loggers.add('logger', {
 logger = winston.loggers.get('logger');
 logger.info("info notification", {title:'optional title'});
 logger.error("error notification", {title:'Errror'});
-
+*/
 
 // Start the app by listening on <port>
 var port = process.env.PORT || 3000;
