@@ -1,6 +1,6 @@
 
 var KineticHexMap = Model({
-  map: new HexMap(),
+  map: new HexMap.HexMap(),
 
   selectedTile: null,
 
@@ -27,7 +27,7 @@ var KineticHexMap = Model({
     for(var i = 0; i < width; i++) {
       for(var j = 0; j < height; j++) {
         var index = i * height + j;
-        var hex = Hex(-Math.floor(j/2) + i, j);
+        var hex = HexMap.Hex(-Math.floor(j/2) + i, j);
         var type = (Math.random() < 0.3 ? 'unit' : 'empty');
         var passable = true;
         var player = (Math.random() < 0.7 ? 0 : 1);
