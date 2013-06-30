@@ -2,12 +2,17 @@
 var KineticHexMap = Model({
   map: new HexMap.HexMap(),
 
+  settings: null,
+
+  layer: null,
+
   selectedTile: null,
 
   initialize: function(width, height, layer, settings) {
     //this.map.initializeMap(width, height);
+    this.layer = layer;
 
-    var s = _.defaults(settings || {}, {
+    var s = this.settings = _.defaults(settings || {}, {
       hexRadius: 64,
       hexMargin: 5,
       marginLeft: 30,
@@ -89,6 +94,7 @@ var KineticHexMap = Model({
         tiles.push(tile);
 
         var unit = null;
+        /*
         if (type === 'unit') {
           unit = new Kinetic.RegularPolygon({
             x: marginLeft + i * (hexWidth + s.hexMargin) + (j % 2) * (hexWidth + s.hexMargin) / 2,
@@ -138,6 +144,7 @@ var KineticHexMap = Model({
           layer.add(unit);
           board.push(unit);
         }
+        */
 
         this.map.set(hex, { 
             player: player, 
@@ -151,6 +158,60 @@ var KineticHexMap = Model({
 
     me.trigger('initialized', tiles);
     me.trigger('initialized', board);
+  },
+
+  loadState: function(state) {
+    //this.layer.destroyChildren();
+    var units = [];
+    for(var i = 0; i < state.board.length; i++) {
+      var row = state.board[i];
+      for(var j = 0; j < row.length; j++) {
+        var stateData = row[j];
+        //console.log(stateData);
+        var hex = HexMap.Hex(-Math.floor(j/2) + i, j);
+        
+        var tile = this.map.get(hex);
+
+        var changedType = (tile.type !== stateData.type);
+        if (!changedType)
+          continue;
+
+        tile.player = stateData.player || 0;
+        tile.type = stateData.type;
+        tile.passable = stateData.type === 'empty';
+
+        if (stateData.type === 'empty') {
+          if (tile.unit)
+            tile.unit.remove();
+        } else {
+          var s = this.settings;
+          var hexHeight = s.hexRadius * 2;
+          var hexWidth = (Math.sqrt(3) / 2) * hexHeight;
+          var marginLeft = ((hexWidth + s.hexMargin) / 2) + s.marginLeft;
+          var marginTop  = ((hexHeight + s.hexMargin) / 2) + s.marginTop;
+
+          tile.unit = new Kinetic.RegularPolygon({
+            x: marginLeft + j * (hexWidth + s.hexMargin) + (i % 2) * (hexWidth + s.hexMargin) / 2,
+            y: marginTop + i * (hexHeight - (hexHeight / 4) + s.hexMargin),
+            sides: 6,
+            radius: s.hexRadius,
+            fill: (stateData.player === 0 ? s.fill : '#FF8000'),
+            originalStroke: (stateData.player === 0 ? s.stroke : 'orangered'),
+            stroke: (stateData.player === 0 ? s.stroke : 'orangered'),
+            strokeWidth: 3,
+            originalStrokeWidth: 3,
+            opacity: 1.0,
+            scaleX: 0.8,
+            scaleY: 0.8,
+            hex: hex
+          });
+          this.layer.add(tile.unit);
+          units.push(tile.unit);
+          this.layer.draw();
+        }
+      }
+    }
+    this.trigger('initialized', units);
   },
 
   getRingData: function(hex, R) {

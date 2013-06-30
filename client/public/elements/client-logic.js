@@ -7,9 +7,9 @@ function gameCtrl($scope, $http) {
     var nextActionCount = ($scope.state.actionCount || 0) + 1;
     $http.get('' + nextActionCount)
       .success(function(state) {
-        console.log(state);
+        //console.log(state);
 
-        // game.loadState(state);
+        game.loadState(state);
         $scope.state = state;
       })
       .error(function() {
@@ -24,7 +24,7 @@ function gameCtrl($scope, $http) {
 
       if ($scope.state.lastAction)
         clearInterval(interval);
-    }, 3000);
+    }, 1000);
   }
 
   playAllActions();
