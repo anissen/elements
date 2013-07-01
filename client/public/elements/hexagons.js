@@ -48,7 +48,7 @@ game.on('attack', function(data) {
   var fromTile = data.fromData.unit;
   var toTile = data.toData.unit;
 
-  var oldData = {x: fromTile.getX(), y: fromTile.getY()}
+  var oldData = {x: fromTile.getX(), y: fromTile.getY()};
   timeline
     .to(fromTile, 0.3, { setX: toTile.getX(), setY: toTile.getY(), ease: Bounce.easeOut })
     .to(fromTile, 0.6, { setX: oldData.x, setY: oldData.y, ease: Elastic.easeOut });
@@ -60,6 +60,17 @@ game.on('move', function(data) {
 
   timeline
     .to(fromTile, 0.3, { setX: toTile.getX(), setY: toTile.getY(), ease: Cubic.easeOut });
+});
+
+game.on('play-unit', function(data) {
+  timeline
+    .from(data.unit, 1.0, { 
+      setY: (data.player === 0 ? 700 : -80),
+      setRotation: Math.PI / 2,
+      setScaleX: 0.5,
+      setScaleY: 0.5,
+      ease: Bounce.easeOut 
+    });
 });
 
 game.on('initialized', function(hexagons) {

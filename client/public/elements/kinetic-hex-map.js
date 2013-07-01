@@ -6,6 +6,8 @@ var KineticHexMap = Model({
 
   layer: null,
 
+  units: [],
+
   selectedTile: null,
 
   initialize: function(width, height, layer, settings) {
@@ -29,16 +31,16 @@ var KineticHexMap = Model({
     var marginLeft = ((hexWidth + s.hexMargin) / 2) + s.marginLeft;
     var marginTop  = ((hexHeight + s.hexMargin) / 2) + s.marginTop;
 
-    for(var i = 0; i < width; i++) {
-      for(var j = 0; j < height; j++) {
-        var index = i * height + j;
-        var hex = HexMap.Hex(-Math.floor(j/2) + i, j);
+    for(var x = 0; x < width; x++) {
+      for(var y = 0; y < height; y++) {
+        var index = y * height + x;
+        var hex = HexMap.Hex(-Math.floor(y/2) + x, y);
         var type = (Math.random() < 0.3 ? 'unit' : 'empty');
         var passable = true;
         var player = (Math.random() < 0.7 ? 0 : 1);
         var tile = new Kinetic.RegularPolygon({
-          x: marginLeft + i * (hexWidth + s.hexMargin) + (j % 2) * (hexWidth + s.hexMargin) / 2,
-          y: marginTop + j * (hexHeight - (hexHeight / 4) + s.hexMargin),
+          x: marginLeft + x * (hexWidth + s.hexMargin) + (y % 2) * (hexWidth + s.hexMargin) / 2,
+          y: marginTop + y * (hexHeight - (hexHeight / 4) + s.hexMargin),
           sides: 6,
           radius: s.hexRadius,
           fill: (passable ? 'rgb(255, 255, 240)' : 'gray'),
@@ -163,13 +165,11 @@ var KineticHexMap = Model({
   loadState: function(state) {
     //this.layer.destroyChildren();
     var units = [];
-    for(var i = 0; i < state.board.length; i++) {
-      var row = state.board[i];
-      for(var j = 0; j < row.length; j++) {
-        var stateData = row[j];
-        //console.log(stateData);
-        var hex = HexMap.Hex(-Math.floor(j/2) + i, j);
-        
+    for(var y = 0; y < state.board.length; y++) {
+      var row = state.board[y];
+      for(var x = 0; x < row.length; x++) {
+        var stateData = row[x];
+        var hex = HexMap.Hex(-Math.floor(y/2) + x, y);
         var tile = this.map.get(hex);
 
         var changedType = (tile.type !== stateData.type);
@@ -184,30 +184,10 @@ var KineticHexMap = Model({
           if (tile.unit)
             tile.unit.remove();
         } else {
-          var s = this.settings;
-          var hexHeight = s.hexRadius * 2;
-          var hexWidth = (Math.sqrt(3) / 2) * hexHeight;
-          var marginLeft = ((hexWidth + s.hexMargin) / 2) + s.marginLeft;
-          var marginTop  = ((hexHeight + s.hexMargin) / 2) + s.marginTop;
-
-          tile.unit = new Kinetic.RegularPolygon({
-            x: marginLeft + j * (hexWidth + s.hexMargin) + (i % 2) * (hexWidth + s.hexMargin) / 2,
-            y: marginTop + i * (hexHeight - (hexHeight / 4) + s.hexMargin),
-            sides: 6,
-            radius: s.hexRadius,
-            fill: (stateData.player === 0 ? s.fill : '#FF8000'),
-            originalStroke: (stateData.player === 0 ? s.stroke : 'orangered'),
-            stroke: (stateData.player === 0 ? s.stroke : 'orangered'),
-            strokeWidth: 3,
-            originalStrokeWidth: 3,
-            opacity: 1.0,
-            scaleX: 0.8,
-            scaleY: 0.8,
-            hex: hex
-          });
+          tile.unit = this.createUnit(stateData.type, hex);
           this.layer.add(tile.unit);
-          units.push(tile.unit);
           this.layer.draw();
+          units.push(tile.unit);
         }
       }
     }
@@ -246,5 +226,101 @@ var KineticHexMap = Model({
     if (!data)
       return null;
     return data.tile;
+  },
+
+  move: function(fromHex, toHex) {
+    this.trigger('move', { 
+      fromData: this.map.get(fromHex), 
+      toData: this.map.get(toHex) 
+    });
+  },
+
+  play: function(cardId, targets) {
+    if (cardId === 'unit') {
+      var player = Math.floor(Math.random() * 2);
+      var unit = this.createUnit(player, targets);
+      var mapData = this.map.get(targets);
+      mapData.player = player;
+      mapData.unit = unit;
+      mapData.type = 'unit';
+
+      this.units.push(unit);
+
+      this.layer.add(unit);
+      this.trigger('play-unit', mapData);
+    }
+  },
+
+  attack: function(cardId, targetHex) {
+    var attacker = _.find(this.units, function(unit) {
+      return unit.attrs.id === cardId;
+    });
+    
+    this.trigger('attack', { 
+      fromData: this.map.get(attacker.attrs.hex), 
+      toData: this.map.get(targetHex) 
+    });
+  },
+
+  createUnit: function(player, hex) {
+    var s = this.settings;
+    var hexHeight = s.hexRadius * 2;
+    var hexWidth = (Math.sqrt(3) / 2) * hexHeight;
+    var marginLeft = ((hexWidth + s.hexMargin) / 2) + s.marginLeft;
+    var marginTop  = ((hexHeight + s.hexMargin) / 2) + s.marginTop;
+
+    var x = hex.q + Math.floor(hex.r / 2);
+    var y = hex.r;
+
+    var unit = new Kinetic.RegularPolygon({
+      x: marginLeft + x * (hexWidth + s.hexMargin) + (y % 2) * (hexWidth + s.hexMargin) / 2,
+      y: marginTop + y * (hexHeight - (hexHeight / 4) + s.hexMargin),
+      sides: 6,
+      radius: s.hexRadius,
+      fill: (player === 0 ? s.fill : '#FF8000'),
+      originalStroke: (player === 0 ? s.stroke : 'orangered'),
+      stroke: (player === 0 ? s.stroke : 'orangered'),
+      strokeWidth: 3,
+      originalStrokeWidth: 3,
+      opacity: 1.0,
+      //scaleX: 0.8,
+      //scaleY: 0.8,
+      id: _.uniqueId('unit'),
+      hex: hex
+    });
+
+    var me = this;
+    unit.on('mouseover touchstart', function() {
+      me.trigger('enter', this);
+    });
+
+    unit.on('mouseout touchend', function() {
+      me.trigger('leave', this);
+    });
+
+    unit.on('click', this.onUnitClick);
+
+    return unit;
+  },
+
+  onUnitClick: function(evt) {
+    if (!this.selectedTile) {
+      this.trigger('selected', evt.targetNode)
+      this.selectedTile = evt.targetNode;
+    } else {
+      // deselect selected tile
+      if (evt.targetNode === this.selectedTile) {
+        this.trigger('deselected', evt.targetNode);
+        this.selectedTile = null;
+      } else {
+        this.trigger('attack', { 
+          fromData: this.map.get(this.selectedTile.attrs.hex), 
+          toData: this.map.get(this.attrs.hex) 
+        });
+        // Deselect the tile after the action
+        this.trigger('deselected', this.selectedTile);
+        this.selectedTile = null;
+      }
+    }
   }
 });
