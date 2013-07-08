@@ -24,7 +24,7 @@ function gameCtrl($scope, $http) {
 
       if ($scope.state.lastAction)
         clearInterval(interval);
-    }, 1000);
+    }, 500);
   }
 
   playAllActions();

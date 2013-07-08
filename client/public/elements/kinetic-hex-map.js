@@ -228,18 +228,29 @@ var KineticHexMap = Model({
     return data.tile;
   },
 
-  move: function(fromHex, toHex) {
+  move: function(unitId, targetHex) {
+    var unit = this.getUnitFromId(unitId);
+
     this.trigger('move', { 
-      fromData: this.map.get(fromHex), 
-      toData: this.map.get(toHex) 
+      fromData: this.map.get(unit.attrs.hex), 
+      toData: this.map.get(targetHex) 
     });
   },
 
-  play: function(cardId, targets) {
+  attack: function(unitId, targetHex) {
+    var attacker = this.getUnitFromId(unitId);
+
+    this.trigger('attack', { 
+      fromData: this.map.get(attacker.attrs.hex), 
+      toData: this.map.get(targetHex) 
+    });
+  },
+
+  play: function(cardId, targetHex) {
     if (cardId === 'unit') {
       var player = Math.floor(Math.random() * 2);
-      var unit = this.createUnit(player, targets);
-      var mapData = this.map.get(targets);
+      var unit = this.createUnit(player, targetHex);
+      var mapData = this.map.get(targetHex);
       mapData.player = player;
       mapData.unit = unit;
       mapData.type = 'unit';
@@ -251,14 +262,9 @@ var KineticHexMap = Model({
     }
   },
 
-  attack: function(cardId, targetHex) {
-    var attacker = _.find(this.units, function(unit) {
-      return unit.attrs.id === cardId;
-    });
-    
-    this.trigger('attack', { 
-      fromData: this.map.get(attacker.attrs.hex), 
-      toData: this.map.get(targetHex) 
+  getUnitFromId: function(unitId) {
+    return _.find(this.units, function(unit) {
+      return unit.attrs.id === unitId;
     });
   },
 
@@ -288,6 +294,8 @@ var KineticHexMap = Model({
       id: _.uniqueId('unit'),
       hex: hex
     });
+
+    console.log('unit id: ' + unit.attrs.id);
 
     var me = this;
     unit.on('mouseover touchstart', function() {
@@ -322,5 +330,16 @@ var KineticHexMap = Model({
         this.selectedTile = null;
       }
     }
+  },
+
+  doAction: function(actionName, cardId, targetHex) {
+    this[actionName](cardId, targetHex);
+  },
+
+  doActionList: function(actions) {
+    var me = this;
+    _.each(actions, function(action) {
+      me[action.name](action.cardId, action.targetHex);
+    });
   }
 });
