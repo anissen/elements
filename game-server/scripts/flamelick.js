@@ -1,2 +1,0 @@
-
-damageUnit(target, 2);

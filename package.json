@@ -1,34 +1,21 @@
 {
-  "name": "elements",
-  "description": "...",
-  "version": "0.1.0",
-  "private": true,
-  "author": "Anders Nissen <andnis@gmail.com> (http://www.andersnissen.com)",
-  "engines": {
-    "node": "0.8.x",
-    "npm": "1.1.x"
-  },
-  "scripts": {
-    "start": "./node_modules/.bin/nodemon server.js"
-  },
-  "dependencies": {
-    "express": "latest",
-    "jade": "latest",
-    "mongoose": "latest",
-    "connect-mongo": "latest",
-    "connect-flash": "latest",
-    "passport": "latest",
-    "passport-local": "latest",
-    "passport-facebook": "latest",
-    "passport-twitter": "latest",
-    "passport-github": "latest",
-    "passport-google-oauth": "latest",
-    "underscore": "latest",
-    "gzippo": "latest",
-    "async": "latest",
-    "nodemon": "latest",
-    "forever": "latest",
-    "view-helpers": "latest",
-    "socket.io": "latest"
-  }
+    "name": "nine-test",
+    "private": true,
+    "version": "0.0.0",
+    "description": "a Sails application",
+    "dependencies": {
+        "sails": "0.9.3",
+        "grunt": "0.4.1",
+        "sails-disk": "~0.9.0",
+        "ejs": "0.8.4",
+        "optimist": "0.3.4"
+    },
+    "scripts": {
+        "start": "node app.js",
+        "debug": "node debug app.js"
+    },
+    "main": "app.js",
+    "repository": "",
+    "author": "",
+    "license": ""
 }

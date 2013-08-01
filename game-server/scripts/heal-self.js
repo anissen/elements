@@ -1,2 +1,0 @@
-
-heal(target, 1);
