@@ -39,6 +39,10 @@ function HexMap() {
     return this.map[hex.id];
   };
 
+  this.getKeys = function() {
+    return _.keys(this.map);
+  };
+
   this.getValues = function() {
     return _.values(this.map);
   };
@@ -97,6 +101,44 @@ function HexMap() {
       });
     }
     return _.values(visited);
+  };
+
+  this.print = function() {
+    var coords = _.chain(this.getKeys())
+      .map(function(key) {
+        var parts = key.split(',');
+        return { x: parseInt(parts[0]), y: parseInt(parts[1]) };
+      })
+      .value();
+
+    var xs = _.pluck(coords, 'x');
+    var ys = _.pluck(coords, 'y');
+    var minX = _.min(xs);
+    var maxX = _.max(xs);
+    var minY = _.min(ys);
+    var maxY = _.max(ys);
+
+    for (var y = minY - 1; y < minY; y++) {
+      var str = '';
+      for (var x = minX; x <= maxX; x++) {
+        str += ' ' + (x < 0 ? x : ' ' + x);
+      }
+      console.log(' ' + str);
+    }
+
+    for (var y = minY; y <= maxY; y++) {
+      var str = "";
+      for (var x = minX; x <= maxX; x++) {
+        var tile = this.get(Hex(x,y));
+        if (!tile) {
+          str += '   ';
+        } else {
+          str += '[' + (tile.unit ? tile.unit.attrs.player : ' ') + ']'; // TODO: Make output non-specific
+        }
+      }
+      console.log(y + ' ' + str);
+    }
+
   };
 }
 

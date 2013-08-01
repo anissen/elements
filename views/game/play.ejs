@@ -7,7 +7,6 @@ html, body {
 body { 
   margin:0; 
   background-color: white;
-
 }
 
 #container {
@@ -24,7 +23,6 @@ body {
   $(function() {
     setupKinetic();
 
-    var socket = io.connect();
     socket.request('/game', { id: '<%= gameId %>' }, function(response) {
       //console.log('game', response);
       /*
@@ -35,7 +33,7 @@ body {
       game.doActionList(response.actions);
 
       socket.on('message', function(message){
-        console.log('message', message);
+        //console.log('message', message);
         game.doActionList([message.action]);
       });
     });

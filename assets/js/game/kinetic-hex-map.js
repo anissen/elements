@@ -11,7 +11,6 @@ var KineticHexMap = Model({
   selectedTile: null,
 
   initialize: function(width, height, layer, settings) {
-    //this.map.initializeMap(width, height);
     this.layer = layer;
 
     var s = this.settings = _.defaults(settings || {}, {
@@ -25,7 +24,6 @@ var KineticHexMap = Model({
 
     var me = this;
     var tiles = [];
-    var board = [];
     var hexHeight = s.hexRadius * 2;
     var hexWidth = (Math.sqrt(3) / 2) * hexHeight;
     var marginLeft = ((hexWidth + s.hexMargin) / 2) + s.marginLeft;
@@ -95,74 +93,22 @@ var KineticHexMap = Model({
         layer.add(tile);
         tiles.push(tile);
 
-        var unit = null;
-        /*
-        if (type === 'unit') {
-          unit = new Kinetic.RegularPolygon({
-            x: marginLeft + i * (hexWidth + s.hexMargin) + (j % 2) * (hexWidth + s.hexMargin) / 2,
-            y: marginTop + j * (hexHeight - (hexHeight / 4) + s.hexMargin),
-            sides: 6,
-            radius: s.hexRadius,
-            fill: (player === 0 ? s.fill : '#FF8000'),
-            originalStroke: (player === 0 ? s.stroke : 'orangered'),
-            stroke: (player === 0 ? s.stroke : 'orangered'),
-            strokeWidth: 3,
-            originalStrokeWidth: 3,
-            opacity: 1.0,
-            scaleX: 0.8,
-            scaleY: 0.8,
-            hex: hex
-          });
-
-          unit.on('mouseover touchstart', function() {
-            me.trigger('enter', this);
-          });
-
-          unit.on('mouseout touchend', function() {
-            me.trigger('leave', this);
-          });
-
-          unit.on('click', function() {
-            if (!me.selectedTile) {
-              me.trigger('selected', this)
-              me.selectedTile = this;
-            } else {
-              // deselect selected tile
-              if (this === me.selectedTile) {
-                me.trigger('deselected', this);
-                me.selectedTile = null;
-              } else {
-                me.trigger('attack', { 
-                  fromData: me.map.get(me.selectedTile.attrs.hex), 
-                  toData: me.map.get(this.attrs.hex) 
-                });
-                // Deselect the tile after the action
-                me.trigger('deselected', me.selectedTile);
-                me.selectedTile = null;
-              }
-            }
-          });
-
-          layer.add(unit);
-          board.push(unit);
-        }
-        */
-
         this.map.set(hex, { 
             player: player, 
             type: type,
             passable: passable,
             tile: tile,
-            unit: unit
+            unit: null
         });
       }
     }
 
     me.trigger('initialized', tiles);
-    me.trigger('initialized', board);
   },
 
   loadState: function(state) {
+    console.log('loadState');
+
     //this.layer.destroyChildren();
     var units = [];
     for(var y = 0; y < state.board.length; y++) {
@@ -299,6 +245,7 @@ var KineticHexMap = Model({
       //scaleX: 0.8,
       //scaleY: 0.8,
       id: _.uniqueId('unit'),
+      player: player,
       hex: hex
     });
 
