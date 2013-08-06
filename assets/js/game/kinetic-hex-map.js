@@ -174,12 +174,21 @@ var KineticHexMap = Model({
     return data.tile;
   },
 
-  move: function(unitId, targetHex) {
+  move: function(unitId, targetHex, callback) {
     var unit = this.getUnitFromId(unitId);
 
+    var source = this.map.get(unit.attrs.hex);
+    var destination = this.map.get(targetHex);
     this.trigger('move', { 
-      fromData: this.map.get(unit.attrs.hex), 
-      toData: this.map.get(targetHex)
+      fromData: source, 
+      toData: destination,
+      callback: function() {
+        //console.log('oncomplete callback triggered!');
+        source.unit = null;
+        destination.unit = unit;
+        unit.attrs.hex = targetHex;
+        callback();
+      }
     });
 
     /*

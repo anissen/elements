@@ -70,6 +70,19 @@ Improved persistent games:
      ☐ Make handle to create/modify an AI player and its deck
  ☐ Make a new deployment to heroku
 
+Sails:
+    ☐ Add game as a Service
+    ☐ Hook up game such that it can be called from controllers
+    ☐ Add card model
+    ☐ Bootstrap card data base with cards
+    ☐ Instantiate a new game with libraries of cards
+    ☐ Able to perform the following actions via HTTP posts
+        ☐ Play unit (card id, tile id)
+        ☐ Move unit (unit id, tile id)
+        ☐ Attack unit (unit id, unit id)
+        ☐ End turn
+        ☐ Play spell (card id, target(s))
+
 Improved gameplay:
  ☐ Implement event system for relevant classes
  ☐ Make system for handling effects on entities (push/remove from stack)

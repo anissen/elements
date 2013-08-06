@@ -60,7 +60,7 @@ function setupKinetic() {
     var toTile = data.toData.tile;
 
     timeline
-      .to(fromTile, 0.3, { setX: toTile.getX(), setY: toTile.getY(), ease: Cubic.easeOut });
+      .to(fromTile, 0.3, { setX: toTile.getX(), setY: toTile.getY(), ease: Cubic.easeOut, onComplete: data.callback });
   });
 
   game.on('play-unit', function(data) {

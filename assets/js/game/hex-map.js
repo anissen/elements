@@ -103,7 +103,7 @@ function HexMap() {
     return _.values(visited);
   };
 
-  this.print = function() {
+  this.toString = function() {
     var coords = _.chain(this.getKeys())
       .map(function(key) {
         var parts = key.split(',');
@@ -118,27 +118,25 @@ function HexMap() {
     var minY = _.min(ys);
     var maxY = _.max(ys);
 
+    var mapStr = '';
     for (var y = minY - 1; y < minY; y++) {
-      var str = '';
       for (var x = minX; x <= maxX; x++) {
-        str += ' ' + (x < 0 ? x : ' ' + x);
+        mapStr += ' ' + (x < 0 ? x : ' ' + x);
       }
-      console.log(' ' + str);
+      mapStr += '\n';
     }
 
     for (var y = minY; y <= maxY; y++) {
-      var str = "";
+      mapStr += y + ' ';
       for (var x = minX; x <= maxX; x++) {
         var tile = this.get(Hex(x,y));
-        if (!tile) {
-          str += '   ';
-        } else {
-          str += '[' + (tile.unit ? tile.unit.attrs.player : ' ') + ']'; // TODO: Make output non-specific
-        }
+        // TODO: Make output non-specific
+        mapStr += (!tile ? '   ' : '[' + (tile.unit ? tile.unit.attrs.player : ' ') + ']');
       }
-      console.log(y + ' ' + str);
+      mapStr += '\n';
     }
 
+    return mapStr;
   };
 }
 
