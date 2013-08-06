@@ -71,8 +71,11 @@ Improved persistent games:
  ☐ Make a new deployment to heroku
 
 Sails:
-    ☐ Add game as a Service
-    ☐ Hook up game such that it can be called from controllers
+    ✔ Add game as a Service @done (06-08-13 22:40)
+    ✔ Hook up game such that it can be called from controllers @done (06-08-13 22:40)
+    ☐ Change game model to have an initial state, list of actions and current state
+    ☐ Move AI code into a AIService
+    ☐ Move replayer code into a ReplayService
     ☐ Add card model
     ☐ Bootstrap card data base with cards
     ☐ Instantiate a new game with libraries of cards

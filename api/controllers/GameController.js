@@ -27,6 +27,9 @@ var GameController = {
         board: []
       };
 
+      var actionValid = ActionValidationService.validateAction(gameData.initialState, action);
+      console.log('Action is ' + (actionValid ? 'VALID' : 'INVALID'));
+
       GameService.performAction(gameData, action, function(result) {
         res.json(result);
       });
