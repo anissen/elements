@@ -1,0 +1,26 @@
+{
+	"folders":
+	[
+		{
+			"path": "/Users/nissen/code/elements",
+      "folder_exclude_patterns": [
+        "node_modules",
+        "db"
+      ],
+      "settings": {
+        "tab_size": 2        
+      }
+		}
+	],
+  "ternjs": {
+      "exclude": [
+        "node_modules/**",
+        "db/**"
+      ],
+      "libs": [],
+      "plugins": {
+
+      }
+
+  }
+}

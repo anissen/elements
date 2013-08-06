@@ -1,4 +1,6 @@
 
+var _ = _ || require('underscore');
+
 (function(exports, _){
 
 var Hex = function(q, r) {
@@ -145,5 +147,5 @@ exports.HexMap = HexMap;
 
 })(
   (typeof exports === 'undefined' ? (this['HexMap'] = {}) : exports), 
-  _ || require('underscore')
+  _
 );

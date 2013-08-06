@@ -6,26 +6,41 @@ var GameController = {
 
   action: function(req, res) {
     var gameId = req.param('id');
-    console.log('gameId', gameId);
-    Game.findOne(gameId).done(function (err, game) {
-      console.log('game', game);
-
+    Game.findOne(gameId).done(function (err, gameData) {
       if (err) return res.send(err, 500);
-      if (!game) return res.send("No game with that id exists!", 404);
-  
+      if (!gameData) return res.send("No game with that ID '" + gameId + "' exists!", 404);
 
+      var action = {
+        action: req.param('name'),
+        data: {
+          from: { x: 1, y: 1 },
+          to: { x: 2, y: 2 }
+        }
+      };
+
+      gameData.initialState = {
+        players: [
+          { name: 'Human' },
+          { name: 'Computer' }
+        ],
+        currentPlayer: 0,
+        board: []
+      };
+
+      GameService.performAction(gameData, action, function(result) {
+        res.json(result);
+      });
+
+      /*
       var action = {
         name: req.param('name'),
         cardId: req.param('cardid'),
         targetHex: req.param('hex')
-      }
+      };
       var newActions = game.actions.concat(action);
 
       // Persist the change
       Game.update(gameId, { actions: newActions }, function (err, game) {
-        console.log('err', err);
-        console.log('update game', game);
-
         if (err) return res.send(err, 500);
 
         //Game.subscribe(req, [{ id: gameId }]);
@@ -39,6 +54,7 @@ var GameController = {
         // Report back with the new state of the game
         res.json(game);
       });
+      */
     });
   },
 
