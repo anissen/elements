@@ -4,6 +4,17 @@
 ---------------------*/
 var GameController = {
 
+  start: function(req, res) {
+    var gameData = {
+      players: req.param('players').split(',')
+    };
+
+    Game.create(gameData).done(function(err, game) {
+      if (err) return res.send(err, 500);
+      res.json(game);
+    });
+  },
+
   action: function(req, res) {
     var gameId = req.param('id');
     Game.findOne(gameId).done(function (err, gameData) {
