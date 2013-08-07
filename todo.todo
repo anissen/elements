@@ -85,6 +85,12 @@ Sails:
         ☐ Attack unit (unit id, unit id)
         ☐ End turn
         ☐ Play spell (card id, target(s))
+    ☐ Game state should be the following:
+        ☐ Initial state
+        ☐ List of:
+            ☐ Action
+            ☐ State
+            ☐ (State diff.)
 
 Improved gameplay:
  ☐ Implement event system for relevant classes
