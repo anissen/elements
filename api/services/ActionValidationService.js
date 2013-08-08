@@ -7,6 +7,7 @@ exports.validateAction = function(gameState, action) {
   var validActions = gameActions.getPossibleActions();
 
   return _.some(validActions, function(validAction) {
+    console.log(validAction);
     return _.isEqual(validAction, action);
   });
 };

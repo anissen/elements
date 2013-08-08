@@ -47,8 +47,7 @@ function bootstrapCards() {
       moves: 1,
       movesLeft: 1,
       attacks: 1,
-      attacksLeft: 1,
-      onTurnStart: 'heal-self.js'
+      attacksLeft: 1
     }, {
       cardId: 'scout',
       type: 'unit',

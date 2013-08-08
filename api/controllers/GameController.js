@@ -13,30 +13,42 @@ var GameController = {
     };
     */
 
-    var gameData = {
-      state: {
-        players: [
-          {
-            name: 'Anders',
-            library: ['small-guy', 'big-guy'],
-            hand: ['flame', 'small-guy'],
-            graveyard: []
-          },
-          {
-            name: 'AI',
-            library: ['small-guy', 'big-guy'],
-            hand: ['flame', 'small-guy'],
-            graveyard: []
-          }
-        ],
-        board: {},
-        currentPlayer: 0
-      }
-    };
+    Card.find().done(function(err, cards) {
 
-    Game.create(gameData).done(function(err, game) {
-      if (err) return res.send(err, 500);
-      res.json(game);
+      var board = {
+        '2,1': cards[4],
+        '-1,4': cards[4]
+      };
+
+      board['2,1'].player = 1;
+      board['-1,4'].player = 0;
+
+      var gameData = {
+        state: {
+          players: [
+            {
+              name: 'Anders',
+              library: [cards[0], cards[1]],
+              hand: [cards[4], cards[0]],
+              graveyard: []
+            },
+            {
+              name: 'AI',
+              library: [cards[0], cards[1]],
+              hand: [cards[4], cards[0]],
+              graveyard: []
+            }
+          ],
+          board: board,
+          currentPlayer: 0
+        }
+      };
+
+      Game.create(gameData).done(function(err, game) {
+        if (err) return res.send(err, 500);
+        res.json(game);
+      });
+
     });
   },
 

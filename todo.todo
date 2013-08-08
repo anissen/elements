@@ -79,6 +79,7 @@ Sails:
     ✔ Add card model @done (08-08-13 21:32)
     ✔ Bootstrap card data base with cards @done (08-08-13 21:32)
     ☐ Instantiate a new game with libraries of cards
+    ☐ Game needs to check if map.get() exists instead of tile.type === 'empty'
     ☐ Able to perform the following actions via HTTP posts
         ☐ Play unit (card id, tile id)
         ☐ Move unit (unit id, tile id)
