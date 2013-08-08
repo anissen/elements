@@ -13,6 +13,7 @@ function bootstrapCards() {
 
   var cards = [
     {
+      cardId: 'small-guy',
       type: 'unit',
       name: 'Cannon Fodder',
       cost: 1,
@@ -24,6 +25,7 @@ function bootstrapCards() {
       attacks: 1,
       attacksLeft: 1
     }, {
+      cardId: 'big-guy',
       type: 'unit',
       name: 'Big Guy',
       cost: 4,
@@ -35,6 +37,7 @@ function bootstrapCards() {
       attacks: 1,
       attacksLeft: 1
     }, {
+      cardId: 'regenerator',
       type: 'unit',
       name: 'Ever-flowing Stream',
       cost: 4,
@@ -47,6 +50,7 @@ function bootstrapCards() {
       attacksLeft: 1,
       onTurnStart: 'heal-self.js'
     }, {
+      cardId: 'scout',
       type: 'unit',
       name: 'Liquid Scout',
       cost: 2,
@@ -58,6 +62,7 @@ function bootstrapCards() {
       attacks: 1,
       attacksLeft: 1
     }, {
+      cardId: 'flame',
       type: 'energy',
       name: 'Flame',
       cost: 0,

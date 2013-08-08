@@ -76,8 +76,8 @@ Sails:
     ☐ Change game model to have an initial state, list of actions and current state
     ☐ Move AI code into a AIService
     ☐ Move replayer code into a ReplayService
-    ☐ Add card model
-    ☐ Bootstrap card data base with cards
+    ✔ Add card model @done (08-08-13 21:32)
+    ✔ Bootstrap card data base with cards @done (08-08-13 21:32)
     ☐ Instantiate a new game with libraries of cards
     ☐ Able to perform the following actions via HTTP posts
         ☐ Play unit (card id, tile id)
@@ -91,6 +91,8 @@ Sails:
             ☐ Action
             ☐ State
             ☐ (State diff.)
+    ☐ Create QueryService
+    ☐ Create ScriptService
 
 Improved gameplay:
  ☐ Implement event system for relevant classes

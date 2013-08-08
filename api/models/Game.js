@@ -12,6 +12,7 @@ module.exports = {
 
 		players: 'array',
 
+    /*
     initialState: {
       type: 'json',
       defaultsTo: {
@@ -19,10 +20,19 @@ module.exports = {
         board: {}
       }
     },
+    */
 
     actions: {
       type: 'array',
       defaultsTo: []
+    },
+
+    state: {
+      type: 'json',
+      defaultsTo: {
+        players: [],
+        board: {}
+      }
     }
 		
 	},

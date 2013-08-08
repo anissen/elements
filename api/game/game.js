@@ -32,23 +32,23 @@ module.exports = (function () {
 
     function getTile(pos) {
       return map.get(Map.Hex(pos.x, pos.y));
-    };
+    }
 
     function setTile(pos, data) {
       map.set(Map.Hex(pos.x, pos.y), data);
-    };
+    }
 
     function resetTile(pos) {
       setTile(pos, {type: 'empty', x: pos.x, y: pos.y});
-    };
+    }
 
     function getTiles() {
       return map.getValues();
-    };
+    }
 
     function getAdjacentTiles(pos) {
       return map.getRing(Map.Hex(pos.x, pos.y));
-    };
+    }
 
     this.updateBoard = function() {
       var board = [];
@@ -222,7 +222,7 @@ module.exports = (function () {
     }
 
     function getPossibleTurnActions() {
-      return [{ action: "endTurn", data: {} }];
+      return [{ type: 'end-turn', card: null, target: null }];
     }
 
     function getPossibleMoves() {
@@ -240,11 +240,9 @@ module.exports = (function () {
         })
         .map(function(move) {
           return {
-            action: 'move',
-            data: {
-              from: { x: unit.x, y: unit.y },
-              to: { x: move.x, y: move.y }
-            }
+            type: 'move',
+            card: unit.id,
+            target: Hex(move.x, move.y).id
           };
         })
         .value();
@@ -265,11 +263,9 @@ module.exports = (function () {
         })
         .map(function(attack) {
           return {
-            action: 'attack',
-            data: {
-              from: { x: unit.x, y: unit.y },
-              to: { x: attack.x, y: attack.y }
-            }
+            type: 'attack',
+            card: unit.id,
+            target: attack.id
           };
         })
         .value();
@@ -303,11 +299,9 @@ module.exports = (function () {
     function getValidPlaysForCard(card) {
       return _.map(getValidTargetsForCard(card), function(target) {
         return {
-          action: 'play',
-          data: {
-            cardId: card.id,
-            pos: { x: target.x, y: target.y }
-          }
+          type: 'play',
+          card: card.id,
+          target: Hex(target.x, target.y).id
         };
       });
     }
