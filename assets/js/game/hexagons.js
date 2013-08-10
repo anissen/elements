@@ -28,26 +28,26 @@ function setupKinetic() {
     hexLayer.draw();
   });
 
-  game.on('selected', function(unit) {
-    unit.moveToTop();
+  game.on('selected', function(entity) {
+    entity.moveToTop();
 
-    var units = game.getReachableTilesData(unit.attrs.hex, 2);
+    var entities = game.getReachableTilesData(entity.attrs.hex, 2);
     timeline
-      .to(unit, 0.5, { setStrokeWidth: 8, setScaleX: 1.2, setScaleY: 1.2, /* setFillB: 75, */ ease: Elastic.easeOut })
-      .staggerTo(units, 0.4, { setScaleX: -1.0, setFillR: 255, setFillG: 180, setFillB: 75, ease: Bounce.easeOut }, 0.03, "-=0.4");
+      .to(entity, 0.5, { setStrokeWidth: 8, setScaleX: 1.2, setScaleY: 1.2, /* setFillB: 75, */ ease: Elastic.easeOut })
+      .staggerTo(entities, 0.4, { setScaleX: -1.0, setFillR: 255, setFillG: 180, setFillB: 75, ease: Bounce.easeOut }, 0.03, "-=0.4");
 
-    neighborHexagons = units;
+    neighborHexagons = entities;
   });
 
-  game.on('deselected', function(unit) {
+  game.on('deselected', function(entity) {
     timeline
-      .to(unit, 0.5, { setStrokeWidth: 2, setScaleX: 1.0, setScaleY: 1.0, /* setFillB: 255, */ ease: Elastic.easeOut })
+      .to(entity, 0.5, { setStrokeWidth: 2, setScaleX: 1.0, setScaleY: 1.0, /* setFillB: 255, */ ease: Elastic.easeOut })
       .staggerTo(neighborHexagons, 0.2, { setScaleX: 1.0, setScaleY: 1.0, setFillR: 255, setFillG: 255, setFillB: 240, ease: Bounce.easeOut }, 0.02, "-=0.4");
   });
 
   game.on('attack', function(data) {
-    var fromTile = data.fromData.unit;
-    var toTile = data.toData.unit;
+    var fromTile = data.fromData.entity;
+    var toTile = data.toData.entity;
 
     var oldData = {x: fromTile.getX(), y: fromTile.getY()};
     timeline
@@ -56,16 +56,16 @@ function setupKinetic() {
   });
 
   game.on('move', function(data) {
-    var fromTile = data.fromData.unit;
+    var fromTile = data.fromData.entity;
     var toTile = data.toData.tile;
 
     timeline
       .to(fromTile, 0.3, { setX: toTile.getX(), setY: toTile.getY(), ease: Cubic.easeOut /*, onComplete: data.callback */ });
   });
 
-  game.on('play-unit', function(data) {
+  game.on('play-entity', function(data) {
     timeline
-      .from(data.unit, 1.0, { 
+      .from(data.entity, 1.0, { 
         setY: (data.player === 0 ? 800 : -80),
         setRotation: Math.PI / 2,
         setScaleX: 0.5,

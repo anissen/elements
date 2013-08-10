@@ -6,11 +6,11 @@ var KineticHexMap = Model({
 
   layer: null,
 
-  units: [],
+  entities: [],
 
   selectedTile: null,
 
-  initialize: function(board, settings) {
+  setupBoard: function(board, settings) {
     var s = this.settings = _.defaults(settings || {}, {
       hexRadius: 64,
       hexMargin: 5,
@@ -42,10 +42,10 @@ var KineticHexMap = Model({
         y: marginTop + y * (hexHeight - (hexHeight / 4) + s.hexMargin),
         sides: 6,
         radius: s.hexRadius,
-        fill: (passable ? 'rgb(255, 255, 240)' : 'gray'),
-        originalFill: (passable ? 'rgb(255, 255, 240)' : 'gray'),
-        stroke: (passable ? 'gray' : 'black'),
-        originalStroke: (passable ? 'gray' : 'black'),
+        fill: 'rgb(255, 255, 240)', // (passable ? 'rgb(255, 255, 240)' : 'gray'),
+        originalFill: 'rgb(255, 255, 240)', // (passable ? 'rgb(255, 255, 240)' : 'gray'),
+        stroke: 'gray', //(passable ? 'gray' : 'black'), 
+        originalStroke: 'gray', //(passable ? 'gray' : 'black'),
         strokeWidth: 2,
         originalStrokeWidth: 2,
         opacity: 1.0,
@@ -77,12 +77,12 @@ var KineticHexMap = Model({
         me.selectedTile.attrs.hex = this.attrs.hex;
 
         var toData = me.map.get(this.attrs.hex);
-        toData.unit = me.selectedTile;
+        toData.entity = me.selectedTile;
         toData.type = 'unit';
         //me.map.set(this.attrs.hex, toData);
         
         var fromData = me.map.get(fromHex);
-        fromData.unit = null;
+        fromData.entity = null;
         fromData.type = 'empty';
         //me.map.set(fromHex, fromData);
 
@@ -94,16 +94,14 @@ var KineticHexMap = Model({
       this.layer.add(tileHex);
       tiles.push(tileHex);
 
-      this.map.set(hex.id, { 
+      this.map.set(key, { 
           player: player, 
           type: type,
           passable: passable,
           tile: tileHex,
-          unit: null
+          entity: null
       });
     }
-
-    console.log('after initialize', this.map.toString());
 
     me.trigger('initialized', tiles);
   },
@@ -112,33 +110,39 @@ var KineticHexMap = Model({
     this.state = state
 
     //this.layer.destroyChildren();
-    var units = [];
+    var entities = [];
     for(var key in state.board) {
       var tile = state.board[key];
-      this.map.set(key, tile);
+      var oldTile = this.map.get(key);
+      
+      if (tile.entity && oldTile.entity && tile.entity.type === oldTile.entity.type)
+        continue;
 
       //var thehex = HexMap.Hex.fromString(key);
       //var hex = HexMap.Hex(-Math.floor(thehex.r/2) + thehex.q, thehex.r);
       //var tile = this.map.get(key);
 
       if (!tile.entity) {
-        tile.player = -1;
-        tile.type = 'empty';
-        tile.passable = true;
-        if (tile.unit)
-          tile.unit.remove();
+        oldTile.player = -1;
+        oldTile.type = 'empty';
+        oldTile.passable = true;
+        if (oldTile.entity)
+          oldTile.entity.remove();
+        oldTile.entity = null;
       } else {
-        tile.player = tile.entity.player;
-        tile.type = tile.entity.type;
-        tile.passable = false;
-        tile.unit = this.createUnit(tile.entity.type, HexMap.Hex.fromString(key), tile.entity.id);
-        this.layer.add(tile.unit);
+        oldTile.player = tile.entity.player;
+        oldTile.type = tile.entity.type;
+        oldTile.passable = false;
+        if (oldTile.entity)
+          oldTile.entity.remove();
+        oldTile.entity = this.createEntity(tile.entity.type, HexMap.Hex.fromString(key), tile.entity.id);
+        this.layer.add(oldTile.entity);
         this.layer.draw();
-        units.push(tile.unit);
+        entities.push(oldTile.entity);
       }
     }
 
-    this.trigger('initialized', units);
+    this.trigger('initialized', entities);
   },
 
   getRingData: function(hex, R) {
@@ -175,26 +179,29 @@ var KineticHexMap = Model({
     return data.tile;
   },
 
-  move: function(unitId, targetHex) {
-    var unit = this.getUnitFromId(unitId);
+  move: function(entityId, targetHex) {
+    var entity = this.getEntityFromId(entityId);
 
-    var source = this.map.get(unit.attrs.hex);
+    console.log(entityId, entity, targetHex);
+    var source = this.map.get(entity.attrs.hex);
     var destination = this.map.get(targetHex);
+    console.log('destination', destination);
+    
     this.trigger('move', { 
       fromData: source, 
       toData: destination /*,
       callback: function() {
         //console.log('oncomplete callback triggered!');
-        source.unit = null;
-        destination.unit = unit;
-        unit.attrs.hex = targetHex;
+        source.entity = null;
+        destination.entity = entity;
+        entity.attrs.hex = targetHex;
         callback();
       } */
     });
   },
 
   attack: function(cardId, targetHex) {
-    var attacker = this.getUnitFromId(cardId);
+    var attacker = this.getEntityFromId(cardId);
 
     this.trigger('attack', { 
       fromData: this.map.get(attacker.attrs.hex), 
@@ -204,33 +211,33 @@ var KineticHexMap = Model({
 
   play: function(cardId, targetHex) {
     //if (cardId === 'unit') {
-    var cardsOnBoard = _.values(this.state.board);
-    var card = _.find(cardsOnBoard, function (boardCard) {
-      return boardCard.entity && boardCard.entity.id === cardId;
+    var cardsInHand = _.values(this.state.players[this.state.currentPlayer].hand);
+    var card = _.find(cardsInHand, function (cardInHand) {
+      return cardInHand.id === cardId;
     });
 
     var player = card.player; // Math.floor(Math.random() * 2);
-    var unit = this.createUnit(player, HexMap.Hex.fromString(targetHex), cardId);
+    var entity = this.createEntity(player, HexMap.Hex.fromString(targetHex), cardId);
     var mapData = this.map.get(targetHex);
 
     mapData.player = player;
-    mapData.unit = unit;
+    mapData.entity = entity;
     mapData.type = 'unit';
 
-    this.units.push(unit);
+    this.entities.push(entity);
 
-    this.layer.add(unit);
-    this.trigger('play-unit', mapData);
+    this.layer.add(entity);
+    this.trigger('play-entity', mapData);
     //}
   },
 
-  getUnitFromId: function(cardId) {
-    return _.find(this.units, function(unit) {
-      return unit.attrs.id === cardId;
+  getEntityFromId: function(cardId) {
+    return _.find(this.entities, function(entity) {
+      return entity.attrs.id === cardId;
     });
   },
 
-  createUnit: function(player, hex, cardId) {
+  createEntity: function(player, hex, cardId) {
     var s = this.settings;
     var hexHeight = s.hexRadius * 2;
     var hexWidth = (Math.sqrt(3) / 2) * hexHeight;
@@ -240,7 +247,7 @@ var KineticHexMap = Model({
     var x = hex.q + Math.floor(hex.r / 2);
     var y = hex.r;
 
-    var unit = new Kinetic.RegularPolygon({
+    var entity = new Kinetic.RegularPolygon({
       x: marginLeft + x * (hexWidth + s.hexMargin) + (y % 2) * (hexWidth + s.hexMargin) / 2,
       y: marginTop + y * (hexHeight - (hexHeight / 4) + s.hexMargin),
       sides: 6,
@@ -259,20 +266,20 @@ var KineticHexMap = Model({
     });
 
     var me = this;
-    unit.on('mouseover touchstart', function() {
+    entity.on('mouseover touchstart', function() {
       me.trigger('enter', this);
     });
 
-    unit.on('mouseout touchend', function() {
+    entity.on('mouseout touchend', function() {
       me.trigger('leave', this);
     });
 
-    unit.on('click', this.onUnitClick);
+    entity.on('click', this.onEntityClick);
 
-    return unit;
+    return entity;
   },
 
-  onUnitClick: function(evt) {
+  onEntityClick: function(evt) {
     if (!this.selectedTile) {
       this.trigger('selected', evt.targetNode)
       this.selectedTile = evt.targetNode;

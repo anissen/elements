@@ -30,8 +30,9 @@ body {
         console.log('action', action);
       });
       */
-      game.initialize(response.state.board, {});
-      game.loadState(response.state);
+      game.setupBoard(response.initialState.board, {});
+      game.loadState(response.initialState);
+      
       game.doActionList(response.actions);
 
       socket.on('message', function(message){

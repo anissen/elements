@@ -40,25 +40,28 @@ var GameController = {
         '0,4': { entity: createCard(cards[4], 0, '0,4') },
       };
 
+      var state = {
+        players: [
+          {
+            name: 'Anders',
+            library: [createCard(cards[0], 0), createCard(cards[1], 0)],
+            hand: [createCard(cards[4], 0), createCard(cards[0], 0)],
+            graveyard: []
+          },
+          {
+            name: 'AI',
+            library: [createCard(cards[0], 1), createCard(cards[1], 1)],
+            hand: [createCard(cards[4], 1), createCard(cards[0], 1)],
+            graveyard: []
+          }
+        ],
+        board: board,
+        currentPlayer: 0
+      };
+
       var gameData = {
-        state: {
-          players: [
-            {
-              name: 'Anders',
-              library: [createCard(cards[0], 0), createCard(cards[1], 0)],
-              hand: [createCard(cards[4], 0), createCard(cards[0], 0)],
-              graveyard: []
-            },
-            {
-              name: 'AI',
-              library: [createCard(cards[0], 1), createCard(cards[1], 1)],
-              hand: [createCard(cards[4], 1), createCard(cards[0], 1)],
-              graveyard: []
-            }
-          ],
-          board: board,
-          currentPlayer: 0
-        }
+        initialState: state,
+        state: clone(state)
       };
 
       Game.create(gameData).done(function(err, game) {
