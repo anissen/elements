@@ -30,6 +30,7 @@ body {
         console.log('action', action);
       });
       */
+      game.initialize(response.state.board, {});
       game.loadState(response.state);
       game.doActionList(response.actions);
 

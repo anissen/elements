@@ -10,9 +10,7 @@ var KineticHexMap = Model({
 
   selectedTile: null,
 
-  initialize: function(width, height, layer, settings) {
-    this.layer = layer;
-
+  initialize: function(board, settings) {
     var s = this.settings = _.defaults(settings || {}, {
       hexRadius: 64,
       hexMargin: 5,
@@ -29,79 +27,83 @@ var KineticHexMap = Model({
     var marginLeft = ((hexWidth + s.hexMargin) / 2) + s.marginLeft;
     var marginTop  = ((hexHeight + s.hexMargin) / 2) + s.marginTop;
 
-    for(var x = 0; x < width; x++) {
-      for(var y = 0; y < height; y++) {
-        var index = y * height + x;
-        var hex = HexMap.Hex(-Math.floor(y/2) + x, y);
-        var type = (Math.random() < 0.3 ? 'unit' : 'empty');
-        var passable = true;
-        var player = (Math.random() < 0.7 ? 0 : 1);
-        var tile = new Kinetic.RegularPolygon({
-          x: marginLeft + x * (hexWidth + s.hexMargin) + (y % 2) * (hexWidth + s.hexMargin) / 2,
-          y: marginTop + y * (hexHeight - (hexHeight / 4) + s.hexMargin),
-          sides: 6,
-          radius: s.hexRadius,
-          fill: (passable ? 'rgb(255, 255, 240)' : 'gray'),
-          originalFill: (passable ? 'rgb(255, 255, 240)' : 'gray'),
-          stroke: (passable ? 'gray' : 'black'),
-          originalStroke: (passable ? 'gray' : 'black'),
-          strokeWidth: 2,
-          originalStrokeWidth: 2,
-          opacity: 1.0,
-          scaleX: 0.8,
-          scaleY: 0.8,
-          hex: x + ',' + y // hex.id
+    for(var key in board) {
+      //var index = y * height + x;
+      //var hex = HexMap.Hex(-Math.floor(y/2) + x, y);
+      var tile = board[key];
+      var hex = HexMap.Hex.fromString(key);
+      var x = hex.q + Math.floor(hex.r / 2);
+      var y = hex.r;
+      var type = (tile.entity ? tile.entity.type : 'empty');
+      var passable = (!tile.entity);
+      var player = (tile.entity ? tile.entity.player : -1);
+      var tileHex = new Kinetic.RegularPolygon({
+        x: marginLeft + x * (hexWidth + s.hexMargin) + (y % 2) * (hexWidth + s.hexMargin) / 2,
+        y: marginTop + y * (hexHeight - (hexHeight / 4) + s.hexMargin),
+        sides: 6,
+        radius: s.hexRadius,
+        fill: (passable ? 'rgb(255, 255, 240)' : 'gray'),
+        originalFill: (passable ? 'rgb(255, 255, 240)' : 'gray'),
+        stroke: (passable ? 'gray' : 'black'),
+        originalStroke: (passable ? 'gray' : 'black'),
+        strokeWidth: 2,
+        originalStrokeWidth: 2,
+        opacity: 1.0,
+        scaleX: 0.8,
+        scaleY: 0.8,
+        hex: key
+      });
+
+      tileHex.on('mouseover touchstart', function() {
+        me.trigger('enter', this);
+      });
+
+      tileHex.on('mouseout touchend', function() {
+        me.trigger('leave', this);
+      });
+
+      tileHex.on('click', function() {
+        if (!me.selectedTile)
+          return;
+
+        me.trigger('move', { 
+          fromData: me.map.get(me.selectedTile.attrs.hex), 
+          toData: me.map.get(this.attrs.hex) 
         });
 
-        tile.on('mouseover touchstart', function() {
-          me.trigger('enter', this);
-        });
+        // TODO: Clean up this function!
 
-        tile.on('mouseout touchend', function() {
-          me.trigger('leave', this);
-        });
+        var fromHex = me.selectedTile.attrs.hex;
+        me.selectedTile.attrs.hex = this.attrs.hex;
 
-        tile.on('click', function() {
-          if (!me.selectedTile)
-            return;
-
-          me.trigger('move', { 
-            fromData: me.map.get(me.selectedTile.attrs.hex), 
-            toData: me.map.get(this.attrs.hex) 
-          });
-
-          // TODO: Clean up this function!
-
-          var fromHex = me.selectedTile.attrs.hex;
-          me.selectedTile.attrs.hex = this.attrs.hex;
-
-          var toData = me.map.get(this.attrs.hex);
-          toData.unit = me.selectedTile;
-          toData.type = 'unit';
-          //me.map.set(this.attrs.hex, toData);
-          
-          var fromData = me.map.get(fromHex);
-          fromData.unit = null;
-          fromData.type = 'empty';
-          //me.map.set(fromHex, fromData);
-
-          // Deselect the tile after the action
-          me.trigger('deselected', me.selectedTile);
-          me.selectedTile = null;
-        });
+        var toData = me.map.get(this.attrs.hex);
+        toData.unit = me.selectedTile;
+        toData.type = 'unit';
+        //me.map.set(this.attrs.hex, toData);
         
-        layer.add(tile);
-        tiles.push(tile);
+        var fromData = me.map.get(fromHex);
+        fromData.unit = null;
+        fromData.type = 'empty';
+        //me.map.set(fromHex, fromData);
 
-        this.map.set(hex.id, { 
-            player: player, 
-            type: type,
-            passable: passable,
-            tile: tile,
-            unit: null
-        });
-      }
+        // Deselect the tile after the action
+        me.trigger('deselected', me.selectedTile);
+        me.selectedTile = null;
+      });
+      
+      this.layer.add(tileHex);
+      tiles.push(tileHex);
+
+      this.map.set(hex.id, { 
+          player: player, 
+          type: type,
+          passable: passable,
+          tile: tileHex,
+          unit: null
+      });
     }
+
+    console.log('after initialize', this.map.toString());
 
     me.trigger('initialized', tiles);
   },
@@ -112,36 +114,30 @@ var KineticHexMap = Model({
     //this.layer.destroyChildren();
     var units = [];
     for(var key in state.board) {
-      var stateData = state.board[key];
-      if (!stateData.entity)
-        continue;
+      var tile = state.board[key];
+      this.map.set(key, tile);
 
-      var thehex = HexMap.Hex.fromString(key);
-      var hex = HexMap.Hex(-Math.floor(thehex.r/2) + thehex.q, thehex.r);
-      var tile = this.map.get(key);
-      
-      console.log(this.map.toString());
+      //var thehex = HexMap.Hex.fromString(key);
+      //var hex = HexMap.Hex(-Math.floor(thehex.r/2) + thehex.q, thehex.r);
+      //var tile = this.map.get(key);
 
-      /*
-      var changedType = (stateData.entity && tile.type !== stateData.entity.type);
-      if (!changedType)
-        continue;
-      */
-
-      tile.player = stateData.entity.player;
-      tile.type = 'unit';
-      tile.passable = false;
-
-      if (!stateData.entity) {
+      if (!tile.entity) {
+        tile.player = -1;
+        tile.type = 'empty';
+        tile.passable = true;
         if (tile.unit)
           tile.unit.remove();
       } else {
-        tile.unit = this.createUnit(stateData.entity.type, hex, stateData.entity.id);
+        tile.player = tile.entity.player;
+        tile.type = tile.entity.type;
+        tile.passable = false;
+        tile.unit = this.createUnit(tile.entity.type, HexMap.Hex.fromString(key), tile.entity.id);
         this.layer.add(tile.unit);
         this.layer.draw();
         units.push(tile.unit);
       }
     }
+
     this.trigger('initialized', units);
   },
 
