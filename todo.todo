@@ -78,10 +78,10 @@ Sails:
     ☐ Move replayer code into a ReplayService
     ✔ Add card model @done (08-08-13 21:32)
     ✔ Bootstrap card data base with cards @done (08-08-13 21:32)
-    ☐ Instantiate a new game with libraries of cards
-    ☐ Game needs to check if map.get() exists instead of tile.type === 'empty'
+    ✔ Instantiate a new game with libraries of cards @done (10-08-13 18:27)
+    ✔ Game needs to check if map.get() exists instead of tile.type === 'empty' @done (10-08-13 18:27)
     ☐ Able to perform the following actions via HTTP posts
-        ☐ Play unit (card id, tile id)
+        ✔ Play unit (card id, tile id) @done (10-08-13 18:31)
         ☐ Move unit (unit id, tile id)
         ☐ Attack unit (unit id, unit id)
         ☐ End turn
@@ -94,6 +94,7 @@ Sails:
             ☐ (State diff.)
     ☐ Create QueryService
     ☐ Create ScriptService
+    ☐ Find suitable names for files
 
 Improved gameplay:
  ☐ Implement event system for relevant classes

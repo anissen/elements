@@ -97,16 +97,6 @@ var GameController = {
       if (err) return res.send(err, 500);
       if (!gameData) return res.send('No game with that ID "' + gameId + '" exists!', 404);
 
-      /*
-      var action = {
-        action: req.param('name'),
-        data: {
-          from: { x: 1, y: 1 },
-          to: { x: 2, y: 2 }
-        }
-      };
-      */
-
       // Action data:
       
       // play:
@@ -155,7 +145,6 @@ var GameController = {
 
       var game = new GameInstance(gameData.state);
       game[action.type](action.card, Hex.fromString(action.target));
-      //game.updateBoard();
 
       var updatedGameData = {
         actions: gameData.actions.concat(action),
