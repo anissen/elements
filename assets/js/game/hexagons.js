@@ -88,7 +88,7 @@ function setupKinetic() {
       }, 0.01, "-=0.4");
   });
 
-  game.initialize(5, 6, hexLayer, {});
+  game.initialize(1, 5, hexLayer, {});
 
   window.game = game;
 }

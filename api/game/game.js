@@ -16,15 +16,15 @@ module.exports = (function () {
     events.EventEmitter.call(this);
 
     function getTile(pos) {
-      return map.get(Map.Hex(pos.x, pos.y));
+      return map.get(pos);
     }
 
     function setTile(pos, data) {
-      map.get(pos).entity = data;
+      getTile(pos).entity = data;
     }
 
     function resetTile(pos) {
-      setTile(pos, { entity: null });
+      setTile(pos, null);
     }
 
     function getTiles() {
@@ -32,7 +32,7 @@ module.exports = (function () {
     }
 
     function getAdjacentTiles(pos) {
-      return map.getRing(Map.Hex(pos.x, pos.y));
+      return map.getRing(pos);
     }
 
     this.updateBoard = function() {
@@ -40,9 +40,10 @@ module.exports = (function () {
     }
 
     this.play = function(cardId, target) {
-      var player = getCurrentPlayer();
-      
+      var player = game.players[game.currentPlayer];
+
       // Find card in hand
+      // TODO: Move this to GameQueryService
       var card = _.find(player.hand, function(cardInHand) {
         return (cardInHand.id === cardId);
       });
@@ -52,51 +53,49 @@ module.exports = (function () {
         return (cardInHand.id === cardId);
       });
 
-      placeNewUnit(card, target);
-
-      /*
-      if (card.type === 'unit' || card.type === 'energy') {
-        payCastingCost(card.cost, data.pos);
-        placeNewUnit(card, data.pos);
-        if (card.scriptFile)
-          executeScript(card.scriptFile, card, data);
-      } else if (card.type === 'spell') {
-        payCastingCost(card.cost);
-        executeScript(card.scriptFile, card, data);
-      }
-      */
+      card.pos = target;
+      setTile(target, card);
 
       this.emit('playedCard', card);
     };
 
-    this.move = function(data) {
-      var unit = getTile(data.from);
-      resetTile(data.from);
-      unit.x = data.to.x;
-      unit.y = data.to.y;
-      unit.movesLeft -= 1;
-      setTile(data.to, unit);
+    this.move = function(cardId, target) {
+      // TODO: Move this to GameQueryService
+      var unit = _.find(game.board, function(tile) {
+        return (tile.entity && tile.entity.id === cardId);
+      }).entity;
+
+      //var unit = getTile(data.from);
+      resetTile(unit.pos);
+      unit.pos = target;
+      // unit.movesLeft -= 1;
+      setTile(target, unit);
     };
 
-    this.attack = function(data) {
-      var attacker = getTile(data.from);
-      var defender = getTile(data.to);
+    this.attack = function(cardId, targetId) {
+      var attacker = _.find(game.board, function(tile) {
+        return (tile.entity && tile.entity.id === cardId);
+      }).entity; // TODO: Move this to GameQueryService
+      var defender = _.find(game.board, function(tile) {
+        return (tile.entity && tile.entity.id === targetId);
+      }).entity; // TODO: Move this to GameQueryService
       defender.life -= attacker.attack;
-      attacker.attacksLeft -= 1;
+      // attacker.attacksLeft -= 1;
       if (defender.life <= 0)
-        resetTile(data.to);
+        resetTile(defender.pos);
 
       this.emit('attack', attacker, defender);
     };
 
-    this.endTurn = function(data) {
+    this.endTurn = function() {
       this.emit('turn ended');
 
       game.currentPlayer = (game.currentPlayer + 1) % game.players.length;
 
-      startTurn();
+      // startTurn();
     };
 
+    /*
     function startTurn() {
       // Replenish 1 energy for all energy sources
       GameQueryService.query()
@@ -138,12 +137,6 @@ module.exports = (function () {
       drawCards(1);
     }
 
-    function executeScript(scriptFile, card, data) {
-      var script = fs.readFileSync('./game-server/scripts/' + scriptFile);
-      vm.runInNewContext(script, getScriptContext(card, data), scriptFile);
-    }
-
-
     function createCardForCurrentPlayer(cardId) {
       var player = getCurrentPlayer();
       var cardTemplate = _.find(player.deck.cards, function (card) {
@@ -166,19 +159,7 @@ module.exports = (function () {
       me.emit('drew cards', cards);
     }
 
-    function placeNewUnit(card, pos) {
-      // TODO: Select all adjacent energy groups
-
-      // TODO: Drain energy from all adjacent energy groups
-      // var newCard = clone(card);
-      // newCard.player = game.currentPlayer;
-      card.pos = pos.id;
-      // card.movesLeft = 1;
-      // card.attacksLeft = 1;
-      setTile(pos, card);
-    }
-
-    /*
+    
     function payCastingCost(cost, pos) {
       var energySources;
       if (pos)
@@ -196,7 +177,7 @@ module.exports = (function () {
     }
     */
 
-    
+  };
 
   util.inherits(GameActions, events.EventEmitter);
 

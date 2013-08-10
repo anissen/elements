@@ -50,7 +50,7 @@ var KineticHexMap = Model({
           opacity: 1.0,
           scaleX: 0.8,
           scaleY: 0.8,
-          hex: hex
+          hex: x + ',' + y // hex.id
         });
 
         tile.on('mouseover touchstart', function() {
@@ -72,7 +72,7 @@ var KineticHexMap = Model({
 
           // TODO: Clean up this function!
 
-          var fromHex = me.selectedTile.attrs.hex.clone();
+          var fromHex = me.selectedTile.attrs.hex;
           me.selectedTile.attrs.hex = this.attrs.hex;
 
           var toData = me.map.get(this.attrs.hex);
@@ -93,7 +93,7 @@ var KineticHexMap = Model({
         layer.add(tile);
         tiles.push(tile);
 
-        this.map.set(hex, { 
+        this.map.set(hex.id, { 
             player: player, 
             type: type,
             passable: passable,
@@ -113,23 +113,30 @@ var KineticHexMap = Model({
     var units = [];
     for(var key in state.board) {
       var stateData = state.board[key];
-      var thehex = HexMap.Hex.fromString(key);
-      var hex = HexMap.Hex(-Math.floor(thehex.r/2) + thehex.q, thehex.r);
-      var tile = this.map.get(hex);
-
-      var changedType = (stateData.entity && tile.entity && tile.entity.type !== stateData.entity.type);
-      if (!changedType)
+      if (!stateData.entity)
         continue;
 
-      tile.player = stateData.entity.player || 0;
-      tile.type = stateData.entity.type;
-      tile.passable = (stateData.entity === null);
+      var thehex = HexMap.Hex.fromString(key);
+      var hex = HexMap.Hex(-Math.floor(thehex.r/2) + thehex.q, thehex.r);
+      var tile = this.map.get(key);
+      
+      console.log(this.map.toString());
+
+      /*
+      var changedType = (stateData.entity && tile.type !== stateData.entity.type);
+      if (!changedType)
+        continue;
+      */
+
+      tile.player = stateData.entity.player;
+      tile.type = 'unit';
+      tile.passable = false;
 
       if (!stateData.entity) {
         if (tile.unit)
           tile.unit.remove();
       } else {
-        tile.unit = this.createUnit(stateData.entity.type, hex);
+        tile.unit = this.createUnit(stateData.entity.type, hex, stateData.entity.id);
         this.layer.add(tile.unit);
         this.layer.draw();
         units.push(tile.unit);
@@ -190,8 +197,8 @@ var KineticHexMap = Model({
     });
   },
 
-  attack: function(unitId, targetHex) {
-    var attacker = this.getUnitFromId(unitId);
+  attack: function(cardId, targetHex) {
+    var attacker = this.getUnitFromId(cardId);
 
     this.trigger('attack', { 
       fromData: this.map.get(attacker.attrs.hex), 
@@ -207,7 +214,7 @@ var KineticHexMap = Model({
     });
 
     var player = card.player; // Math.floor(Math.random() * 2);
-    var unit = this.createUnit(player, targetHex);
+    var unit = this.createUnit(player, HexMap.Hex.fromString(targetHex), cardId);
     var mapData = this.map.get(targetHex);
 
     mapData.player = player;
@@ -221,13 +228,13 @@ var KineticHexMap = Model({
     //}
   },
 
-  getUnitFromId: function(unitId) {
+  getUnitFromId: function(cardId) {
     return _.find(this.units, function(unit) {
-      return unit.attrs.id === unitId;
+      return unit.attrs.id === cardId;
     });
   },
 
-  createUnit: function(player, hex) {
+  createUnit: function(player, hex, cardId) {
     var s = this.settings;
     var hexHeight = s.hexRadius * 2;
     var hexWidth = (Math.sqrt(3) / 2) * hexHeight;
@@ -250,12 +257,10 @@ var KineticHexMap = Model({
       opacity: 1.0,
       //scaleX: 0.8,
       //scaleY: 0.8,
-      id: _.uniqueId('unit'),
+      id: cardId,
       player: player,
-      hex: hex
+      hex: hex.id
     });
-
-    console.log('unit id: ' + unit.attrs.id);
 
     var me = this;
     unit.on('mouseover touchstart', function() {
@@ -293,9 +298,9 @@ var KineticHexMap = Model({
   },
 
   doAction: function(actionName, cardId, targetHex) {
-    if (typeof targetHex === 'string')
-        targetHex = HexMap.Hex.fromString(targetHex);
-      
+    //if (typeof targetHex === 'string')
+    //    targetHex = HexMap.Hex.fromString(targetHex);
+
     this[actionName](cardId, targetHex);
   },
 

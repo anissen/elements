@@ -5,12 +5,13 @@
 
 var _  = require('underscore');
 var GameInstance = require('./../game/game');
-var Hex = require('./../../assets/js/game/hex-map').Hex;
 
-function createCard(card, player) {
+function createCard(card, player, pos) {
   var cardInstance = clone(card);
   cardInstance.id = _.uniqueId('card');
   cardInstance.player = player;
+  if (pos)
+    cardInstance.pos = pos;
   return cardInstance;
 }
 
@@ -32,11 +33,11 @@ var GameController = {
     Card.find().done(function(err, cards) {
 
       var board = {
-        '0,0': { entity: createCard(cards[4], 1) },
+        '0,0': { entity: createCard(cards[4], 1, '0,0') },
         '0,1': { entity: null },
         '0,2': { entity: null },
         '0,3': { entity: null },
-        '0,4': { entity: createCard(cards[4], 0) },
+        '0,4': { entity: createCard(cards[4], 0, '0,4') },
       };
 
       var gameData = {
@@ -144,7 +145,7 @@ var GameController = {
       */
 
       var game = new GameInstance(gameData.state);
-      game[action.type](action.card, Hex.fromString(action.target));
+      game[action.type](action.card, action.target);
 
       var updatedGameData = {
         actions: gameData.actions.concat(action),

@@ -39,7 +39,10 @@ function getScriptContext(card, data) {
   };
 }
 
-};
+function executeScript(scriptFile, card, data) {
+  var script = fs.readFileSync('./game-server/scripts/' + scriptFile);
+  vm.runInNewContext(script, getScriptContext(card, data), scriptFile);
+}
 
 exports.something = function(data) {
   

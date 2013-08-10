@@ -33,12 +33,12 @@ function HexMap() {
   var me = this;
   this.map = {};
 
-  this.set = function(hex, data) {
-    this.map[hex.id] = data;
+  this.set = function(key, data) {
+    this.map[key] = data;
   };
 
-  this.get = function(hex) {
-    return this.map[hex.id];
+  this.get = function(key) {
+    return this.map[key];
   };
 
   this.getKeys = function() {
@@ -131,7 +131,7 @@ function HexMap() {
     for (var y = minY; y <= maxY; y++) {
       mapStr += y + ' ';
       for (var x = minX; x <= maxX; x++) {
-        var tile = this.get(Hex(x,y));
+        var tile = this.get(x + ',' + y);
         // TODO: Make output non-specific
         mapStr += (!tile ? '   ' : '[' + (tile.unit ? tile.unit.attrs.player : ' ') + ']');
       }
