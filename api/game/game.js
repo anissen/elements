@@ -11,10 +11,13 @@ module.exports = (function () {
     var me = this;
 
     var map = new Map.HexMap();
+    map.map = game.board;
 
+    /*
     for (var key in game.board) {
       map.set(key, game.board[key]);
     }
+    */
 
     /*
     for (var y = 0; y < game.board.length; y++) {
@@ -41,11 +44,12 @@ module.exports = (function () {
     }
 
     function setTile(pos, data) {
-      map.set(Map.Hex(pos.x, pos.y), data);
+      //map.set(pos, data);
+      map.get(pos).entity = data;
     }
 
     function resetTile(pos) {
-      setTile(pos, {type: 'empty', x: pos.x, y: pos.y});
+      setTile(pos, { entity: null });
     }
 
     function getTiles() {
@@ -57,23 +61,25 @@ module.exports = (function () {
     }
 
     this.updateBoard = function() {
-      game.board = map.getValues();
+      game.board = map.map;
     }
 
-    this.play = function(data) {
+    this.play = function(cardId, target) {
       var player = getCurrentPlayer();
-      var card = createCardForCurrentPlayer(data.cardId);
-
-      var foundCard = false; // Hack to avoid removing all cards with matching cardId
-      player.hand = _.reject(player.hand, function(cardInHand) {
-        var correctCard = (cardInHand.id === data.cardId);
-        if (correctCard && !foundCard) {
-          foundCard = true;
-          return true;
-        }
-        return false;
+      
+      // Find card in hand
+      var card = _.find(player.hand, function(cardInHand) {
+        return (cardInHand.id === cardId);
       });
 
+      // Remove card from hand
+      player.hand = _.reject(player.hand, function(cardInHand) {
+        return (cardInHand.id === cardId);
+      });
+
+      placeNewUnit(card, target);
+
+      /*
       if (card.type === 'unit' || card.type === 'energy') {
         payCastingCost(card.cost, data.pos);
         placeNewUnit(card, data.pos);
@@ -83,6 +89,7 @@ module.exports = (function () {
         payCastingCost(card.cost);
         executeScript(card.scriptFile, card, data);
       }
+      */
 
       this.emit('playedCard', card);
     };
@@ -356,13 +363,12 @@ module.exports = (function () {
       // TODO: Select all adjacent energy groups
 
       // TODO: Drain energy from all adjacent energy groups
-      var newCard = clone(card);
-      newCard.player = game.currentPlayer;
-      newCard.x = pos.x;
-      newCard.y = pos.y;
-      newCard.movesLeft = newCard.moves;
-      newCard.attacksLeft = newCard.attacks;
-      setTile(pos, newCard);
+      // var newCard = clone(card);
+      // newCard.player = game.currentPlayer;
+      card.pos = pos.id;
+      // card.movesLeft = 1;
+      // card.attacksLeft = 1;
+      setTile(pos, card);
     }
 
     function playerEnergyTilesQuery(tile) {
