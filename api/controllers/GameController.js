@@ -33,11 +33,14 @@ var GameController = {
     Card.find().done(function(err, cards) {
 
       var board = {
-        '0,0': { entity: createCard(cards[4], 1, '0,0') },
+        '0,0': { entity: null },
+        '1,0': { entity: createCard(cards[4], 1, '1,0') },
+        '2,0': { entity: null },
         '0,1': { entity: null },
-        '0,2': { entity: null },
-        '0,3': { entity: null },
-        '0,4': { entity: createCard(cards[4], 0, '0,4') },
+        '1,1': { entity: null },
+        '-1,2': { entity: null },
+        '0,2': { entity: createCard(cards[4], 0, '0,2') },
+        '1,2': { entity: null },
       };
 
       var state = {

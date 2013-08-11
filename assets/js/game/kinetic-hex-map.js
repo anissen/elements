@@ -272,6 +272,14 @@ var KineticHexMap = Model({
       opacity: 1.0
     });
 
+    // HACK for customizing energy hex
+    if (card.type === 'energy') {
+      entity.attrs.fill = 'gold';
+      entity.attrs.originalFill = 'gold';
+      entity.attrs.strokeWidth = 6;
+      entity.attrs.originalStrokeWidth = 6;
+    }
+
     var nameLabel = new Kinetic.Text({
       align: 'center',
       width: hexWidth,
