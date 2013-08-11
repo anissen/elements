@@ -66,13 +66,15 @@ function setupKinetic() {
   });
 
   game.on('play-entity', function(data) {
+    var easings = [Bounce.easeOut, Back.easeOut, Elastic.easeOut, SlowMo.ease, Expo.easeOut];
+
     timeline
       .from(data.entity, 1.0, { 
         setY: (data.player === 0 ? 800 : -80),
         setRotation: Math.PI / 2,
         setScaleX: 0.5,
         setScaleY: 0.5,
-        ease: Bounce.easeOut 
+        ease: easings[Math.floor(Math.random() * easings.length)]
       });
   });
 
