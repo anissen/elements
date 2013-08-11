@@ -37,9 +37,27 @@ var KineticHexMap = Model({
       var type = (tile.entity ? tile.entity.type : 'empty');
       var passable = (!tile.entity);
       var player = (tile.entity ? tile.entity.player : -1);
-      var tileHex = new Kinetic.RegularPolygon({
+
+      var tileGroup = new Kinetic.Group({
         x: marginLeft + x * (hexWidth + s.hexMargin) + (y % 2) * (hexWidth + s.hexMargin) / 2,
         y: marginTop + y * (hexHeight - (hexHeight / 4) + s.hexMargin),
+        hex: key
+      });
+
+      var text = new Kinetic.Text({
+        align: 'center',
+        text: '(' + key + ')',
+        fontSize: 12,
+        fontFamily: 'Verdana',
+        fill: 'grey'
+      });
+
+      text.setOffset({
+        x: text.getWidth() / 2,
+        y: text.getHeight() / 2
+      });
+
+      var tileHex = new Kinetic.RegularPolygon({
         sides: 6,
         radius: s.hexRadius,
         fill: 'rgb(255, 255, 240)', // (passable ? 'rgb(255, 255, 240)' : 'gray'),
@@ -47,22 +65,24 @@ var KineticHexMap = Model({
         stroke: 'gray', //(passable ? 'gray' : 'black'), 
         originalStroke: 'gray', //(passable ? 'gray' : 'black'),
         strokeWidth: 2,
-        originalStrokeWidth: 2,
-        opacity: 1.0,
-        scaleX: 0.8,
-        scaleY: 0.8,
-        hex: key
+        originalStrokeWidth: 2
+        //opacity: 1.0,
+        //scaleX: 0.8,
+        //scaleY: 0.8,
       });
 
-      tileHex.on('mouseover touchstart', function() {
+      tileGroup.add(tileHex);
+      tileGroup.add(text);
+
+      tileGroup.on('mouseover touchstart', function() {
         me.trigger('enter', this);
       });
 
-      tileHex.on('mouseout touchend', function() {
+      tileGroup.on('mouseout touchend', function() {
         me.trigger('leave', this);
       });
 
-      tileHex.on('click', function() {
+      tileGroup.on('click', function() {
         if (!me.selectedTile)
           return;
 
@@ -91,19 +111,19 @@ var KineticHexMap = Model({
         me.selectedTile = null;
       });
       
-      this.layer.add(tileHex);
-      tiles.push(tileHex);
+      this.layer.add(tileGroup);
+      tiles.push(tileGroup);
 
       this.map.set(key, { 
           player: player, 
           type: type,
           passable: passable,
-          tile: tileHex,
+          tile: tileGroup,
           entity: null
       });
     }
 
-    me.trigger('initialized', tiles);
+    me.trigger('board-setup', tiles);
   },
 
   loadState: function(state) {
@@ -118,10 +138,6 @@ var KineticHexMap = Model({
       if (tile.entity && oldTile.entity && tile.entity.type === oldTile.entity.type)
         continue;
 
-      //var thehex = HexMap.Hex.fromString(key);
-      //var hex = HexMap.Hex(-Math.floor(thehex.r/2) + thehex.q, thehex.r);
-      //var tile = this.map.get(key);
-
       if (!tile.entity) {
         oldTile.player = -1;
         oldTile.type = 'empty';
@@ -135,14 +151,15 @@ var KineticHexMap = Model({
         oldTile.passable = false;
         if (oldTile.entity)
           oldTile.entity.remove();
-        oldTile.entity = this.createEntity(tile.entity.type, HexMap.Hex.fromString(key), tile.entity.id);
+        oldTile.entity = this.createEntity(tile.entity, HexMap.Hex.fromString(key));
         this.layer.add(oldTile.entity);
         this.layer.draw();
+
         entities.push(oldTile.entity);
       }
     }
 
-    this.trigger('initialized', entities);
+    this.trigger('state-loaded', entities);
   },
 
   getRingData: function(hex, R) {
@@ -156,7 +173,7 @@ var KineticHexMap = Model({
   },
 
   getReachableTilesData: function(hex, movement) {
-    var hexes = this.map.getReachableTiles(hex, movement || 2, function(tile) {
+    var hexes = this.map.getReachableTiles(HexMap.Hex.fromString(hex), movement || 2, function(tile) {
       return tile.type === 'empty';
     });
     var hexesWithoutStart = _.reject(hexes, function(H) {
@@ -182,10 +199,8 @@ var KineticHexMap = Model({
   move: function(entityId, targetHex) {
     var entity = this.getEntityFromId(entityId);
 
-    console.log(entityId, entity, targetHex);
     var source = this.map.get(entity.attrs.hex);
     var destination = this.map.get(targetHex);
-    console.log('destination', destination);
     
     this.trigger('move', { 
       fromData: source, 
@@ -216,13 +231,12 @@ var KineticHexMap = Model({
       return cardInHand.id === cardId;
     });
 
-    var player = card.player; // Math.floor(Math.random() * 2);
-    var entity = this.createEntity(player, HexMap.Hex.fromString(targetHex), cardId);
+    var entity = this.createEntity(card, HexMap.Hex.fromString(targetHex));
     var mapData = this.map.get(targetHex);
 
-    mapData.player = player;
+    mapData.player = card.player;
     mapData.entity = entity;
-    mapData.type = 'unit';
+    mapData.type = card.type;
 
     this.entities.push(entity);
 
@@ -237,7 +251,7 @@ var KineticHexMap = Model({
     });
   },
 
-  createEntity: function(player, hex, cardId) {
+  createEntity: function(card, hex) {
     var s = this.settings;
     var hexHeight = s.hexRadius * 2;
     var hexWidth = (Math.sqrt(3) / 2) * hexHeight;
@@ -248,45 +262,79 @@ var KineticHexMap = Model({
     var y = hex.r;
 
     var entity = new Kinetic.RegularPolygon({
-      x: marginLeft + x * (hexWidth + s.hexMargin) + (y % 2) * (hexWidth + s.hexMargin) / 2,
-      y: marginTop + y * (hexHeight - (hexHeight / 4) + s.hexMargin),
       sides: 6,
       radius: s.hexRadius,
-      fill: (player === 0 ? s.fill : '#FF8000'),
-      originalStroke: (player === 0 ? s.stroke : 'orangered'),
-      stroke: (player === 0 ? s.stroke : 'orangered'),
+      fill: (card.player === 0 ? s.fill : '#FF8000'),
+      originalStroke: (card.player === 0 ? s.stroke : 'orangered'),
+      stroke: (card.player === 0 ? s.stroke : 'orangered'),
       strokeWidth: 3,
       originalStrokeWidth: 3,
-      opacity: 1.0,
-      //scaleX: 0.8,
-      //scaleY: 0.8,
-      id: cardId,
-      player: player,
+      opacity: 1.0
+    });
+
+    var nameLabel = new Kinetic.Text({
+      align: 'center',
+      width: hexWidth,
+      text: card.name,
+      fontSize: 16,
+      fontFamily: 'Verdana',
+      fill: 'black'
+    });
+
+    nameLabel.setOffset({
+      x: nameLabel.getWidth() / 2,
+      y: nameLabel.getHeight()
+    });
+
+    var idLabel = new Kinetic.Text({
+      align: 'center',
+      text: card.id,
+      fontSize: 12,
+      fontFamily: 'Verdana',
+      fill: 'grey'
+    });
+
+    idLabel.setOffset({
+      x: idLabel.getWidth() / 2,
+      y: -idLabel.getHeight()
+    });
+
+    var entityGroup = new Kinetic.Group({
+      x: marginLeft + x * (hexWidth + s.hexMargin) + (y % 2) * (hexWidth + s.hexMargin) / 2,
+      y: marginTop + y * (hexHeight - (hexHeight / 4) + s.hexMargin),
+      id: card.id,
+      player: card.player,
       hex: hex.id
     });
 
+    entityGroup.add(entity);
+    entityGroup.add(nameLabel);
+    entityGroup.add(idLabel);
+
     var me = this;
-    entity.on('mouseover touchstart', function() {
+    entityGroup.on('mouseover touchstart', function() {
       me.trigger('enter', this);
     });
 
-    entity.on('mouseout touchend', function() {
+    entityGroup.on('mouseout touchend', function() {
       me.trigger('leave', this);
     });
 
-    entity.on('click', this.onEntityClick);
+    entityGroup.on('click', this.onEntityClick);
 
-    return entity;
+    return entityGroup;
   },
 
   onEntityClick: function(evt) {
+    var clickedGroup = evt.targetNode.parent;
+
     if (!this.selectedTile) {
-      this.trigger('selected', evt.targetNode)
-      this.selectedTile = evt.targetNode;
+      this.trigger('selected', clickedGroup);
+      this.selectedTile = clickedGroup;
     } else {
       // deselect selected tile
-      if (evt.targetNode === this.selectedTile) {
-        this.trigger('deselected', evt.targetNode);
+      if (clickedGroup === this.selectedTile) {
+        this.trigger('deselected', clickedGroup);
         this.selectedTile = null;
       } else {
         this.trigger('attack', { 

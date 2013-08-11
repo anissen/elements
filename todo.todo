@@ -82,7 +82,7 @@ Sails:
     ✔ Game needs to check if map.get() exists instead of tile.type === 'empty' @done (10-08-13 18:27)
     ☐ Able to perform the following actions via HTTP posts
         ✔ Play unit (card id, tile id) @done (10-08-13 18:31)
-        ☐ Move unit (unit id, tile id)
+        ✔ Move unit (unit id, tile id) @done (10-08-13 23:45)
         ☐ Attack unit (unit id, unit id)
         ☐ End turn
         ☐ Play spell (card id, target(s))

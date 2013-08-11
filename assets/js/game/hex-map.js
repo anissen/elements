@@ -91,7 +91,7 @@ function HexMap() {
       fringes[k].forEach(function(H) {
         for (var dir = 0; dir < 6; dir++) {
           var neighbor = H.add(me.getDirection(dir));
-          var neighborData = me.get(neighbor);
+          var neighborData = me.get(neighbor.id);
           if (!neighborData) {
             // Ensure that tiles outside the view are not considered again
             visited[neighbor.id] = neighbor;

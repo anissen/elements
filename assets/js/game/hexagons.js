@@ -17,14 +17,16 @@ function setupKinetic() {
   var timeline = new TimelineLite({ paused: false, onUpdate: hexLayer.draw, onUpdateScope: hexLayer });
 
   game.on('enter', function(tile) {
-    tile.setStroke('darkred');
-    tile.setStrokeWidth(5);
+    var hex = tile.get('RegularPolygon')[0];
+    hex.setStroke('darkred');
+    hex.setStrokeWidth(5);
     hexLayer.draw();
   });
 
   game.on('leave', function(tile) {
-    tile.setStroke(tile.attrs.originalStroke);
-    tile.setStrokeWidth(tile.attrs.originalStrokeWidth);
+    var hex = tile.get('RegularPolygon')[0];
+    hex.setStroke(hex.attrs.originalStroke);
+    hex.setStrokeWidth(hex.attrs.originalStrokeWidth);
     hexLayer.draw();
   });
 
@@ -74,7 +76,7 @@ function setupKinetic() {
       });
   });
 
-  game.on('initialized', function(hexagons) {
+  game.on('setup-board', function(hexagons) {
     timeline
       .staggerFrom(_.shuffle(hexagons), 0.7, { 
         setY: -80, 
@@ -86,6 +88,16 @@ function setupKinetic() {
         setScaleY: 1.0, 
         ease: Elastic.easeInOut 
       }, 0.01, "-=0.4");
+  });
+
+  game.on('state-loaded', function(data) {
+    timeline
+      .staggerFrom(_.shuffle(data), 1.0, { 
+        setRotation: -Math.PI,
+        setScaleX: 0.0,
+        setScaleY: 0.0,
+        ease: Back.easeOut
+      }, 0.5);
   });
 
   game.layer = hexLayer;
