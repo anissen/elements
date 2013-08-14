@@ -33,12 +33,15 @@ function setupKinetic() {
   game.on('selected', function(entity) {
     entity.moveToTop();
 
-    var entities = game.getReachableTilesData(entity.attrs.hex, 2);
+    var entities = game.getReachableTilesData(entity.attrs.hex, 1);
+    var entityHexes = _.map(entities, function(entity) {
+      return entity.get('RegularPolygon')[0];
+    });
     timeline
       .to(entity, 0.5, { setStrokeWidth: 8, setScaleX: 1.2, setScaleY: 1.2, /* setFillB: 75, */ ease: Elastic.easeOut })
-      .staggerTo(entities, 0.4, { setScaleX: -1.0, setFillR: 255, setFillG: 180, setFillB: 75, ease: Bounce.easeOut }, 0.03, "-=0.4");
+      .staggerTo(entityHexes, 0.4, { setScaleX: -1.0, setFillR: 255, setFillG: 180, setFillB: 75, ease: Bounce.easeOut }, 0.03, "-=0.4");
 
-    neighborHexagons = entities;
+    neighborHexagons = entityHexes;
   });
 
   game.on('deselected', function(entity) {
@@ -62,11 +65,11 @@ function setupKinetic() {
     var toTile = data.toData.tile;
 
     timeline
-      .to(fromTile, 0.3, { setX: toTile.getX(), setY: toTile.getY(), ease: Cubic.easeOut /*, onComplete: data.callback */ });
+      .to(fromTile, 0.3, { setX: toTile.getX(), setY: toTile.getY(), ease: Cubic.easeOut, onComplete: data.callback });
   });
 
   game.on('play-entity', function(data) {
-    var easings = [Bounce.easeOut, Back.easeOut, Elastic.easeOut, SlowMo.ease, Expo.easeOut];
+    var easings = [Bounce.easeOut, Back.easeOut, SlowMo.ease, Expo.easeOut];
 
     timeline
       .from(data.entity, 1.0, { 

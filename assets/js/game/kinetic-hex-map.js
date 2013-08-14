@@ -174,9 +174,10 @@ var KineticHexMap = Model({
 
   getReachableTilesData: function(hex, movement) {
     var hexes = this.map.getReachableTiles(HexMap.Hex.fromString(hex), movement || 2, function(tile) {
-      return tile.type === 'empty';
+      return tile.entity === null; //passable;
     });
-    var hexesWithoutStart = _.reject(hexes, function(H) {
+    var hexIds = _.pluck(hexes, 'id');
+    var hexesWithoutStart = _.reject(hexIds, function(H) {
       return H === hex;
     });
     return this.getTileData(hexesWithoutStart);
@@ -204,14 +205,14 @@ var KineticHexMap = Model({
     
     this.trigger('move', { 
       fromData: source, 
-      toData: destination /*,
+      toData: destination ,
       callback: function() {
         //console.log('oncomplete callback triggered!');
         source.entity = null;
         destination.entity = entity;
         entity.attrs.hex = targetHex;
-        callback();
-      } */
+        //callback();
+      }
     });
   },
 
