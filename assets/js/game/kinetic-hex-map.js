@@ -10,15 +10,24 @@ var KineticHexMap = Model({
 
   selectedTile: null,
 
-  setupBoard: function(board, settings) {
-    var s = this.settings = _.defaults(settings || {}, {
+  setupBoard: function(state, settings) {
+    var desktop = {
       hexRadius: 64,
       hexMargin: 5,
       marginLeft: 30,
-      marginTop: 20,
+      marginTop: 20 + 210 /* to fit top hand */,
       fill: 'rgb(0, 200, 255)',
       stroke: '1C75BC'
-    });
+    };
+    var mobile = {
+      hexRadius: 38,
+      hexMargin: 3,
+      marginLeft: 10,
+      marginTop: 130,
+      fill: 'rgb(0, 200, 255)',
+      stroke: '1C75BC'
+    };
+    var s = this.settings = _.defaults(settings || {}, desktop);
 
     var me = this;
     var tiles = [];
@@ -27,10 +36,26 @@ var KineticHexMap = Model({
     var marginLeft = ((hexWidth + s.hexMargin) / 2) + s.marginLeft;
     var marginTop  = ((hexHeight + s.hexMargin) / 2) + s.marginTop;
 
-    for(var key in board) {
-      //var index = y * height + x;
-      //var hex = HexMap.Hex(-Math.floor(y/2) + x, y);
-      var tile = board[key];
+    for (var playerId = 0; playerId < state.players.length; playerId++) {
+      for (var i = 0; i < 5; i++) {
+        var r = (playerId === 0 ? -2 : 4);
+        var q = i - Math.floor(r / 2);
+        var key = q + ',' + r;
+        /*
+        console.log(key, { entity: state.players[playerId].hand[i] || null });
+        var entity = state.players[playerId].hand[i];
+        if (entity) {
+          entity.hex = key;
+          state.board[key] = { entity: entity };
+        } else {
+          state.board[key] = { entity: null };
+        }*/
+        state.board[key] = { entity: state.players[playerId].hand[i] || null };
+      }
+    }
+
+    for(var key in state.board) {
+      var tile = state.board[key];
       var hex = HexMap.Hex.fromString(key);
       var x = hex.q + Math.floor(hex.r / 2);
       var y = hex.r;
@@ -60,29 +85,26 @@ var KineticHexMap = Model({
       var tileHex = new Kinetic.RegularPolygon({
         sides: 6,
         radius: s.hexRadius,
-        fill: 'rgb(255, 255, 240)', // (passable ? 'rgb(255, 255, 240)' : 'gray'),
-        originalFill: 'rgb(255, 255, 240)', // (passable ? 'rgb(255, 255, 240)' : 'gray'),
-        stroke: 'gray', //(passable ? 'gray' : 'black'), 
-        originalStroke: 'gray', //(passable ? 'gray' : 'black'),
+        fill: 'rgb(255, 255, 240)',
+        originalFill: 'rgb(255, 255, 240)',
+        stroke: 'gray',
+        originalStroke: 'gray',
         strokeWidth: 2,
         originalStrokeWidth: 2
-        //opacity: 1.0,
-        //scaleX: 0.8,
-        //scaleY: 0.8,
       });
 
       tileGroup.add(tileHex);
       tileGroup.add(text);
 
-      tileGroup.on('mouseover touchstart', function() {
+      tileGroup.on('mouseover', function() {
         me.trigger('enter', this);
       });
 
-      tileGroup.on('mouseout touchend', function() {
+      tileGroup.on('mouseout', function() {
         me.trigger('leave', this);
       });
 
-      tileGroup.on('click', function() {
+      tileGroup.on('click touchstart', function() {
         if (!me.selectedTile)
           return;
 
@@ -269,8 +291,12 @@ var KineticHexMap = Model({
       originalStroke: (card.player === 0 ? s.stroke : 'orangered'),
       stroke: (card.player === 0 ? s.stroke : 'orangered'),
       strokeWidth: 3,
-      originalStrokeWidth: 3,
-      opacity: 1.0
+      originalStrokeWidth: 3/*,
+      opacity: 1.0,
+      shadowColor: 'black',
+      shadowBlur: 10,
+      shadowOffset: 10,
+      shadowOpacity: 0.5 */
     });
 
     // HACK for customizing energy hex
@@ -294,7 +320,7 @@ var KineticHexMap = Model({
       x: nameLabel.getWidth() / 2,
       y: nameLabel.getHeight()
     });
-
+    
     var idLabel = new Kinetic.Text({
       align: 'center',
       text: card.id,
@@ -307,7 +333,7 @@ var KineticHexMap = Model({
       x: idLabel.getWidth() / 2,
       y: -idLabel.getHeight()
     });
-
+    
     var entityGroup = new Kinetic.Group({
       x: marginLeft + x * (hexWidth + s.hexMargin) + (y % 2) * (hexWidth + s.hexMargin) / 2,
       y: marginTop + y * (hexHeight - (hexHeight / 4) + s.hexMargin),
@@ -321,15 +347,15 @@ var KineticHexMap = Model({
     entityGroup.add(idLabel);
 
     var me = this;
-    entityGroup.on('mouseover touchstart', function() {
+    entityGroup.on('mouseover', function() {
       me.trigger('enter', this);
     });
 
-    entityGroup.on('mouseout touchend', function() {
+    entityGroup.on('mouseout', function() {
       me.trigger('leave', this);
     });
 
-    entityGroup.on('click', this.onEntityClick);
+    entityGroup.on('click touchstart', this.onEntityClick);
 
     return entityGroup;
   },

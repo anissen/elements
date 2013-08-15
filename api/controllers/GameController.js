@@ -104,40 +104,6 @@ var GameController = {
       if (err) return res.send(err, 500);
       if (!gameData) return res.send('No game with that ID "' + gameId + '" exists!', 404);
 
-      // Action data:
-      
-      // play:
-      // player, card, location
-      // 0,      2,    (1,3)
-
-      // move:
-      // player, card, location
-      // 0,      2,    (1,3)
-      
-      // attack:
-      // player, card, unit
-      // 0,      2,    5
-
-      // spell: (e.g. from spells, or activated/triggered ability of units and structures)
-      // player, card (source), target (location, unit, player)
-      // 0,      2,             (1,3), 5, 0
-
-      // end-turn:
-      // player
-      // 0
-
-      // General format: [player-id, action-id, card-id, target-id]
-
-      // location format: (board-q,r), i.e. (board-1,3)
-      // unit format: card-x, i.e card-2
-      // player format: player-x, i.e. player-0
-
-      /*
-      GameService.performAction(gameData, action, function(result) {
-        res.json(result);
-      });
-      */
-
       var action = {
         type:   req.param('type'),
         card:   req.param('card'),

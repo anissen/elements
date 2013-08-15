@@ -95,6 +95,7 @@ Sails:
     ☐ Create QueryService
     ☐ Create ScriptService
     ☐ Find suitable names for files
+    ☐ Make UI for hands
 
 Improved gameplay:
  ☐ Implement event system for relevant classes

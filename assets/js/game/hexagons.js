@@ -2,8 +2,17 @@
 function setupKinetic() {
   var stage = new Kinetic.Stage({
       container: 'container',
-      width: 700,
-      height: 700
+      width: 800,
+      height: 800 /*,
+      draggable: true,
+      // only allow vertical dragging
+      dragBoundFunc: function(pos) {
+        return {
+          x: this.getAbsolutePosition().x,
+          y: pos.y
+        };
+      }
+      */
   });
 
   var hexLayer = new Kinetic.Layer();
@@ -73,7 +82,7 @@ function setupKinetic() {
 
     timeline
       .from(data.entity, 1.0, { 
-        setY: (data.player === 0 ? 800 : -80),
+        setY: (data.player === 0 ? 1000 : -100),
         setRotation: Math.PI / 2,
         setScaleX: 0.5,
         setScaleY: 0.5,
