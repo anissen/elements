@@ -86,6 +86,7 @@ Sails:
         ☐ Attack unit (unit id, unit id)
         ☐ End turn
         ☐ Play spell (card id, target(s))
+    ☐ Don't look up hex on tile - use a game.entities[] structure instead 
     ☐ Game state should be the following:
         ☐ Initial state
         ☐ List of:

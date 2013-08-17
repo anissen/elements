@@ -13,19 +13,29 @@ var KineticHexMap = Model({
   setupBoard: function(state, settings) {
     var desktop = {
       hexRadius: 64,
-      hexMargin: 5,
+      hexMargin: 8,
       marginLeft: 30,
       marginTop: 20 + 210 /* to fit top hand */,
       fill: 'rgb(0, 200, 255)',
-      stroke: '1C75BC'
+      stroke: '1C75BC',
+      tileStrokeWidth: 2,
+      tileFontSize: 12,
+      entityStrokeWidth: 3,
+      entitySelectedStrokeWidth: 8,
+      entityFontSize: 16
     };
     var mobile = {
-      hexRadius: 38,
-      hexMargin: 3,
+      hexRadius: 40,
+      hexMargin: 0,
       marginLeft: 10,
       marginTop: 130,
       fill: 'rgb(0, 200, 255)',
-      stroke: '1C75BC'
+      stroke: '1C75BC',
+      tileStrokeWidth: 0,
+      tileFontSize: 8,
+      entityStrokeWidth: 0,
+      entitySelectedStrokeWidth: 5,
+      entityFontSize: 12
     };
     var s = this.settings = _.defaults(settings || {}, desktop);
 
@@ -72,7 +82,7 @@ var KineticHexMap = Model({
       var text = new Kinetic.Text({
         align: 'center',
         text: '(' + key + ')',
-        fontSize: 12,
+        fontSize: s.tileFontSize,
         fontFamily: 'Verdana',
         fill: 'grey'
       });
@@ -89,8 +99,8 @@ var KineticHexMap = Model({
         originalFill: 'rgb(255, 255, 240)',
         stroke: 'gray',
         originalStroke: 'gray',
-        strokeWidth: 2,
-        originalStrokeWidth: 2
+        strokeWidth: s.tileStrokeWidth,
+        originalStrokeWidth: s.tileStrokeWidth
       });
 
       tileGroup.add(tileHex);
@@ -150,6 +160,10 @@ var KineticHexMap = Model({
 
   loadState: function(state) {
     this.state = state
+
+
+    // TODO: Refactor this function!
+
 
     //this.layer.destroyChildren();
     var entities = [];
@@ -290,8 +304,8 @@ var KineticHexMap = Model({
       fill: (card.player === 0 ? s.fill : '#FF8000'),
       originalStroke: (card.player === 0 ? s.stroke : 'orangered'),
       stroke: (card.player === 0 ? s.stroke : 'orangered'),
-      strokeWidth: 3,
-      originalStrokeWidth: 3/*,
+      strokeWidth: s.entityStrokeWidth,
+      originalStrokeWidth: s.entityStrokeWidth /*,
       opacity: 1.0,
       shadowColor: 'black',
       shadowBlur: 10,
@@ -303,15 +317,15 @@ var KineticHexMap = Model({
     if (card.type === 'energy') {
       entity.attrs.fill = 'gold';
       entity.attrs.originalFill = 'gold';
-      entity.attrs.strokeWidth = 6;
-      entity.attrs.originalStrokeWidth = 6;
+      entity.attrs.strokeWidth = s.entityStrokeWidth * 2;
+      entity.attrs.originalStrokeWidth = s.entityStrokeWidth * 2;
     }
 
     var nameLabel = new Kinetic.Text({
       align: 'center',
       width: hexWidth,
       text: card.name,
-      fontSize: 16,
+      fontSize: s.entityFontSize,
       fontFamily: 'Verdana',
       fill: 'black'
     });
@@ -383,20 +397,17 @@ var KineticHexMap = Model({
     }
   },
 
-  doAction: function(actionName, cardId, targetHex) {
-    //if (typeof targetHex === 'string')
-    //    targetHex = HexMap.Hex.fromString(targetHex);
-
+  playAction: function(actionName, cardId, targetHex) {
     this[actionName](cardId, targetHex);
   },
 
-  doActionList: function(actions) {
+  playActionList: function(actions) {
     var me = this;
     var i = 0;
     _.each(actions, function(action) {
-      setTimeout(function() { // Hack to avoid storing movement data before the hex state is updated
-        me.doAction(action.type, action.card, action.target);
-      }, 1000 * (i++));
+      //setTimeout(function() { // Hack to avoid storing movement data before the hex state is updated
+        me.playAction(action.type, action.card, action.target);
+      //}, 1000 * (i++));
     });
   }
 });

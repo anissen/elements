@@ -33,11 +33,11 @@ body {
       game.setupBoard(response.initialState, {});
       game.loadState(response.initialState);
       
-      game.doActionList(response.actions);
+      game.playActionList(response.actions);
 
       socket.on('message', function(message){
         //console.log('message', message);
-        game.doActionList([message.action]);
+        game.playActionList([message.action]);
       });
     });
   })

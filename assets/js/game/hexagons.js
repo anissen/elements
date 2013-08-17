@@ -28,7 +28,7 @@ function setupKinetic() {
   game.on('enter', function(tile) {
     var hex = tile.get('RegularPolygon')[0];
     hex.setStroke('darkred');
-    hex.setStrokeWidth(5);
+    hex.setStrokeWidth(hex.getStrokeWidth() + 2);
     hexLayer.draw();
   });
 
@@ -47,7 +47,7 @@ function setupKinetic() {
       return entity.get('RegularPolygon')[0];
     });
     timeline
-      .to(entity, 0.5, { setStrokeWidth: 8, setScaleX: 1.2, setScaleY: 1.2, /* setFillB: 75, */ ease: Elastic.easeOut })
+      .to(entity, 0.5, { setStrokeWidth: entity.attrs.selectedStrokeWidth, setScaleX: 1.3, setScaleY: 1.3, /* setFillB: 75, */ ease: Elastic.easeOut })
       .staggerTo(entityHexes, 0.4, { setScaleX: -1.0, setFillR: 255, setFillG: 180, setFillB: 75, ease: Bounce.easeOut }, 0.03, "-=0.4");
 
     neighborHexagons = entityHexes;
@@ -55,7 +55,7 @@ function setupKinetic() {
 
   game.on('deselected', function(entity) {
     timeline
-      .to(entity, 0.5, { setStrokeWidth: 2, setScaleX: 1.0, setScaleY: 1.0, /* setFillB: 255, */ ease: Elastic.easeOut })
+      .to(entity, 0.5, { setStrokeWidth: entity.attrs.originalStrokeWidth, setScaleX: 1.0, setScaleY: 1.0, /* setFillB: 255, */ ease: Elastic.easeOut })
       .staggerTo(neighborHexagons, 0.2, { setScaleX: 1.0, setScaleY: 1.0, setFillR: 255, setFillG: 255, setFillB: 240, ease: Bounce.easeOut }, 0.02, "-=0.4");
   });
 
