@@ -87,7 +87,7 @@ module.exports = (function () {
       this.emit('attack', attacker, defender);
     };
 
-    this.endTurn = function() {
+    this.endturn = function() {
       this.emit('turn ended');
 
       game.currentPlayer = (game.currentPlayer + 1) % game.players.length;

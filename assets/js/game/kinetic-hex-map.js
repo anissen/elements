@@ -6,7 +6,7 @@ var KineticHexMap = Model({
 
   layer: null,
 
-  entities: [],
+  entities: {},
 
   selectedTile: null,
 
@@ -48,7 +48,7 @@ var KineticHexMap = Model({
 
     for (var playerId = 0; playerId < state.players.length; playerId++) {
       for (var i = 0; i < 5; i++) {
-        var r = (playerId === 0 ? -2 : 4);
+        var r = (playerId === 1 ? -2 : 4);
         var q = i - Math.floor(r / 2);
         var key = q + ',' + r;
         /*
@@ -190,8 +190,6 @@ var KineticHexMap = Model({
         oldTile.entity = this.createEntity(tile.entity, HexMap.Hex.fromString(key));
         this.layer.add(oldTile.entity);
         this.layer.draw();
-
-        entities.push(oldTile.entity);
       }
     }
 
@@ -262,7 +260,6 @@ var KineticHexMap = Model({
   },
 
   play: function(cardId, targetHex) {
-    //if (cardId === 'unit') {
     var cardsInHand = _.values(this.state.players[this.state.currentPlayer].hand);
     var card = _.find(cardsInHand, function (cardInHand) {
       return cardInHand.id === cardId;
@@ -275,17 +272,16 @@ var KineticHexMap = Model({
     mapData.entity = entity;
     mapData.type = card.type;
 
-    this.entities.push(entity);
-
     this.layer.add(entity);
     this.trigger('play-entity', mapData);
-    //}
+  },
+
+  endturn: function() {
+    this.trigger('turn-ended');
   },
 
   getEntityFromId: function(cardId) {
-    return _.find(this.entities, function(entity) {
-      return entity.attrs.id === cardId;
-    });
+    return this.entities[cardId];
   },
 
   createEntity: function(card, hex) {
@@ -306,11 +302,10 @@ var KineticHexMap = Model({
       stroke: (card.player === 0 ? s.stroke : 'orangered'),
       strokeWidth: s.entityStrokeWidth,
       originalStrokeWidth: s.entityStrokeWidth /*,
-      opacity: 1.0,
-      shadowColor: 'black',
-      shadowBlur: 10,
-      shadowOffset: 10,
-      shadowOpacity: 0.5 */
+      shadowColor: (card.player === 0 ? s.fill : '#FF8000'),
+      shadowBlur: 20,
+      shadowOpacity: 1.0
+      */
     });
 
     // HACK for customizing energy hex
@@ -370,6 +365,8 @@ var KineticHexMap = Model({
     });
 
     entityGroup.on('click touchstart', this.onEntityClick);
+
+    this.entities[card.id] = entityGroup;
 
     return entityGroup;
   },

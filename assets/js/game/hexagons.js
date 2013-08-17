@@ -114,6 +114,24 @@ function setupKinetic() {
       }, 0.5);
   });
 
+  game.on('turn-ended', function() {
+    var entityHexes = _.chain(game.entities)
+      .filter(function(entity) {
+        return entity.attrs.player === game.state.currentPlayer;
+      })
+      .map(function(entity) {
+        return entity.get('RegularPolygon')[0];
+      })
+      .shuffle()
+      .value();
+
+    timeline
+      .staggerTo(_.shuffle(entityHexes), 0.5, { 
+        setStrokeWidth: 1,
+        ease: Back.easeOut
+      }, 0.05);
+  });
+
   game.layer = hexLayer;
 
   window.game = game;

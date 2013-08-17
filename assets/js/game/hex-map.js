@@ -120,16 +120,16 @@ function HexMap() {
     var minY = _.min(ys);
     var maxY = _.max(ys);
 
-    var mapStr = '';
+    var mapStr = '\n';
     for (var y = minY - 1; y < minY; y++) {
       for (var x = minX; x <= maxX; x++) {
-        mapStr += ' ' + (x < 0 ? x : ' ' + x);
+        mapStr += (x === minX && minY < 0 ? '  ' : '') + ' ' + (x < 0 ? x : ' ' + x);
       }
       mapStr += '\n';
     }
 
     for (var y = minY; y <= maxY; y++) {
-      mapStr += y + ' ';
+      mapStr += (y < 0 ? y : ' ' + y) + ' ';
       for (var x = minX; x <= maxX; x++) {
         var tile = this.get(x + ',' + y);
         // TODO: Make output non-specific
