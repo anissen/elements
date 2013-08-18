@@ -24,7 +24,6 @@ body {
     setupKinetic();
 
     socket.request('/game', { id: '<%= gameId %>' }, function(response) {
-      console.log('game', response);
       /*
       response.actions.forEach(function(action) {
         console.log('action', action);

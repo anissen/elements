@@ -58,7 +58,7 @@ exports.query = function(state) {
       throw 'valueType is expected to be "player", but was "' + this.valueType + '"';
 
     this.valueType = 'card';
-    this.values = _.filter(this.values, function(card) {
+    this.values = _.filter(this.values.hand, function(card) {
       return card.id === cardId;
     });
 
