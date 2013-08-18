@@ -8,6 +8,8 @@ var KineticHexMap = Model({
 
   entities: {},
 
+  playerTurnIndicator: null,
+
   selectedTile: null,
 
   setupBoard: function(state, settings) {
@@ -38,6 +40,19 @@ var KineticHexMap = Model({
       entityFontSize: 12
     };
     var s = this.settings = _.defaults(settings || {}, desktop);
+
+    this.playerTurnIndicator = new Kinetic.Rect({
+      x: -100,
+      y: 0,
+      height: 170,
+      width: 1000,
+      fill: 'c5c5c5',
+      opacity: 0.0,
+      shadowColor: 'grey',
+      shadowBlur: 500
+    });
+
+    this.layer.add(this.playerTurnIndicator);
 
     var me = this;
     var tiles = [];
@@ -269,6 +284,18 @@ var KineticHexMap = Model({
     this.trigger('turn-ended', this.state.currentPlayer);
     this.state.currentPlayer = (this.state.currentPlayer + 1) % this.state.players.length;
     this.trigger('turn-started', this.state.currentPlayer);
+
+    if (this.state.currentPlayer !== 0) // HACK HACK HACK HACK
+      return;
+
+    var library = this.state.players[this.state.currentPlayer].library;
+    var newCard = library.splice(0,1)[0];
+    if (!newCard)
+      return;
+
+    var newCardEntity = this.createEntity(newCard, HexMap.Hex(2,4));
+    this.layer.add(newCardEntity);
+    this.trigger('draw-card', newCardEntity);
   },
 
   getEntityFromId: function(cardId) {

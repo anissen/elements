@@ -77,12 +77,12 @@ function setupKinetic() {
       .to(fromTile, 0.3, { setX: toTile.getX(), setY: toTile.getY(), ease: Cubic.easeOut, onComplete: data.callback });
   });
 
-  game.on('draw-card', function(data) {
+  game.on('draw-card', function(entity) {
     var easings = [Bounce.easeOut, Back.easeOut, SlowMo.ease, Expo.easeOut];
-
+    console.log(entity);
     timeline
-      .from(data.entity, 1.0, { 
-        setY: (data.player === 0 ? 1000 : -100),
+      .from(entity, 1.0, { 
+        setY: (entity.attrs.player === 0 ? 1000 : -100),
         setRotation: Math.PI / 2,
         setScaleX: 0.5,
         setScaleY: 0.5,
@@ -92,7 +92,7 @@ function setupKinetic() {
 
   game.on('play-card', function(data) {
     var toTile = data.target.tile;
-    var easings = [Bounce.easeOut, Back.easeOut, SlowMo.ease, Expo.easeOut];
+    var easings = [Back.easeOut]; // [Bounce.easeOut, Back.easeOut, SlowMo.ease, Expo.easeOut];
 
     timeline
       .to(data.card, 1.0, { 
@@ -138,11 +138,12 @@ function setupKinetic() {
       .value();
 
     timeline
-      .staggerTo(oldPlayerEntities, 1.0, {
-        //setStrokeWidth: 1,
+      .staggerTo(oldPlayerEntities, 0.3, {
+        setStrokeWidth: 0,
+        //setScaleY: 0.8,
         setShadowOpacity: 0.0,
-        ease: Back.easeOut
-      }, 0.1);
+        ease: Expo.easeOut
+      }, 0.01);
   });
 
   game.on('turn-started', function(playerId) {
@@ -157,11 +158,20 @@ function setupKinetic() {
       .value();
 
     timeline
-      .staggerTo(newPlayerEntities, 1.0, {
-        //setStrokeWidth: 1,
+      .to(game.playerTurnIndicator, 0.5, {
+        setY: (playerId === 1 ? 0 : (800 - 170)),
+        setOpacity: 1.0,
+        ease: Expo.easeOut
+      });
+
+    timeline
+      .staggerTo(newPlayerEntities, 0.3, {
+        setStrokeWidth: 3,
+        //setScaleX: 1.0,
+        //setScaleY: 1.0,
         setShadowOpacity: 1.0,
-        ease: Back.easeOut
-      }, 0.1);
+        ease: Expo.easeOut
+      }, 0.01);
   });
 
   game.layer = hexLayer;
