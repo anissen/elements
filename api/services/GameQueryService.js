@@ -23,33 +23,51 @@ exports.query = function(state) {
 
   var queryObj = {};
 
-  queryObj.units = function () {
-    this.values = _.filter(state.board, function (tile) {
+  queryObj.units = function() {
+    return _.filter(state.board, function(tile) {
       return tile.entity && tile.entity.type === 'unit';
     });
-
-    return this;
   };
 
-  queryObj.energy = function () {
-    this.values = _.filter(state.board, function (tile) {
+  queryObj.energy = function() {
+    return _.filter(state.board, function(tile) {
       return tile.entity && tile.entity.type === 'energy';
     });
-
-    return this;
   };
 
-  queryObj.ownedByPlayer = function (player) {
-    this.values = _.filter(this.values, function (tile) {
+  queryObj.ownedByPlayer = function(player) {
+    return _.filter(state.board, function(tile) {
       return tile.entity && tile.entity.player === player;
     });
-    
+  };
+
+  queryObj.getCurrentPlayer = function() {
+    this.valueType = 'player';
+    this.values = state.players[state.currentPlayer];
     return this;
   };
 
-  queryObj.result = function () {
-    return this.values;
+  queryObj.getNthPlayer = function(playerId) {
+    this.valueType = 'player';
+    this.values = state.players[playerId];
+    return this;
   };
+
+  queryObj.getCardInHand = function(cardId) {
+    if (this.valueType !== 'player')
+      throw 'valueType is expected to be "player", but was "' + this.valueType + '"';
+
+    this.valueType = 'card';
+    this.values = _.filter(this.values, function(card) {
+      return card.id === cardId;
+    });
+
+    return this;
+  };
+
+  queryObj.value = function() {
+    return this.values;
+  }
 
   return queryObj;
 };

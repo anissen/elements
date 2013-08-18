@@ -77,7 +77,7 @@ function setupKinetic() {
       .to(fromTile, 0.3, { setX: toTile.getX(), setY: toTile.getY(), ease: Cubic.easeOut, onComplete: data.callback });
   });
 
-  game.on('play-entity', function(data) {
+  game.on('draw-card', function(data) {
     var easings = [Bounce.easeOut, Back.easeOut, SlowMo.ease, Expo.easeOut];
 
     timeline
@@ -86,6 +86,18 @@ function setupKinetic() {
         setRotation: Math.PI / 2,
         setScaleX: 0.5,
         setScaleY: 0.5,
+        ease: easings[Math.floor(Math.random() * easings.length)]
+      });
+  });
+
+  game.on('play-card', function(data) {
+    var toTile = data.target.tile;
+    var easings = [Bounce.easeOut, Back.easeOut, SlowMo.ease, Expo.easeOut];
+
+    timeline
+      .to(data.card, 1.0, { 
+        setX: toTile.getX(), 
+        setY: toTile.getY(),
         ease: easings[Math.floor(Math.random() * easings.length)]
       });
   });
@@ -114,10 +126,10 @@ function setupKinetic() {
       }, 0.5);
   });
 
-  game.on('turn-ended', function() {
-    var entityHexes = _.chain(game.entities)
+  game.on('turn-ended', function(playerId) {
+    var oldPlayerEntities = _.chain(game.entities)
       .filter(function(entity) {
-        return entity.attrs.player === game.state.currentPlayer;
+        return entity.attrs.player === playerId;
       })
       .map(function(entity) {
         return entity.get('RegularPolygon')[0];
@@ -126,10 +138,30 @@ function setupKinetic() {
       .value();
 
     timeline
-      .staggerTo(_.shuffle(entityHexes), 0.5, { 
-        setStrokeWidth: 1,
+      .staggerTo(oldPlayerEntities, 1.0, {
+        //setStrokeWidth: 1,
+        setShadowOpacity: 0.0,
         ease: Back.easeOut
-      }, 0.05);
+      }, 0.1);
+  });
+
+  game.on('turn-started', function(playerId) {
+    var newPlayerEntities = _.chain(game.entities)
+      .filter(function(entity) {
+        return entity.attrs.player === playerId;
+      })
+      .map(function(entity) {
+        return entity.get('RegularPolygon')[0];
+      })
+      .shuffle()
+      .value();
+
+    timeline
+      .staggerTo(newPlayerEntities, 1.0, {
+        //setStrokeWidth: 1,
+        setShadowOpacity: 1.0,
+        ease: Back.easeOut
+      }, 0.1);
   });
 
   game.layer = hexLayer;

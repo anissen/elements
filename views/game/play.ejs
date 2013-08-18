@@ -24,16 +24,18 @@ body {
     setupKinetic();
 
     socket.request('/game', { id: '<%= gameId %>' }, function(response) {
-      //console.log('game', response);
+      console.log('game', response);
       /*
       response.actions.forEach(function(action) {
         console.log('action', action);
       });
       */
-      game.setupBoard(response.initialState, {});
-      game.loadState(response.initialState);
-      
-      game.playActionList(response.actions);
+      if (response && response.initialState && response.actions) {
+        game.setupBoard(response.initialState, {});
+        game.loadState(response.initialState);
+        
+        game.playActionList(response.actions);
+      }
 
       socket.on('message', function(message){
         //console.log('message', message);

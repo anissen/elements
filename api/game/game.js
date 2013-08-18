@@ -6,6 +6,7 @@ var util = require('util'),
     Map = require('./../../assets/js/game/hex-map');
 
 module.exports = (function () {
+
   var GameActions = function(game) {
 
     var me = this;
@@ -35,6 +36,10 @@ module.exports = (function () {
       return map.getRing(pos);
     }
 
+    function query() {
+      return GameQueryService.query(game);
+    }
+
     this.updateBoard = function() {
       game.board = map.map;
     }
@@ -44,9 +49,15 @@ module.exports = (function () {
 
       // Find card in hand
       // TODO: Move this to GameQueryService
+      var card = query()
+        .getCurrentPlayer()
+        .getCardInHand(cardId)
+        .value();
+      /*
       var card = _.find(player.hand, function(cardInHand) {
         return (cardInHand.id === cardId);
       });
+      */
 
       // Remove card from hand
       player.hand = _.reject(player.hand, function(cardInHand) {

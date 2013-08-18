@@ -239,7 +239,7 @@ var KineticHexMap = Model({
     
     this.trigger('move', { 
       fromData: source, 
-      toData: destination ,
+      toData: destination,
       callback: function() {
         //console.log('oncomplete callback triggered!');
         source.entity = null;
@@ -260,24 +260,15 @@ var KineticHexMap = Model({
   },
 
   play: function(cardId, targetHex) {
-    var cardsInHand = _.values(this.state.players[this.state.currentPlayer].hand);
-    var card = _.find(cardsInHand, function (cardInHand) {
-      return cardInHand.id === cardId;
-    });
-
-    var entity = this.createEntity(card, HexMap.Hex.fromString(targetHex));
-    var mapData = this.map.get(targetHex);
-
-    mapData.player = card.player;
-    mapData.entity = entity;
-    mapData.type = card.type;
-
-    this.layer.add(entity);
-    this.trigger('play-entity', mapData);
+    var entity = this.entities[cardId];
+    var target = this.map.get(targetHex);
+    this.trigger('play-card', { card: entity, target: target });
   },
 
   endturn: function() {
-    this.trigger('turn-ended');
+    this.trigger('turn-ended', this.state.currentPlayer);
+    this.state.currentPlayer = (this.state.currentPlayer + 1) % this.state.players.length;
+    this.trigger('turn-started', this.state.currentPlayer);
   },
 
   getEntityFromId: function(cardId) {
@@ -301,11 +292,10 @@ var KineticHexMap = Model({
       originalStroke: (card.player === 0 ? s.stroke : 'orangered'),
       stroke: (card.player === 0 ? s.stroke : 'orangered'),
       strokeWidth: s.entityStrokeWidth,
-      originalStrokeWidth: s.entityStrokeWidth /*,
+      originalStrokeWidth: s.entityStrokeWidth,
       shadowColor: (card.player === 0 ? s.fill : '#FF8000'),
       shadowBlur: 20,
-      shadowOpacity: 1.0
-      */
+      shadowOpacity: 0.0
     });
 
     // HACK for customizing energy hex
