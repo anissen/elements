@@ -29,9 +29,9 @@ Hex.fromString = function(str) {
   return Hex(parseInt(parts[0]), parseInt(parts[1]));
 };
 
-function HexMap() {
+function HexMap(data) {
   var me = this;
-  this.map = {};
+  this.map = data || {};
 
   this.set = function(key, data) {
     this.map[key] = data;

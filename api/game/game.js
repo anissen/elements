@@ -11,8 +11,7 @@ module.exports = (function () {
 
     var me = this;
 
-    var map = new Map.HexMap();
-    map.map = game.board;
+    var map = new Map.HexMap(game.board);
 
     events.EventEmitter.call(this);
 

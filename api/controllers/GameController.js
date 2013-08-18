@@ -31,6 +31,8 @@ var GameController = {
     */
 
     Card.find().done(function(err, cards) {
+      if (err) return res.send(err, 500);
+      if (!cards) return res.send('No cards found');
 
       var board = {
         '0,0': { entity: null },
@@ -69,6 +71,8 @@ var GameController = {
 
       Game.create(gameData).done(function(err, game) {
         if (err) return res.send(err, 500);
+        if (!game) return res.send('Game not created');
+
         res.json(game);
       });
 
