@@ -58,9 +58,25 @@ exports.query = function(state) {
       throw 'valueType is expected to be "player", but was "' + this.valueType + '"';
 
     this.valueType = 'card';
-    this.values = _.filter(this.values.hand, function(card) {
-      return card.id === cardId;
-    });
+    this.values = _.chain(this.values.hand)
+      .filter(function(card) {
+        return card.id === cardId;
+      })
+      .first()
+      .value();
+
+    return this;
+  };
+
+  queryObj.getEntity = function(cardId) {
+    this.valueType = 'entity';
+    this.values = _.chain(state.board)
+      .filter(function(tile) {
+        return tile.entity && tile.entity.id === cardId;
+      })
+      .first()
+      .value()
+      .entity;
 
     return this;
   };

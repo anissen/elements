@@ -5,6 +5,7 @@
 
 var _  = require('underscore');
 var GameInstance = require('./../game/game');
+//var objectDiff = require('objectdiff');
 
 function createCard(card, player, pos) {
   var cardInstance = clone(card);
@@ -110,8 +111,8 @@ var GameController = {
 
       var action = {
         type:   req.param('type'),
-        card:   req.param('card'),
-        target: req.param('target')
+        card:   req.param('card'),  // TODO: Include hex coordinates for client
+        target: req.param('target') // TODO: Include hex coordinates for client
       };
 
       /*
@@ -120,6 +121,7 @@ var GameController = {
         return res.send(500, { error: 'Action is invalid'});
       */
 
+      //var oldGameState = clone(gameData.state);
       var game = new GameInstance(gameData.state);
       game[action.type](action.card, action.target);
 
@@ -127,6 +129,8 @@ var GameController = {
         actions: gameData.actions.concat(action),
         state: gameData.state
       };
+
+      //console.log(JSON.stringify(objectDiff.diff(oldGameState, gameData.state), null, 2));
 
       Game.update(gameId, updatedGameData, function (err, game) {
         if (err) return res.send(err, 500);

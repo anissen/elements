@@ -73,7 +73,7 @@ Improved persistent games:
 Sails:
     ✔ Add game as a Service @done (06-08-13 22:40)
     ✔ Hook up game such that it can be called from controllers @done (06-08-13 22:40)
-    ☐ Change game model to have an initial state, list of actions and current state
+    ✔ Change game model to have an initial state, list of actions and current state @done (18-08-13 21:56)
     ☐ Move AI code into a AIService
     ☐ Move replayer code into a ReplayService
     ✔ Add card model @done (08-08-13 21:32)
@@ -83,10 +83,9 @@ Sails:
     ☐ Able to perform the following actions via HTTP posts
         ✔ Play unit (card id, tile id) @done (10-08-13 18:31)
         ✔ Move unit (unit id, tile id) @done (10-08-13 23:45)
-        ☐ Attack unit (unit id, unit id)
-        ☐ End turn
-        ☐ Play spell (card id, target(s))
-    ☐ Don't look up hex on tile - use a game.entities[] structure instead 
+        ✔ Attack unit (unit id, unit id) @done (18-08-13 21:56)
+        ✔ End turn @done (18-08-13 21:56)
+        ✘ Play spell (card id, target(s)) @cancelled (18-08-13 21:56)
     ☐ Game state should be the following:
         ☐ Initial state
         ☐ List of:

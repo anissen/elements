@@ -60,8 +60,8 @@ function setupKinetic() {
   });
 
   game.on('attack', function(data) {
-    var fromTile = data.fromData.entity;
-    var toTile = data.toData.entity;
+    var fromTile = data.fromData;
+    var toTile = data.toData;
 
     var oldData = {x: fromTile.getX(), y: fromTile.getY()};
     timeline
@@ -79,7 +79,7 @@ function setupKinetic() {
 
   game.on('draw-card', function(entity) {
     var easings = [Bounce.easeOut, Back.easeOut, SlowMo.ease, Expo.easeOut];
-    console.log(entity);
+
     timeline
       .from(entity, 1.0, { 
         setY: (entity.attrs.player === 0 ? 1000 : -100),
@@ -95,8 +95,8 @@ function setupKinetic() {
     var easings = [Back.easeOut]; // [Bounce.easeOut, Back.easeOut, SlowMo.ease, Expo.easeOut];
 
     timeline
-      .to(data.card, 1.0, { 
-        setX: toTile.getX(), 
+      .to(data.card, 1.0, {
+        setX: toTile.getX(),
         setY: toTile.getY(),
         ease: easings[Math.floor(Math.random() * easings.length)]
       });

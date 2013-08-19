@@ -46,17 +46,10 @@ module.exports = (function () {
     this.play = function(cardId, target) {
       var player = game.players[game.currentPlayer];
 
-      // Find card in hand
-      // TODO: Move this to GameQueryService
       var card = query()
         .getCurrentPlayer()
         .getCardInHand(cardId)
         .value();
-      /*
-      var card = _.find(player.hand, function(cardInHand) {
-        return (cardInHand.id === cardId);
-      });
-      */
 
       // Remove card from hand
       player.hand = _.reject(player.hand, function(cardInHand) {
@@ -71,24 +64,21 @@ module.exports = (function () {
 
     this.move = function(cardId, target) {
       // TODO: Move this to GameQueryService
-      var unit = _.find(game.board, function(tile) {
-        return (tile.entity && tile.entity.id === cardId);
-      }).entity;
+      var entity = query()
+        .getEntity(cardId)
+        .value();
 
       //var unit = getTile(data.from);
-      resetTile(unit.pos);
-      unit.pos = target;
+      resetTile(entity.pos);
+      entity.pos = target;
       // unit.movesLeft -= 1;
-      setTile(target, unit);
+      setTile(target, entity);
     };
 
     this.attack = function(cardId, targetId) {
-      var attacker = _.find(game.board, function(tile) {
-        return (tile.entity && tile.entity.id === cardId);
-      }).entity; // TODO: Move this to GameQueryService
-      var defender = _.find(game.board, function(tile) {
-        return (tile.entity && tile.entity.id === targetId);
-      }).entity; // TODO: Move this to GameQueryService
+      var attacker = query().getEntity(cardId).value();
+      var defender = query().getEntity(targetId).value();
+
       defender.life -= attacker.attack;
       // attacker.attacksLeft -= 1;
       if (defender.life <= 0)
@@ -168,7 +158,6 @@ module.exports = (function () {
 
       me.emit('drew cards', cards);
     }
-
     
     function payCastingCost(cost, pos) {
       var energySources;

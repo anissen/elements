@@ -251,6 +251,7 @@ var KineticHexMap = Model({
 
     var source = this.map.get(entity.attrs.hex);
     var destination = this.map.get(targetHex);
+    console.log('move', entity);
     
     this.trigger('move', { 
       fromData: source, 
@@ -265,18 +266,21 @@ var KineticHexMap = Model({
     });
   },
 
-  attack: function(cardId, targetHex) {
+  attack: function(cardId, targetId) {
     var attacker = this.getEntityFromId(cardId);
+    var target = this.getEntityFromId(targetId);
 
-    this.trigger('attack', { 
-      fromData: this.map.get(attacker.attrs.hex), 
-      toData: this.map.get(targetHex) 
+    this.trigger('attack', {
+      fromData: attacker,
+      toData: target
     });
   },
 
   play: function(cardId, targetHex) {
     var entity = this.entities[cardId];
     var target = this.map.get(targetHex);
+    target.entity = entity;
+
     this.trigger('play-card', { card: entity, target: target });
   },
 
@@ -419,9 +423,9 @@ var KineticHexMap = Model({
     var me = this;
     var i = 0;
     _.each(actions, function(action) {
-      //setTimeout(function() { // Hack to avoid storing movement data before the hex state is updated
+      setTimeout(function() { // Hack to avoid storing movement data before the hex state is updated
         me.playAction(action.type, action.card, action.target);
-      //}, 1000 * (i++));
+      }, 1000 * (i++));
     });
   }
 });
