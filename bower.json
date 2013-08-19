@@ -1,0 +1,18 @@
+{
+  "name": "Elements of War",
+  "version": "0.0.1",
+  "main": "app.js",
+  "ignore": [
+
+  ],
+  "dependencies": {
+    "jquery": ">=2.0.3",
+    "kineticjs": ">=4.5.2",
+    "tweenMax": ">=1.10.2",
+    "underscore": ">=1.5.1",
+    "fishbone.js": ">=1.0.1"
+  },
+  "devDependencies": {
+
+  }
+}

@@ -102,5 +102,6 @@ nbproject
 # local config
 ########################
 config/local.js
-old
+
+assets/components
 
