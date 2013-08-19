@@ -17,10 +17,18 @@ body {
 }
 </style>
 
+<a id="fullscreen-button" href="#" style="float: right;">Fullscreen</a>
 <div id="container"></div>
 
 <script>
   $(function() {
+    var fullscreenElement = $('#container')[0]; // Get DOM element from jQuery collection
+    $('#fullscreen-button').click(function () {
+        if (screenfull.enabled) {
+            screenfull.request(fullscreenElement);
+        }
+    });
+
     setupKinetic();
 
     socket.request('/game', { id: '<%= gameId %>' }, function(response) {
@@ -32,6 +40,9 @@ body {
       if (response && response.initialState && response.actions) {
         game.setupBoard(response.initialState, {});
         game.loadState(response.initialState);
+
+        // HACK
+        game.trigger('turn-started', response.initialState.currentPlayer);
         
         game.playActionList(response.actions);
       }

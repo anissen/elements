@@ -425,7 +425,7 @@ var KineticHexMap = Model({
     _.each(actions, function(action) {
       setTimeout(function() { // Hack to avoid storing movement data before the hex state is updated
         me.playAction(action.type, action.card, action.target);
-      }, 1000 * (i++));
+      }, 1500 * (i++));
     });
   }
 });
