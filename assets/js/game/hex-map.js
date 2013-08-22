@@ -19,7 +19,7 @@ var Hex = function(q, r) {
 
   hex.clone = function() {
     return Hex(q, r);
-  }
+  };
 
   return hex;
 };
@@ -105,7 +105,7 @@ function HexMap(data) {
     return _.values(visited);
   };
 
-  this.toString = function() {
+  this.toString = function(tileRepresentationFunc) {
     var coords = _.chain(this.getKeys())
       .map(function(key) {
         var parts = key.split(',');
@@ -123,7 +123,7 @@ function HexMap(data) {
     var mapStr = '\n';
     for (var y = minY - 1; y < minY; y++) {
       for (var x = minX; x <= maxX; x++) {
-        mapStr += (x === minX && minY < 0 ? '  ' : '') + ' ' + (x < 0 ? x : ' ' + x);
+        mapStr += (x === minX || minY < 0 ? '  ' : '') + ' ' + (x < 0 ? x : ' ' + x);
       }
       mapStr += '\n';
     }
@@ -132,8 +132,7 @@ function HexMap(data) {
       mapStr += (y < 0 ? y : ' ' + y) + ' ';
       for (var x = minX; x <= maxX; x++) {
         var tile = this.get(x + ',' + y);
-        // TODO: Make output non-specific
-        mapStr += (!tile ? '   ' : '[' + (tile.unit ? tile.unit.attrs.player : ' ') + ']');
+        mapStr += (!tile ? '   ' : '[' + tileRepresentationFunc(tile) + ']');
       }
       mapStr += '\n';
     }

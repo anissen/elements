@@ -89,13 +89,19 @@ var GameController = {
       if (!gameData) return res.send('No game with that ID "' + gameId + '" exists!', 404);
 
       var results = GameQueryService.query(gameData.state)
-        .energy()
-        .result();
+        .from()
+          .hands()
+        .filter()
+          .byUnits()
+        .results();
 
       var results2 = GameQueryService.query(gameData.state)
-        .energy()
-        .ownedByPlayer(0)
-        .result();
+        .from()
+          .hands()
+        .filter()
+          .byUnits()
+          .byPlayerId(1)
+        .results();
 
       res.json({ all: results, mine: results2 });
     });
@@ -127,7 +133,8 @@ var GameController = {
 
       var updatedGameData = {
         actions: gameData.actions.concat(action),
-        state: gameData.state
+        state: gameData.state,
+        validActions: GameQueryService.query(gameData.state).getValidActions().value()
       };
 
       //console.log(JSON.stringify(objectDiff.diff(oldGameState, gameData.state), null, 2));

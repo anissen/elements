@@ -21,71 +21,127 @@ GameQueryService.query(state)
 
 exports.query = function(state) {
 
-  var queryObj = {};
+  var selectionQueryObj = { values: [] };
+  var filterQueryObj = {};
 
-  queryObj.units = function() {
-    return _.filter(state.board, function(tile) {
-      return tile.entity && tile.entity.type === 'unit';
+  selectionQueryObj.from = function() {
+    return this;
+  };
+
+  selectionQueryObj.board = function() {
+    this.values = this.values.concat(_.values(state.board));
+    return this;
+  };
+
+  selectionQueryObj.hands = function() {
+    var allHands = _.map(state.players, function(player) {
+      return _.map(player.hand, function(card) {
+        return { entity: card };
+      });
+    });
+    this.values = _.flatten(this.values.concat(allHands));
+    return this;
+  };
+
+  selectionQueryObj.filter = function() {
+    filterQueryObj.values = _.chain(this.values);
+    return filterQueryObj;
+  };
+
+  filterQueryObj.byEmpty = function() {
+    return this.values.filter(function(tile) {
+      return tile.entity === null;
     });
   };
 
-  queryObj.energy = function() {
-    return _.filter(state.board, function(tile) {
+  filterQueryObj.byUnits = function() {
+    this.values = this.values.filter(function(tile) {
+      return tile.entity && tile.entity.type === 'unit';
+    });
+    return this;
+  };
+
+  filterQueryObj.byEnergy = function() {
+    return this.values.filter(function(tile) {
       return tile.entity && tile.entity.type === 'energy';
     });
   };
 
-  queryObj.ownedByPlayer = function(player) {
-    return _.filter(state.board, function(tile) {
+  filterQueryObj.byPlayerId = function(player) {
+    this.values = this.values.filter(function(tile) {
       return tile.entity && tile.entity.player === player;
+    });
+    return this;
+  };
+
+  filterQueryObj.byCurrentPlayer = function() {
+    this.values = this.values.filter(function(tile) {
+      return tile.entity && tile.entity.player === state.currentPlayer;
+    });
+    return this;
+  };
+
+  filterQueryObj.byId = function(cardId) {
+    return this.values.filter(function(tile) {
+      return tile.entity && tile.entity.id === cardId;
     });
   };
 
-  queryObj.getCurrentPlayer = function() {
-    this.valueType = 'player';
-    this.values = state.players[state.currentPlayer];
-    return this;
+  filterQueryObj.results = function() {
+    return this.values.value();
   };
 
-  queryObj.getNthPlayer = function(playerId) {
-    this.valueType = 'player';
-    this.values = state.players[playerId];
-    return this;
-  };
-
-  queryObj.getCardInHand = function(cardId) {
-    if (this.valueType !== 'player')
-      throw 'valueType is expected to be "player", but was "' + this.valueType + '"';
-
-    this.valueType = 'card';
-    this.values = _.chain(this.values.hand)
-      .filter(function(card) {
-        return card.id === cardId;
-      })
-      .first()
-      .value();
-
-    return this;
-  };
-
-  queryObj.getEntity = function(cardId) {
-    this.valueType = 'entity';
-    this.values = _.chain(state.board)
-      .filter(function(tile) {
-        return tile.entity && tile.entity.id === cardId;
-      })
-      .first()
-      .value()
-      .entity;
-
-    return this;
-  };
-
-  queryObj.value = function() {
-    return this.values;
+  /*
+  function getValidPlaysForCard(card) {
+    return _.map(getValidTargetsForCard(card), function(target) {
+      return {
+        type: 'play',
+        card: card.id,
+        target: Hex(target.x, target.y).id
+      };
+    });
   }
 
-  return queryObj;
+  function getValidTargetsForCard(card) {
+    if (card.type === 'spell')
+      return getTiles(); // TODO: Need more precise specification and handling of targets
+
+    return _.filter(state.board, function(tile) {
+      // TODO: Need check for placement near energy source and sufficiant energy
+      return tile.type === 'empty' &&
+        _.some(getAdjacentTiles(tile), playerEnergyTilesQuery) &&
+        getAvailableEnergyAtTile(tile) >= card.cost;
+    });
+  }
+
+  filterQueryObj.getValidActions = function(cardId) {
+    this.valueType = 'actions';
+
+    var availableEnergy = _.chain(state.board)
+      .filter(function(tile) {
+        return tile.entity && 
+          tile.entity.player === state.currentPlayer && 
+          tile.entity.type === 'energy'
+      })
+      .reduce(function(sum, energy) {
+        return sum + energy.energy;
+      }, 0)
+      .value();
+
+    var cardsInHand = state.players[state.currentPlayer].hand;
+    this.values = _.chain(cardsInHand)
+      .filter(function(card) {
+        return card.cost <= availableEnergy;
+      })
+      .map(getValidPlaysForCard)
+      .flatten()
+      .value()
+
+    return this;
+  };
+  */
+
+  return selectionQueryObj;
 };
 
 
@@ -217,11 +273,8 @@ function getPossiblePlays() {
     }, 0)
     .value();
 
-  console.log('availableEnergy', availableEnergy);
-
   return _.chain(getAllCardsInHand())
     .filter(function(card) {
-      console.log('card ', card.name, 'cost', card.cost);
       return card.cost <= availableEnergy;
     })
     .map(getValidPlaysForCard)

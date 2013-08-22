@@ -1,31 +1,6 @@
 
-var http = require("http");
 var _ = require("underscore");
 var inquirer = require("inquirer");
-
-var json;
-
-http.get("http://localhost:1337/game/3", function(res){
-  var data = '';
-
-  res.on('data', function (chunk){
-    data += chunk;
-  });
-
-  res.on('end',function(){
-    json = JSON.parse(data);
-  });
-}).on('error', function(e) {
-  console.log("Got error: " + e.message);
-});
-
-console.log('-----------------------');
-console.log('      Welcome to       ');
-console.log('                       ');
-console.log('    Elements of War    ');
-console.log('                       ');
-console.log('   (Terminal version)  ');
-console.log('-----------------------');
 
 var actionQuestion = {
   type: "list",
@@ -62,9 +37,11 @@ var moveQuestion = {
     { name: "Some unit", value: "move" },
     { name: "Some unit", value: "endturn" }
   ]
-}
+};
 
-inquirer.prompt([actionQuestion, playQuestion, moveQuestion], function(answers) {
-  console.log(answers);
-  console.log('json', json);
-});
+module.exports.askQuestions = function() {
+  inquirer.prompt([actionQuestion, playQuestion, moveQuestion], function(answers) {
+    console.log(answers);
+    // console.log('json', json);
+  });
+}
