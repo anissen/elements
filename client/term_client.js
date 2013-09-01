@@ -32,5 +32,5 @@ function start(json) {
     return tile.entity ? tile.entity.player : ' ';
   }));
 
-  questions.askQuestions();
+  questions.askQuestions(json);
 }

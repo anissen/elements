@@ -49,6 +49,13 @@ function HexMap(data) {
     return _.values(this.map);
   };
 
+  this.getValuesWithKeys = function(keyName) {
+    keyName = keyName || 'key';
+    return _.map(this.map, function(value, key) {
+      return _.extend(value, {'key': key});
+    });
+  };
+
   this.getDirection = function(direction) {
     var neighbors = [
         Hex(+1,  0), Hex(+1, -1), Hex( 0, -1),

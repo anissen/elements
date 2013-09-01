@@ -107,6 +107,25 @@ var GameController = {
     });
   },
 
+  validactions: function(req, res) {
+    'use strict';
+
+    var gameId = req.param('id');
+    Game.findOne(gameId).done(function (err, gameData) {
+      if (err) return res.send(err, 500);
+      if (!gameData) return res.send('No game with that ID "' + gameId + '" exists!', 404);
+
+      GameQueryService.setState(gameData.state);
+
+      var game = new GameInstance(gameData.state);
+      GameQueryService.setMap(game.getMap());
+      
+      var results = GameQueryService.getPossibleActions();
+
+      res.json({ validActions: results });
+    });
+  },
+
   action: function(req, res) {
     'use strict';
 

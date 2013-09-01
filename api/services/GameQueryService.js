@@ -19,6 +19,7 @@ GameQueryService.query(state)
 */
 
 
+/*
 exports.query = function(state) {
 
   var selectionQueryObj = { values: [] };
@@ -56,15 +57,16 @@ exports.query = function(state) {
 
   filterQueryObj.byUnits = function() {
     this.values = this.values.filter(function(tile) {
-      return tile.entity && tile.entity.type === 'unit';
+      return tile.type === 'unit' || (tile.entity && tile.entity.type === 'unit');
     });
     return this;
   };
 
   filterQueryObj.byEnergy = function() {
-    return this.values.filter(function(tile) {
+    this.values = this.values.filter(function(tile) {
       return tile.entity && tile.entity.type === 'energy';
     });
+    return this;
   };
 
   filterQueryObj.byPlayerId = function(player) {
@@ -82,74 +84,116 @@ exports.query = function(state) {
   };
 
   filterQueryObj.byId = function(cardId) {
-    return this.values.filter(function(tile) {
+    this.values = this.values.filter(function(tile) {
       return tile.entity && tile.entity.id === cardId;
     });
+    return this;
   };
 
   filterQueryObj.results = function() {
     return this.values.value();
   };
 
-  /*
-  function getValidPlaysForCard(card) {
-    return _.map(getValidTargetsForCard(card), function(target) {
-      return {
-        type: 'play',
-        card: card.id,
-        target: Hex(target.x, target.y).id
-      };
-    });
-  }
-
-  function getValidTargetsForCard(card) {
-    if (card.type === 'spell')
-      return getTiles(); // TODO: Need more precise specification and handling of targets
-
-    return _.filter(state.board, function(tile) {
-      // TODO: Need check for placement near energy source and sufficiant energy
-      return tile.type === 'empty' &&
-        _.some(getAdjacentTiles(tile), playerEnergyTilesQuery) &&
-        getAvailableEnergyAtTile(tile) >= card.cost;
-    });
-  }
-
-  filterQueryObj.getValidActions = function(cardId) {
-    this.valueType = 'actions';
-
-    var availableEnergy = _.chain(state.board)
-      .filter(function(tile) {
-        return tile.entity && 
-          tile.entity.player === state.currentPlayer && 
-          tile.entity.type === 'energy'
-      })
-      .reduce(function(sum, energy) {
-        return sum + energy.energy;
-      }, 0)
-      .value();
-
-    var cardsInHand = state.players[state.currentPlayer].hand;
-    this.values = _.chain(cardsInHand)
-      .filter(function(card) {
-        return card.cost <= availableEnergy;
-      })
-      .map(getValidPlaysForCard)
-      .flatten()
-      .value()
-
-    return this;
-  };
-  */
-
   return selectionQueryObj;
 };
+*/
+
+var state;
+var map;
+
+exports.setState = function(s) {
+  state = s;
+};
+
+exports.setMap = function(m) {
+  map = m;
+};
+
+function getValidPlaysForCard(card) {
+  return _.map(getValidTargetsForCard(card), function(target) {
+    return {
+      type: 'play',
+      card: card.id,
+      target: Hex(target.x, target.y).id
+    };
+  });
+}
+
+function getValidTargetsForCard(card) {
+  //if (card.type === 'spell')
+  //  return getTiles(); // TODO: Need more precise specification and handling of targets
+
+  return _.filter(state.board, function(tile) {
+    // TODO: Need check for placement near energy source and sufficiant energy
+    return tile.type === 'empty' &&
+      _.some(getAdjacentTiles(tile), playerEnergyTilesQuery) &&
+      getAvailableEnergyAtTile(tile) >= card.cost;
+  });
+}
+
+function getTiles() {
+  console.log(map.getValuesWithKeys('pos'));
+  return map.getValuesWithKeys();
+}
+
+function getTileData(hexes) {
+  return _.chain(hexes)
+    .map(getTile)
+    .compact()
+    .value();
+}
+
+function getTile(hex) {
+  var data = this.map.get(hex);
+  if (!data)
+    return null;
+  return data.tile;
+}
+
+function getReachableTilesForCard(card) {
+  var hexes = this.map.getReachableTiles(HexMap.Hex.fromString(hex), movement || 2, function(tile) {
+    return tile.entity === null; //passable;
+  });
+  var hexIds = _.pluck(hexes, 'id');
+  var hexesWithoutStart = _.reject(hexIds, function(H) {
+    return H === hex;
+  });
+  return this.getTileData(hexesWithoutStart);
+}
+
+/*
+filterQueryObj.getValidActions = function(cardId) {
+  this.valueType = 'actions';
+
+  var availableEnergy = _.chain(state.board)
+    .filter(function(tile) {
+      return tile.entity && 
+        tile.entity.player === state.currentPlayer && 
+        tile.entity.type === 'energy'
+    })
+    .reduce(function(sum, energy) {
+      return sum + energy.energy;
+    }, 0)
+    .value();
+
+  var cardsInHand = state.players[state.currentPlayer].hand;
+  this.values = _.chain(cardsInHand)
+    .filter(function(card) {
+      return card.cost <= availableEnergy;
+    })
+    .map(getValidPlaysForCard)
+    .flatten()
+    .value()
+
+  return this;
+};
+*/
 
 
 //
 // Generation of possible actions
 //
 
-/*
 this.getPossibleActions = function() {
   var turnActions = getPossibleTurnActions();
   return this.getPossibleActionsWithoutEndTurn().concat(turnActions);
@@ -164,8 +208,8 @@ this.getPossibleActionsWithoutEndTurn = function() {
 
 this.getStateValue = function() {
   var value = 0;
-  value += getValueOfPlayersThings(game.currentPlayer);
-  value -= getValueOfPlayersThings((game.currentPlayer + 1) % 2);
+  value += getValueOfPlayersThings(state.currentPlayer);
+  value -= getValueOfPlayersThings((state.currentPlayer + 1) % 2);
   return value;
 };
 
@@ -181,7 +225,7 @@ function getValueOfPlayersThings(playerId) {
     .value();
 
   var valuePerCard = 2;
-  var cardsOnHandValue = game.players[playerId].hand.length * valuePerCard;
+  var cardsOnHandValue = state.players[playerId].hand.length * valuePerCard;
 
   var energyLifeValue = 3;
   var energyValue = _.chain(getTiles())
@@ -200,13 +244,13 @@ this.checkWinner = function() {
   var player0Lost = hasPlayerLost(0);
   var player1Lost = hasPlayerLost(1);
   if (!player0Lost && !player1Lost)
-    game.won = [];
+    state.won = [];
   else if (player0Lost && player1Lost)
-    game.won = [0, 1];
+    state.won = [0, 1];
   else if (player0Lost)
-    game.won = [1];
+    state.won = [1];
   else if (player1Lost)
-    game.won = [0];
+    state.won = [0];
 };
 
 function hasPlayerLost(playerId) {
@@ -253,7 +297,7 @@ function getPossibleAttacks() {
 function getValidAttacksForUnit(unit) {
   return _.chain(getAdjacentTiles(unit))
     .filter(function(tile) {
-      return tile.type !== 'empty' && tile.player !== game.currentPlayer;
+      return tile.type !== 'empty' && tile.player !== state.currentPlayer;
     })
     .map(function(attack) {
       return {
@@ -283,7 +327,7 @@ function getPossiblePlays() {
 }
 
 function getCurrentPlayer() {
-  return game.players[game.currentPlayer];
+  return state.players[state.currentPlayer];
 }
 
 function getAllCardsInHand() {
@@ -321,11 +365,11 @@ function getAllUnits() {
 }
 
 function playerEnergyTilesQuery(tile) {
-  return tile.player === game.currentPlayer && tile.type === 'energy';
+  return tile.player === state.currentPlayer && tile.type === 'energy';
 }
 
 function playerUnitTilesQuery(tile) {
-  return tile.player === game.currentPlayer && tile.type === 'unit';
+  return tile.player === state.currentPlayer && tile.type === 'unit';
 }
 
 function getEnergySourcesConnectedToTile(tile) {
@@ -346,4 +390,3 @@ function getAvailableEnergyAtTile(tile) {
   }, 0);
   return availableEnergy;
 }
-*/

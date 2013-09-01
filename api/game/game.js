@@ -35,13 +35,17 @@ module.exports = (function () {
       return map.getRing(pos);
     }
 
+    this.getMap = function() {
+      return map;
+    };
+
     function query() {
       return GameQueryService.query(game);
     }
 
     this.updateBoard = function() {
       game.board = map.map;
-    }
+    };
 
     this.play = function(cardId, target) {
       var player = game.players[game.currentPlayer];
