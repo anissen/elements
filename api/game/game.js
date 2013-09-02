@@ -50,10 +50,15 @@ module.exports = (function () {
     this.play = function(cardId, target) {
       var player = game.players[game.currentPlayer];
 
+      /*
       var card = query()
         .getCurrentPlayer()
         .getCardInHand(cardId)
         .value();
+      */
+      var card = _.find(player.hand, function(cardInHand) {
+        return (cardInHand.id === cardId);
+      });
 
       // Remove card from hand
       player.hand = _.reject(player.hand, function(cardInHand) {

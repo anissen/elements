@@ -11,6 +11,12 @@ function createCard(card, player, pos) {
   var cardInstance = clone(card);
   cardInstance.id = _.uniqueId('card');
   cardInstance.player = player;
+  if (card.type === 'unit') {
+    cardInstance.attacks = 1;
+    cardInstance.attacksLeft = 1;
+    cardInstance.moves = 1;
+    cardInstance.movesLeft = 1;
+  }
   if (pos)
     cardInstance.pos = pos;
   return cardInstance;
@@ -36,14 +42,14 @@ var GameController = {
       if (!cards) return res.send('No cards found');
 
       var board = {
-        '0,0': { entity: null },
-        '1,0': { entity: createCard(cards[4], 1, '1,0') },
-        '2,0': { entity: null },
-        '0,1': { entity: null },
-        '1,1': { entity: null },
-        '-1,2': { entity: null },
-        '0,2': { entity: createCard(cards[4], 0, '0,2') },
-        '1,2': { entity: null },
+        '0,0': { entity: null, pos: '0,0' },
+        '1,0': { entity: createCard(cards[4], 1, '1,0'), pos: '1,0' },
+        '2,0': { entity: null, pos: '2,0' },
+        '0,1': { entity: null, pos: '0,1' },
+        '1,1': { entity: null, pos: '1,1' },
+        '-1,2': { entity: null, pos: '-1,2' },
+        '0,2': { entity: createCard(cards[4], 0, '0,2'), pos: '0,2' },
+        '1,2': { entity: null, pos: '1,2' },
       };
 
       var state = {
@@ -152,8 +158,8 @@ var GameController = {
 
       var updatedGameData = {
         actions: gameData.actions.concat(action),
-        state: gameData.state,
-        validActions: GameQueryService.query(gameData.state).getValidActions().value()
+        state: gameData.state//,
+        //validActions: GameQueryService.query(gameData.state).getValidActions().value()
       };
 
       //console.log(JSON.stringify(objectDiff.diff(oldGameState, gameData.state), null, 2));

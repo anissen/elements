@@ -1,6 +1,7 @@
 
 var GameInstance = require('./../game/game'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    HexMap = require('./../../assets/js/game/hex-map');
 
 // proposed API:
 /*
@@ -125,15 +126,14 @@ function getValidTargetsForCard(card) {
 
   return _.filter(state.board, function(tile) {
     // TODO: Need check for placement near energy source and sufficiant energy
-    return tile.type === 'empty' &&
+    return !tile.entity &&
       _.some(getAdjacentTiles(tile), playerEnergyTilesQuery) &&
       getAvailableEnergyAtTile(tile) >= card.cost;
   });
 }
 
 function getTiles() {
-  console.log(map.getValuesWithKeys('pos'));
-  return map.getValuesWithKeys();
+  return map.getValues();
 }
 
 function getTileData(hexes) {
@@ -144,14 +144,14 @@ function getTileData(hexes) {
 }
 
 function getTile(hex) {
-  var data = this.map.get(hex);
+  var data = map.get(hex);
   if (!data)
     return null;
-  return data.tile;
+  return data;
 }
 
 function getReachableTilesForCard(card) {
-  var hexes = this.map.getReachableTiles(HexMap.Hex.fromString(hex), movement || 2, function(tile) {
+  var hexes = map.getReachableTiles(HexMap.Hex.fromString(hex), movement || 2, function(tile) {
     return tile.entity === null; //passable;
   });
   var hexIds = _.pluck(hexes, 'id');
@@ -159,6 +159,17 @@ function getReachableTilesForCard(card) {
     return H === hex;
   });
   return this.getTileData(hexesWithoutStart);
+}
+
+function getAdjacentTiles(tile) {
+  var hexes = map.getReachableTiles(HexMap.Hex.fromString(tile.entity.pos), 1, function(tile) {
+    return tile.entity === null; //passable;
+  });
+  var hexIds = _.pluck(hexes, 'id');
+  var hexesWithoutStart = _.reject(hexIds, function(H) {
+    return H === tile.entity.id;
+  });
+  return getTileData(hexesWithoutStart);
 }
 
 /*
@@ -255,7 +266,7 @@ this.checkWinner = function() {
 
 function hasPlayerLost(playerId) {
   return !_.some(getTiles(), function(tile) {
-    return tile.player === playerId && tile.type === 'energy';
+    return tile.entity && tile.entity.player === playerId && tile.entity.type === 'energy';
   });
 }
 
@@ -265,7 +276,7 @@ function getPossibleTurnActions() {
 
 function getPossibleMoves() {
   return _.chain(getAllUnits())
-    .filter(function(unit) { return unit.movesLeft > 0; })
+    .filter(function(unit) { return unit.entity.movesLeft > 0; })
     .map(getValidMovesForUnit)
     .flatten()
     .value();
@@ -274,13 +285,13 @@ function getPossibleMoves() {
 function getValidMovesForUnit(unit) {
   return _.chain(getAdjacentTiles(unit))
     .filter(function(tile) {
-      return tile.type === 'empty';
+      return !tile.entity;
     })
-    .map(function(move) {
+    .map(function(tile) {
       return {
         type: 'move',
-        card: unit.id,
-        target: Hex(move.x, move.y).id
+        card: unit.entity.id,
+        target: tile.pos
       };
     })
     .value();
@@ -297,7 +308,8 @@ function getPossibleAttacks() {
 function getValidAttacksForUnit(unit) {
   return _.chain(getAdjacentTiles(unit))
     .filter(function(tile) {
-      return tile.type !== 'empty' && tile.player !== state.currentPlayer;
+      return tile.entity &&
+        tile.entity.player !== state.currentPlayer;
     })
     .map(function(attack) {
       return {
@@ -339,7 +351,7 @@ function getValidPlaysForCard(card) {
     return {
       type: 'play',
       card: card.id,
-      target: Hex(target.x, target.y).id
+      target: HexMap.Hex(target.x, target.y).id
     };
   });
 }
@@ -350,7 +362,7 @@ function getValidTargetsForCard(card) {
 
   return _.filter(getTiles(), function(tile) {
     // TODO: Need check for placement near energy source and sufficiant energy
-    return tile.type === 'empty' &&
+    return !tile.entity &&
       _.some(getAdjacentTiles(tile), playerEnergyTilesQuery) &&
       getAvailableEnergyAtTile(tile) >= card.cost;
   });
@@ -365,11 +377,15 @@ function getAllUnits() {
 }
 
 function playerEnergyTilesQuery(tile) {
-  return tile.player === state.currentPlayer && tile.type === 'energy';
+  return tile.entity &&
+    tile.entity.player === state.currentPlayer &&
+    tile.entity.type === 'energy';
 }
 
 function playerUnitTilesQuery(tile) {
-  return tile.player === state.currentPlayer && tile.type === 'unit';
+  return tile.entity &&
+    tile.entity.player === state.currentPlayer &&
+    tile.entity.type === 'unit';
 }
 
 function getEnergySourcesConnectedToTile(tile) {
