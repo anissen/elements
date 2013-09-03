@@ -127,7 +127,7 @@ function getValidTargetsForCard(card) {
   return _.filter(state.board, function(tile) {
     // TODO: Need check for placement near energy source and sufficiant energy
     return !tile.entity &&
-      _.some(getAdjacentTiles(tile), playerEnergyTilesQuery) &&
+      _.some(getAdjacentTiles(tile.pos), playerEnergyTilesQuery) &&
       getAvailableEnergyAtTile(tile) >= card.cost;
   });
 }
@@ -150,6 +150,7 @@ function getTile(hex) {
   return data;
 }
 
+/*
 function getReachableTilesForCard(card) {
   var hexes = map.getReachableTiles(HexMap.Hex.fromString(hex), movement || 2, function(tile) {
     return tile.entity === null; //passable;
@@ -160,16 +161,23 @@ function getReachableTilesForCard(card) {
   });
   return this.getTileData(hexesWithoutStart);
 }
+*/
 
-function getAdjacentTiles(tile) {
-  var hexes = map.getReachableTiles(HexMap.Hex.fromString(tile.entity.pos), 1, function(tile) {
+function getReachableTiles(pos) {
+  var hexes = map.getReachableTiles(HexMap.Hex.fromString(pos), 1, function(tile) {
     return tile.entity === null; //passable;
   });
   var hexIds = _.pluck(hexes, 'id');
   var hexesWithoutStart = _.reject(hexIds, function(H) {
-    return H === tile.entity.id;
+    return H === pos;
   });
   return getTileData(hexesWithoutStart);
+}
+
+function getAdjacentTiles(pos) {
+  var hexes = map.getRing(HexMap.Hex.fromString(pos), 1);
+  var hexIds = _.pluck(hexes, 'id');
+  return getTileData(hexIds);
 }
 
 /*
@@ -241,7 +249,7 @@ function getValueOfPlayersThings(playerId) {
   var energyLifeValue = 3;
   var energyValue = _.chain(getTiles())
     .filter(function(tile) {
-      return tile.player === playerId && tile.type === 'energy';
+      return tile.entity && tile.entity.player === playerId && tile.entity.type === 'energy';
     })
     .reduce(function(sum, energy) {
       return sum + energy.life * energyLifeValue + energy.energy;
@@ -283,7 +291,7 @@ function getPossibleMoves() {
 }
 
 function getValidMovesForUnit(unit) {
-  return _.chain(getAdjacentTiles(unit))
+  return _.chain(getReachableTiles(unit.entity.pos))
     .filter(function(tile) {
       return !tile.entity;
     })
@@ -299,14 +307,14 @@ function getValidMovesForUnit(unit) {
 
 function getPossibleAttacks() {
   return _.chain(getAllUnits())
-    .filter(function(unit) { return unit.attacksLeft > 0; })
+    .filter(function(unit) { return unit.entity.attacksLeft > 0; })
     .map(getValidAttacksForUnit)
     .flatten()
     .value();
 }
 
 function getValidAttacksForUnit(unit) {
-  return _.chain(getAdjacentTiles(unit))
+  return _.chain(getAdjacentTiles(unit.entity.pos))
     .filter(function(tile) {
       return tile.entity &&
         tile.entity.player !== state.currentPlayer;
@@ -314,8 +322,8 @@ function getValidAttacksForUnit(unit) {
     .map(function(attack) {
       return {
         type: 'attack',
-        card: unit.id,
-        target: attack.id
+        card: unit.entity.id,
+        target: attack.entity.id
       };
     })
     .value();
@@ -324,8 +332,8 @@ function getValidAttacksForUnit(unit) {
 function getPossiblePlays() {
   var availableEnergy = _.chain(getTiles())
     .filter(playerEnergyTilesQuery)
-    .reduce(function(sum, energy) {
-      return sum + energy.energy;
+    .reduce(function(sum, tile) {
+      return sum + tile.entity.energy;
     }, 0)
     .value();
 
@@ -351,7 +359,7 @@ function getValidPlaysForCard(card) {
     return {
       type: 'play',
       card: card.id,
-      target: HexMap.Hex(target.x, target.y).id
+      target: target.pos
     };
   });
 }
@@ -363,7 +371,7 @@ function getValidTargetsForCard(card) {
   return _.filter(getTiles(), function(tile) {
     // TODO: Need check for placement near energy source and sufficiant energy
     return !tile.entity &&
-      _.some(getAdjacentTiles(tile), playerEnergyTilesQuery) &&
+      _.some(getAdjacentTiles(tile.pos), playerEnergyTilesQuery) &&
       getAvailableEnergyAtTile(tile) >= card.cost;
   });
 }
@@ -402,7 +410,7 @@ function getEnergySourcesConnectedToTile(tile) {
 function getAvailableEnergyAtTile(tile) {
   var energySources = getEnergySourcesConnectedToTile(tile);
   var availableEnergy = _.reduce(energySources, function(sum, tile){
-    return sum + tile.energy;
+    return sum + tile.entity.energy;
   }, 0);
   return availableEnergy;
 }
