@@ -2,7 +2,7 @@
 var _ = require("underscore");
 var inquirer = require("inquirer");
 
-module.exports.askQuestions = function(json) {
+module.exports.askQuestions = function(state, validActions) {
 
   var actionQuestion = {
     type: "list",
@@ -15,10 +15,47 @@ module.exports.askQuestions = function(json) {
     ]
   };
 
-  function cardsToPlay() {
-    return _.map(json.state.players[1 /*json.state.currentPlayer*/].hand, function(card) {
-      return { name: card.name + '\n   [' + card.attack + '/' + card.life + '] (' + card.cost + ' energy)', value: card.id };
+  function cardToPlayTextFromId(cardId) {
+    var card = _.find(state.players[state.currentPlayer].hand, function(card) {
+      return card.id === cardId;
     });
+    return card.name + ' [' + card.attack + '/' + card.life + '] (' + card.cost + ' energy)';
+  }
+
+  function cardToMoveTextFromId(entityId) {
+    // console.log(_.values(state.board));
+    var tile = _.find(_.values(state.board), function(tile) {
+      return tile.entity && tile.entity.id === entityId;
+    });
+    return tile.entity.name + ' [' + tile.entity.attack + '/' + tile.entity.life + ']';
+  }
+
+  function cardsToPlay() {
+    return _.chain(validActions)
+      .filter(function(action) {
+        return action.type === 'play';
+      })
+      .map(function(action) {
+        return {
+          name: cardToPlayTextFromId(action.card) + '\n  >> Play at ' + action.target,
+          value: action.card
+        };
+      })
+      .value();
+  }
+
+  function cardsToMove() {
+    return _.chain(validActions)
+      .filter(function(action) {
+        return action.type === 'move';
+      })
+      .map(function(action) {
+        return {
+          name: cardToMoveTextFromId(action.card) + '\n  >> Move to ' + action.target,
+          value: action.card
+        };
+      })
+      .value();
   }
 
   var playQuestion = {
@@ -34,11 +71,7 @@ module.exports.askQuestions = function(json) {
     when: function(answer) { return answer.action === 'move'; },
     name: "card",
     message: "Which unit do you wish to move",
-    choices: [
-      { name: "Some unit", value: "play" },
-      { name: "Some unit", value: "move" },
-      { name: "Some unit", value: "endturn" }
-    ]
+    choices: cardsToMove
   };
 
   inquirer.prompt([actionQuestion, playQuestion, moveQuestion], function(answers) {

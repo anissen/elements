@@ -128,7 +128,7 @@ var GameController = {
       
       var results = GameQueryService.getPossibleActions();
 
-      res.json({ validActions: results });
+      res.json(results);
     });
   },
 
