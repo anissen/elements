@@ -23,58 +23,66 @@ module.exports.askQuestions = function(state, validActions) {
   }
 
   function cardToMoveTextFromId(entityId) {
-    // console.log(_.values(state.board));
     var tile = _.find(_.values(state.board), function(tile) {
       return tile.entity && tile.entity.id === entityId;
     });
     return tile.entity.name + ' [' + tile.entity.attack + '/' + tile.entity.life + ']';
   }
 
-  function cardsToPlay() {
+  function cardAction(answer) {
     return _.chain(validActions)
       .filter(function(action) {
-        return action.type === 'play';
+        return action.type === answer.action;
       })
-      .map(function(action) {
+      .countBy(function(action) {
+        return action.card;
+      })
+      .map(function(count, card) {
+        var description;
+        if (answer.action === 'play') {
+          description = cardToPlayTextFromId(card);
+        } else if (answer.action === 'move') {
+          description = cardToMoveTextFromId(card);
+        }
         return {
-          name: cardToPlayTextFromId(action.card) + '\n  >> Play at ' + action.target,
-          value: action.card
+          name: description + ' [' + count + ' targets]',
+          value: card
         };
       })
       .value();
   }
 
-  function cardsToMove() {
+  function target(answer) {
     return _.chain(validActions)
       .filter(function(action) {
-        return action.type === 'move';
+        return action.type === answer.action && action.card === answer.card;
       })
       .map(function(action) {
         return {
-          name: cardToMoveTextFromId(action.card) + '\n  >> Move to ' + action.target,
-          value: action.card
+          name: answer.action + ' @ ' + action.target,
+          value: action.target
         };
       })
       .value();
   }
 
-  var playQuestion = {
+  var cardQuestion = {
     type: "list",
-    when: function(answer) { return answer.action === 'play'; },
+    when: function(answer) { return answer.action === 'play' || answer.action === 'move'; },
     name: "card",
-    message: "Which card do you wish to play",
-    choices: cardsToPlay
+    message: "Choose card",
+    choices: cardAction
   };
 
-  var moveQuestion = {
+  var targetQuestion = {
     type: "list",
-    when: function(answer) { return answer.action === 'move'; },
-    name: "card",
-    message: "Which unit do you wish to move",
-    choices: cardsToMove
+    when: function(answer) { return answer.action === 'play' || answer.action === 'move'; },
+    name: "target",
+    message: "Target",
+    choices: target
   };
 
-  inquirer.prompt([actionQuestion, playQuestion, moveQuestion], function(answers) {
+  inquirer.prompt([actionQuestion, cardQuestion, targetQuestion], function(answers) {
     console.log(answers);
     // console.log('json', json);
   });
