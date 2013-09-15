@@ -73,9 +73,10 @@ module.exports = (function () {
 
     this.move = function(cardId, target) {
       // TODO: Move this to GameQueryService
-      var entity = query()
-        .getEntity(cardId)
-        .value();
+      
+      var entity = _.find(game.board, function(tile) {
+        return tile.entity && tile.entity.id === cardId;
+      }).entity;
 
       //var unit = getTile(data.from);
       resetTile(entity.pos);

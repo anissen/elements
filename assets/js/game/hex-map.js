@@ -152,6 +152,6 @@ exports.Hex = Hex;
 exports.HexMap = HexMap;
 
 })(
-  (typeof exports === 'undefined' ? (this['HexMap'] = {}) : exports), 
+  (typeof exports === 'undefined' ? (this['HexMap'] = {}) : exports),
   _
 );

@@ -1,17 +1,18 @@
 
+var clc = require('cli-color');
 var _ = require("underscore");
-var inquirer = require("inquirer");
 
-module.exports.askQuestions = function(state, validActions) {
+module.exports.getQuestions = function(state, validActions) {
 
   var actionQuestion = {
     type: "list",
-    name: "action",
+    name: "type",
     message: "Which action do you wish to take",
     choices: [
-      { name: "Play card", value: "play" },
-      { name: "Move unit", value: "move" },
-      { name: "End turn", value: "endturn" }
+      { name: "Play card " + clc.green(getActionsOfType('play').length + ' actions'), value: "play" },
+      { name: "Move unit " + clc.green(getActionsOfType('move').length + ' actions'), value: "move" },
+      { name: "Attack with unit " + clc.green(getActionsOfType('attack').length + ' actions'), value: "attack" },
+      { name: "End turn " + clc.green(getActionsOfType('end-turn').length + ' action'), value: "endturn" }
     ]
   };
 
@@ -29,20 +30,25 @@ module.exports.askQuestions = function(state, validActions) {
     return tile.entity.name + ' [' + tile.entity.attack + '/' + tile.entity.life + ']';
   }
 
+  function getActionsOfType(type) {
+    return _.filter(validActions, function(action) {
+      return action.type === type;
+    });
+  }
+
   function cardAction(answer) {
-    return _.chain(validActions)
-      .filter(function(action) {
-        return action.type === answer.action;
-      })
+    return _.chain(getActionsOfType(answer.type))
       .countBy(function(action) {
         return action.card;
       })
       .map(function(count, card) {
         var description;
-        if (answer.action === 'play') {
+        if (answer.type === 'play') {
           description = cardToPlayTextFromId(card);
-        } else if (answer.action === 'move') {
+        } else if (answer.type === 'move') {
           description = cardToMoveTextFromId(card);
+        } else if (answer.type === 'attack') {
+          description = 'attack: ' + cardToMoveTextFromId(card);
         }
         return {
           name: description + ' [' + count + ' targets]',
@@ -55,11 +61,11 @@ module.exports.askQuestions = function(state, validActions) {
   function target(answer) {
     return _.chain(validActions)
       .filter(function(action) {
-        return action.type === answer.action && action.card === answer.card;
+        return action.type === answer.type && action.card === answer.card;
       })
       .map(function(action) {
         return {
-          name: answer.action + ' @ ' + action.target,
+          name: answer.type + ' @ ' + action.target,
           value: action.target
         };
       })
@@ -68,7 +74,7 @@ module.exports.askQuestions = function(state, validActions) {
 
   var cardQuestion = {
     type: "list",
-    when: function(answer) { return answer.action === 'play' || answer.action === 'move'; },
+    when: function(answer) { return answer.type === 'play' || answer.type === 'move' || answer.type === 'attack'; },
     name: "card",
     message: "Choose card",
     choices: cardAction
@@ -76,15 +82,11 @@ module.exports.askQuestions = function(state, validActions) {
 
   var targetQuestion = {
     type: "list",
-    when: function(answer) { return answer.action === 'play' || answer.action === 'move'; },
+    when: function(answer) { return answer.type === 'play' || answer.type === 'move' || answer.type === 'attack'; },
     name: "target",
     message: "Target",
     choices: target
   };
 
-  inquirer.prompt([actionQuestion, cardQuestion, targetQuestion], function(answers) {
-    console.log(answers);
-    // console.log('json', json);
-  });
-
+  return [actionQuestion, cardQuestion, targetQuestion];
 };
