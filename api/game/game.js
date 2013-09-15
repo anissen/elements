@@ -86,8 +86,16 @@ module.exports = (function () {
     };
 
     this.attack = function(cardId, targetId) {
-      var attacker = query().getEntity(cardId).value();
-      var defender = query().getEntity(targetId).value();
+      //var attacker = query().getEntity(cardId).value();
+      //var defender = query().getEntity(targetId).value();
+
+      var attacker = _.find(game.board, function(tile) {
+        return tile.entity && tile.entity.id === cardId;
+      }).entity;
+
+      var defender = _.find(game.board, function(tile) {
+        return tile.entity && tile.entity.id === targetId;
+      }).entity;
 
       defender.life -= attacker.attack;
       // attacker.attacksLeft -= 1;

@@ -25,7 +25,7 @@ print('|                       |');
 print('|   (Terminal version)  |');
 print('-------------------------');
 
-function start(json) {
+function start(gameId, json) {
   var map = new HexMap(json.state.board);
   console.log(map.toString(function(tile) {
     if (!tile.entity) return ' ';
@@ -36,7 +36,7 @@ function start(json) {
       return clc.yellow(typeChar);
   }));
 
-  http.get("http://localhost:1337/game/validactions/10", function(res){
+  http.get("http://localhost:1337/game/validactions/" + gameId, function(res){
     var data = '';
 
     res.on('data', function (chunk){
@@ -48,29 +48,28 @@ function start(json) {
 
       print('You have *' + validActions.length + '* actions to choose from');
       var questionList = questions.getQuestions(json.state, validActions);
-
       inquirer.prompt(questionList, function(answers) {
-        var url = "http://localhost:1337/game/action/10?";
+        var url = "http://localhost:1337/game/action/" + gameId + "?";
         answers = _.extend(answers, { player: json.state.currentPlayer });
         var parameters = _.map(answers, function(value, key) {
           return key + '=' + value;
         }).join('&');
         http.get(url + parameters, function(res){
           console.log('Done');
-          loop();
+          loop(gameId);
         }).on('error', function(e) {
-          console.log("Got error: " + e.message);
+          console.log("Got action error: " + e.message);
         });
       });
     });
 
   }).on('error', function(e) {
-    console.log("Got error: " + e.message);
+    console.log("Got validactions error: " + e.message);
   });
 }
 
-function loop() {
-  http.get("http://localhost:1337/game/10", function(res){
+function loop(gameId) {
+  http.get("http://localhost:1337/game/" + gameId, function(res){
     var data = '';
 
     res.on('data', function (chunk){
@@ -78,12 +77,24 @@ function loop() {
     });
 
     res.on('end',function(){
-      start(JSON.parse(data));
+      start(gameId, JSON.parse(data));
     });
 
   }).on('error', function(e) {
-    console.log("Got error: " + e.message);
+    console.log("Got game error: " + e.message);
   });
 }
 
-loop();
+var gameQuestion = {
+  type: "input",
+  name: "gameId",
+  message: "Game ID",
+  validate: function(value) {
+    var pass = value.match(/^\d+$/i);
+    return (pass ? true : "Please enter a valid game ID");
+  }
+};
+
+inquirer.prompt(gameQuestion, function(answer) {
+  loop(answer.gameId);
+});
